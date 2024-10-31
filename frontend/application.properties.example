@@ -1,0 +1,4 @@
+spring.application.name=frontend
+
+# (sesuaikan dengan port yg kalian ingin gunakan) ex:  9001
+server.port=
