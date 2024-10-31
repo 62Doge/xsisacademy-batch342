@@ -1,0 +1,33 @@
+spring.application.name=backend
+# ===============================
+# = DATA SOURCE
+# ===============================
+# Set here configuration for localhost port
+# (sesuaikan dengan port yg kalian ingin gunakan) ex:  9001
+server.port=
+# Set here configurations for the database connection
+# (sesuaikan dengan nama db kalian masing2) ex:  jdbc:postgresql://localhost:5432/spring342app
+spring.datasource.url=
+#  (sesuaikan username psql kalian masing2) ex:  postgres
+spring.datasource.username=
+#  (sesuaikan pwd psql kalian masing2) ex:  postgres
+spring.datasource.password=
+# ex:  org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.dialect=
+# ex:  false
+spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults=
+#  org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.database-platform=
+# spring.datasource.driver-class-name=org.postgresql.Driver
+# ===============================
+# = JPA / HIBERNATE
+# ===============================
+# Show or not log for each sql query
+#  (berguna untuk melihat query yg tereksekusi di dalam log) ex:  true
+spring.jpa.show-sql=
+# Hibernate ddl auto (create, create-drop, update): with "create-drop" the database
+# schema will be automatically created afresh for every start of application
+
+# PILIH SALAH SATU
+# spring.jpa.hibernate.ddl-auto=create-drop
+# spring.jpa.hibernate.ddl-auto=update
