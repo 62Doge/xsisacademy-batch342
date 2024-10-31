@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{layouts/main}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+  </head>
+  <body>
+    <th:block layout:fragment="pageAbove">
+      <script>
+        console.log("js/css at head");
+      </script>
+    </th:block>
+
+    <div layout:fragment="content">
+      <h1 class="text-center">Hello world</h1>
+    </div>
+
+    <th:block layout:fragment="pageBottom">
+      <script>
+        console.log("js/css at end body");
+      </script>
+    </th:block>
+  </body>
+</html>
