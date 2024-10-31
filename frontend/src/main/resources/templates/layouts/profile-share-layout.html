@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="id" layout:decorate="~{layouts/main}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>profile share layout</title>
+  </head>
+  <body>
+    <div layout:fragment="content" class="row">
+      <div class="col-4">
+        <th:block layout:fragment="profileSidebar">sidebar</th:block>
+      </div>
+      <div class="col">
+        <th:block layout:fragment="profileTab">tab</th:block>
+      </div>
+    </div>
+  </body>
+</html>

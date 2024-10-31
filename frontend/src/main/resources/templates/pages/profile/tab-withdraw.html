@@ -1,0 +1,129 @@
+<div class="container m-0 p-0 mt-5" th:fragment="withdrawContent">
+  <div class="row g-2">
+    <div class="col-12 col-md-6 d-flex">
+      <div class="card border rounded-2 w-100 h-100">
+        <div class="card-header">
+          <h5 class="mb-0">Pilih Nominal Penarikan</h5>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <ul class="list-group flex-grow-1">
+            <li
+              class="list-group-item cursor-pointer btn btn-outline-primary"
+              data-amount="100000"
+            >
+              Rp 100,000
+            </li>
+            <li
+              class="list-group-item cursor-pointer btn btn-outline-primary"
+              data-amount="200000"
+            >
+              Rp 200,000
+            </li>
+            <li
+              class="list-group-item cursor-pointer btn btn-outline-primary"
+              data-amount="500000"
+            >
+              Rp 500,000
+            </li>
+            <li
+              class="list-group-item cursor-pointer btn btn-outline-primary"
+              data-amount="1000000"
+            >
+              Rp 1,000,000
+            </li>
+            <li
+              class="list-group-item cursor-pointer btn btn-outline-primary"
+              data-amount=""
+              id="addCustomNominal"
+            >
+              Nominal Lain
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 d-flex">
+      <div class="card border rounded-2 w-100 h-100">
+        <div class="card-header">
+          <h5 class="mb-0">Informasi Penarikan</h5>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <div
+            id="withdraw-info"
+            class="alert flex-grow-1"
+            style="display: none"
+          >
+            <p>
+              Anda akan menarik saldo sebesar <span id="amount">Rp 0</span>.
+            </p>
+            <button class="btn btn-outline-primary w-100 mt-3">Lanjut</button>
+          </div>
+        </div>
+        <div class="card-footer mt-auto d-flex justify-content-end">
+          <button id="cancel-button-info" class="btn btn-danger me-2">
+            Cancel
+          </button>
+          <button id="ok-button-info" class="btn btn-primary">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block th:fragment="withdrawScript">
+  <script>
+    $(document).ready(function () {
+      $(".list-group-item").on("click", function () {
+        // Ambil nilai nominal penarikan dari data-amount
+        const amount = $(this).data("amount");
+        $("#amount").text(`Rp ${amount.toLocaleString()}`);
+
+        // Tampilkan informasi dan tombol
+        $("#withdraw-info").show();
+        $("#cancel-button").show();
+        $("#ok-button").show();
+      });
+
+      $("#cancel-button").on("click", function () {
+        // Sembunyikan informasi dan tombol ketika cancel diklik
+        $("#withdraw-info").hide();
+        $("#cancel-button").hide();
+        $("#ok-button").hide();
+      });
+
+      $("#ok-button").on("click", function () {
+        alert("Penarikan saldo sebesar " + $("#amount").text() + " berhasil!");
+        // Anda dapat menambahkan logika lain di sini jika diperlukan
+      });
+
+      $("#addCustomNominal").click(function (e) {
+        e.preventDefault();
+        const modalTitle = `<h3 class="fs-4">Isi Nominal Lain</h3>`;
+        const modalBody = `
+        <div class="row">
+          <div class="col">
+            <label for="inputCustomNominal" class="form-label">Isi nominal lain</label>
+            <input type="text" class="form-control" placeholder="Masukkan nominal" id="inputCustomNominal" />
+          </div>
+        </div>
+        `;
+        const modalFooter = `
+        <div class="d-flex justify-content-center">
+          <button class="btn btn-outline-danger me-2">Batal</button>
+          <button class="btn btn-outline-primary">OK</button>
+        </div>
+        `;
+        setModal(modalTitle, modalBody, modalFooter);
+        $("#baseModal").modal("show");
+      });
+    });
+
+    function setModal(title, body, footer) {
+      $("#baseModalTitle").html(title);
+      $("#baseModalBody").html(body);
+      $("#baseModalBody").addClass("py-0");
+      $("#baseModalFooter").html(footer);
+    }
+  </script>
+</th:block>
