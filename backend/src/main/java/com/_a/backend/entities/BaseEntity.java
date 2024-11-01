@@ -39,6 +39,6 @@ public class BaseEntity {
     private LocalDateTime deletedOn;
 
     @Column(name = "is_delete")
-    private Boolean isDeleted = false;
+    private Boolean isDelete = false;
 
 }
