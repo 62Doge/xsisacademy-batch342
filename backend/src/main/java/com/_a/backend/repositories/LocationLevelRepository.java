@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LocationLevelRepository extends JpaRepository<LocationLevel, Long> {
+    Boolean existsByName(String name);
+
+    //    Boolean existsByLocations(Locations locations);
 }

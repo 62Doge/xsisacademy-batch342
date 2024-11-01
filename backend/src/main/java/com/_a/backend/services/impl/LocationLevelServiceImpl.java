@@ -49,6 +49,25 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
     }
 
     @Override
+    public LocationLevelResponseDTO update(LocationLevelRequestDTO locationLevelRequestDTO, Long id) {
+        Optional<LocationLevel> optionalLocationLevel = locationLevelRepository.findById(id);
+        if (optionalLocationLevel.isPresent()) {
+            LocationLevel locationLevel = optionalLocationLevel.get();
+
+            modelMapper.map(locationLevelRequestDTO, locationLevel);
+
+            LocationLevel updatedLocationLevel = locationLevelRepository.save(locationLevel);
+
+            return modelMapper.map(updatedLocationLevel, LocationLevelResponseDTO.class);
+        }
+        throw new RuntimeException("Location Level not found");
+    }
+
+//    public LocationLevelResponseDTO softDelete(Long id) {
+//        LocationLevel locationLevel = locationLevelRepository.findById(id).get();
+//    }
+
+    @Override
     public void deleteById(Long id) {
         locationLevelRepository.deleteById(id);
     }
