@@ -1,5 +1,7 @@
 package com._a.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,6 +36,7 @@ public class Menu extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
+    @JsonBackReference
     private Menu parent;
 
     @Column(name = "parent_id")
