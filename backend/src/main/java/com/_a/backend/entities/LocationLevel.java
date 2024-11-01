@@ -1,16 +1,17 @@
 package com._a.backend.entities;
 
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.xml.stream.Location;
 import java.util.List;
 
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "m_location_level")
 @AllArgsConstructor
@@ -27,7 +28,10 @@ public class LocationLevel extends BaseEntity {
     @Column(name = "abbreviation", length = 50)
     private String abbreviation;
 
-////    This is for m_location relation
-//    @JsonManagedReference
-//    private List<> locations;
+    // This is for m_location relation
+    // @JsonManagedReference
+    // private List<Location> locations;
+    //// This is for m_location relation
+    // @JsonManagedReference
+    // private List<> locations;
 }
