@@ -1,20 +1,28 @@
 package com._a.backend.entities;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
 @Table(name = "m_biodata")
-public class Biodata {
+public class Biodata extends BaseEntity{
   
   public Biodata(String fullname, String mobile_phone,byte[] image, String image_path){
     this.fullname = fullname;
@@ -40,4 +48,8 @@ public class Biodata {
 
   @Column(name = "image_path", length = 255)
   private String imagePath;
+
+  @OneToOne(mappedBy = "biodata", cascade = CascadeType.ALL)
+  @JsonBackReference
+  private Doctor doctor;
 }
