@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "m_location_level")
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocationLevel {
+public class LocationLevel extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

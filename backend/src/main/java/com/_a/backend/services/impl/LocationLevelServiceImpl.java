@@ -35,6 +35,7 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
         if (locationLevel.isPresent()) {
             Optional<LocationLevelResponseDTO> locationLevelResponseDTO = locationLevel.map(
                     locationLevelOptional -> modelMapper.map(locationLevelOptional, LocationLevelResponseDTO.class));
+            return locationLevelResponseDTO;
         }
 
         return Optional.empty();
