@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.xml.stream.Location;
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "m_location_level")
@@ -24,7 +27,7 @@ public class LocationLevel extends BaseEntity {
     @Column(name = "abbreviation", length = 50)
     private String abbreviation;
 
-//    This is for m_location relation
+////    This is for m_location relation
 //    @JsonManagedReference
-//    private List<Location> locations;
+//    private List<> locations;
 }
