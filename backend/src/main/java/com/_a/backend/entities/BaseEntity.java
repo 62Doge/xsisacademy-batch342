@@ -28,7 +28,7 @@ public class BaseEntity {
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "modefied_on", updatable = true, nullable = true)
+    @Column(name = "modified_on", updatable = true, nullable = true)
     private LocalDateTime modifiedOn;
 
     @Column(name = "deleted_by", nullable = true)
