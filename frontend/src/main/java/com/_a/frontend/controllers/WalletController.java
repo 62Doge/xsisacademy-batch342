@@ -1,0 +1,15 @@
+package com._a.frontend.controllers;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+@RequestMapping("/wallet")
+public class WalletController {
+  @GetMapping("")
+  public String index() {
+    return "pages/profile/index";
+  }
+
+}
