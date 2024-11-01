@@ -2,6 +2,7 @@ package com._a.backend.controllers;
 
 import com._a.backend.dtos.requests.LocationLevelRequestDTO;
 import com._a.backend.dtos.responses.LocationLevelResponseDTO;
+import com._a.backend.entities.LocationLevel;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.repositories.LocationLevelRepository;
 import com._a.backend.services.impl.LocationLevelServiceImpl;
@@ -15,7 +16,8 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/location-level")
+@RequestMapping("/api/admin/location-level")
+@CrossOrigin("*")
 public class LocationLevelController {
     @Autowired
     private LocationLevelServiceImpl locationLevelService;
@@ -36,6 +38,43 @@ public class LocationLevelController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> findLocationLevelById(@PathVariable("id") Long id) {
+        try {
+            Optional<LocationLevelResponseDTO> locationLevel = locationLevelService.findById(id);
+
+            if (locationLevel.isPresent()) {
+                ApiResponse<LocationLevelResponseDTO> successResponse =
+                        new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), locationLevel.get());
+                return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+            } else {
+                ApiResponse<LocationLevelResponseDTO> notFoundResponse =
+                        new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Location Level not found", null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
+            }
+        }catch (Exception e) {
+            ApiResponse<LocationLevelResponseDTO> errorResponse =
+                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> findLocationLevelByName(@PathVariable String name) {
+        try {
+            List<LocationLevelResponseDTO> locationLevelResponseDTOS = locationLevelService.findByName(name);
+
+            ApiResponse<List<LocationLevelResponseDTO>> successResponse =
+                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), locationLevelResponseDTOS);
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        }catch (Exception e) {
+            ApiResponse<List<LocationLevelResponseDTO>> errorResponse =
+                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
 
     @PostMapping("")
     public ResponseEntity<?> saveLocationLevel(@Valid @RequestBody LocationLevelRequestDTO locationLevelRequestDTO) {

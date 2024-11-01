@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{layouts/main-without-search}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Level Lokasi</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="d-flex mb-2">
+                <div class="me-2">
+                    <input type="text" class="form-control" placeholder="Cari Level Lokasi"/>
+                </div>
+                <div>
+                    <button id="addBankButton" type="button" class="btn btn-primary" onclick="openAddForm()">
+                        <span class="tf-icons bx bx-add-to-queue"></span> Tambah Level Lokasi
+                    </button>
+                </div>
+            </div>
+            <div class="card">
+                <h5 class="card-header"><strong>Level Lokasi</strong></h5>
+                <div class="table-responsive text-nowrap">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Nama Singkat</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0" id="location-level-table">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:replace="~{fragments/BaseModal::modal(class='modal-dialog-centered')}"></th:block>
+
+</div>
+<th:block layout:fragment="pageBottom">
+    <script th:src="@{/js/locationLevel.js}"></script>
+</th:block>
+</body>
+</html>

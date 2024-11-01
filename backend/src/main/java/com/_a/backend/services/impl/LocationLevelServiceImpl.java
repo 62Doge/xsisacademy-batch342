@@ -29,6 +29,13 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
         return locationLevelResponseDTOs;
     }
 
+    public List<LocationLevelResponseDTO> findByName(String name) {
+        List<LocationLevel> locationLevels = locationLevelRepository.findByNameContainingIgnoreCase(name);
+        List<LocationLevelResponseDTO> locationLevelResponseDTOS = locationLevels.stream().map(
+                locationLevel -> modelMapper.map(locationLevel, LocationLevelResponseDTO.class)).toList();
+        return locationLevelResponseDTOS;
+    }
+
     @Override
     public Optional<LocationLevelResponseDTO> findById(Long id) {
         Optional<LocationLevel> locationLevel = locationLevelRepository.findById(id);
