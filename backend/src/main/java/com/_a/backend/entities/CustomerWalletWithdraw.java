@@ -9,9 +9,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Table;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "t_customer_wallet_withdraw")
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class CustomerWalletWithdraw extends BaseEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
