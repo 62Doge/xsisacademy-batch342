@@ -5,9 +5,10 @@ import org.springframework.stereotype.Service;
 
 import com._a.backend.entities.User;
 import com._a.backend.repositories.UserRepository;
+import com._a.backend.services.AuthService;
 
 @Service
-public class DumpAuthService {
+public class DumpAuthServiceImpl implements AuthService {
   @Autowired
   UserRepository userRepository;
 

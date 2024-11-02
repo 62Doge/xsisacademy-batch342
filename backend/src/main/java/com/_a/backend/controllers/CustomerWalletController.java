@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.responses.CustomerWalletSummaryResponseDto;
 import com._a.backend.payloads.ApiResponse;
+import com._a.backend.services.AuthService;
 import com._a.backend.services.CustomerWalletService;
-import com._a.backend.services.impl.DumpAuthService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class CustomerWalletController {
 
   @Autowired
-  DumpAuthService authService;
+  AuthService authService;
 
   @Autowired
   CustomerWalletService customerWalletService;
