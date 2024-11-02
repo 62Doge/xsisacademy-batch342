@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.responses.CustomerWalletSummaryResponseDto;
 import com._a.backend.repositories.CustomerWalletRepository;
+import com._a.backend.services.AuthService;
 import com._a.backend.services.CustomerWalletService;
 
 @Service
@@ -12,16 +13,23 @@ public class CustomerWalletServiceImpl implements CustomerWalletService {
   @Autowired
   private CustomerWalletRepository walletRepository;
 
+  @Autowired
+  AuthService authService;
+
   @Override
-  public CustomerWalletSummaryResponseDto getCustomerWalletByUserId(Long userid) {
-    return walletRepository.findBalanceByUserId(userid).orElseThrow(
-        () -> new RuntimeException("User with id: " + userid + " don't have wallet. Wallet just for patient role"));
+  public CustomerWalletSummaryResponseDto getCustomerWallet() {
+    Long userId = authService.getDetails().getId();
+
+    return walletRepository.findByUserId(userId).orElseThrow(
+        () -> new RuntimeException("User with id: " + userId + " don't have wallet. Wallet just for patient role"));
   }
 
   @Override
-  public Double getBalanceByUserId(Long userId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getBalanceByUserId'");
+  public Double getBalance() {
+    Long userId = authService.getDetails().getId();
+
+    return walletRepository.findBalanceByUserId(userId).orElseThrow(
+        () -> new RuntimeException("User with id: " + userId + " don't have wallet. Wallet just for patient role"));
   }
 
 }

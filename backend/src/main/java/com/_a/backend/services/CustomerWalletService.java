@@ -3,7 +3,7 @@ package com._a.backend.services;
 import com._a.backend.dtos.responses.CustomerWalletSummaryResponseDto;
 
 public interface CustomerWalletService {
-  CustomerWalletSummaryResponseDto getCustomerWalletByUserId(Long userid);
+  CustomerWalletSummaryResponseDto getCustomerWallet();
 
-  Double getBalanceByUserId(Long userId);
+  Double getBalance();
 }
