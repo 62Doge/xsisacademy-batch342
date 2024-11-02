@@ -25,38 +25,38 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id")
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "biodata_id", insertable = false, updatable = false)
-    private Biodata biodata;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "biodata_id", insertable = false, updatable = false)
+  private Biodata biodata;
 
-    @Column(name = "biodata_id")
-    private Long biodataId;
+  @Column(name = "biodata_id")
+  private Long biodataId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id", insertable = false, updatable = false)
-    private Role role;
+  @ManyToOne(fetch = FetchType.EAGER)
+  @JoinColumn(name = "role_id", insertable = false, updatable = false)
+  private Role role;
 
-    @Column(name = "role_id")
-    private Long roleId;
+  @Column(name = "role_id")
+  private Long roleId;
 
-    @Column(name = "email", length = 100)
-    private String email;
+  @Column(name = "email", length = 100)
+  private String email;
 
-    @Column(name = "password", length = 255)
-    private String password;
+  @Column(name = "password", length = 255)
+  private String password;
 
-    @Column(name = "login_attempt")
-    private int loginAttempt;
+  @Column(name = "login_attempt")
+  private int loginAttempt;
 
-    @Column(name = "is_locked")
-    private boolean isLocked;
+  @Column(name = "is_locked")
+  private boolean isLocked;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "last_login")
-    private LocalDateTime lastLogin;
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "last_login")
+  private LocalDateTime lastLogin;
 }

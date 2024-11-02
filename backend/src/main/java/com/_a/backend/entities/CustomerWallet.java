@@ -46,6 +46,6 @@ public class CustomerWallet extends BaseEntity {
 
   private LocalDateTime blockEnds;
 
-  @Column(nullable = false)
+  @Column(nullable = false, columnDefinition = "boolean default false")
   private boolean isBlocked = false;
 }

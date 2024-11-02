@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 @MappedSuperclass
 public class BaseEntity {
-    
+
     @Column(name = "created_by", updatable = false)
     private Long createdBy;
 
@@ -38,7 +38,7 @@ public class BaseEntity {
     @Column(name = "deleted_on", nullable = true)
     private LocalDateTime deletedOn;
 
-    @Column(name = "is_delete")
+    @Column(name = "is_delete", columnDefinition = "boolean default false")
     private Boolean isDelete = false;
 
 }
