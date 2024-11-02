@@ -25,7 +25,7 @@ public class CustomerCustomNominal extends BaseEntity {
   @JoinColumn(name = "customer_id", insertable = false, updatable = false)
   private Customer customer;
 
-  @Column(name = "customer_id", nullable = false)
+  @Column(name = "customer_id")
   private Long customerId;
 
   private int nominal;

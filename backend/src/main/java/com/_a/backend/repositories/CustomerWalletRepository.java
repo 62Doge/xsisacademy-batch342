@@ -19,5 +19,16 @@ public interface CustomerWalletRepository extends JpaRepository<CustomerWallet, 
       where u.id=?1
       and cw.isDelete=false
       """)
-  Optional<CustomerWalletSummaryResponseDto> findBalanceByUserId(Long userId);
+  Optional<CustomerWalletSummaryResponseDto> findByUserId(Long userId);
+
+  @Query("""
+      select cw.balance
+      from CustomerWallet cw
+      join cw.customer c
+      join c.biodata b
+      join User u on b.id=u.biodataId
+      where u.id=?1
+      and cw.isDelete=false
+      """)
+  Optional<Double> findBalanceByUserId(Long userId);
 }
