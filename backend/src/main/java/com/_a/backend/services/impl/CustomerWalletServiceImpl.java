@@ -13,9 +13,15 @@ public class CustomerWalletServiceImpl implements CustomerWalletService {
   private CustomerWalletRepository walletRepository;
 
   @Override
-  public CustomerWalletSummaryResponseDto getBalanceByUserId(Long userid) {
+  public CustomerWalletSummaryResponseDto getCustomerWalletByUserId(Long userid) {
     return walletRepository.findBalanceByUserId(userid).orElseThrow(
         () -> new RuntimeException("User with id: " + userid + " don't have wallet. Wallet just for patient role"));
+  }
+
+  @Override
+  public Double getBalanceByUserId(Long userId) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getBalanceByUserId'");
   }
 
 }

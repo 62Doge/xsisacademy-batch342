@@ -28,7 +28,7 @@ public class CustomerWalletController {
   @GetMapping({ "", "/" })
   public ResponseEntity<ApiResponse<CustomerWalletSummaryResponseDto>> getCustomerWallet() {
     CustomerWalletSummaryResponseDto responseDto = customerWalletService
-        .getBalanceByUserId(authService.getDetails().getId());
+        .getCustomerWalletByUserId(authService.getDetails().getId());
     return new ResponseEntity<>(ApiResponse.success(200, responseDto), HttpStatus.OK);
   }
 
