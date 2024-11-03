@@ -35,11 +35,18 @@
             </button>
           </div>
         </div>
-        <div class="card-footer mt-auto d-flex justify-content-end">
-          <button id="cancel-button-info" class="btn btn-danger me-2 disabled">
+        <div
+          class="card-footer mt-auto d-flex justify-content-end"
+          id="processWithdraw"
+        >
+          <button
+            class="btn btn-danger me-2 disabled withdraw-btn cancel-process"
+          >
             Cancel
           </button>
-          <button id="ok-button-info" class="btn btn-primary disabled">
+          <button
+            class="btn btn-primary disabled withdraw-btn continue-process"
+          >
             OK
           </button>
         </div>
@@ -59,9 +66,11 @@
       },
     };
 
+    let customerBalance;
+
     function formatRupiah(amount) {
       let [integerPart, decimalPart] = amount.toString().split(".");
-
+      decimalPart = decimalPart ? decimalPart.padEnd(2, "0") : "00";
       let integerArray = Array.from(integerPart);
       let formattedInteger = "";
       let counter = 0;
@@ -85,7 +94,7 @@
           dataType: "json",
           success: function (response) {
             let balance = response.data.balance.toFixed(2);
-
+            customerBalance = balance;
             $("#walletBalance").text(formatRupiah(balance));
           },
           error(response) {
@@ -115,7 +124,7 @@
             <button data-type="${nominalData.type}" data-id="${nominalData.id}"
               class="btn btn-outline-primary flex-fill mb-2 nominal-item"
               data-amount="${nominalData.nominal}">
-              ${nominalData.nominal}
+              ${formatRupiah(nominalData.nominal)}
             </button>
           `);
               }
@@ -141,7 +150,7 @@
             <button data-type="${nominalData.type}" data-id="${nominalData.id}"
               class="btn btn-outline-primary flex-fill mb-2 nominal-item"
               data-amount="${nominalData.nominal}">
-              ${nominalData.nominal}
+              ${formatRupiah(nominalData.nominal)}
             </button>
           `);
               }
@@ -169,25 +178,16 @@
 
       $(document).on("click", ".nominal-list .nominal-item", function () {
         const button = $(this);
-        const amount = button.data("amount");
         resetRequestData();
+        const amount = button.data("amount");
         requestData.nominal.type = button.data("type");
         requestData.nominal.id = button.data("id");
         console.log(requestData);
+        console.log(typeof amount);
 
-        $("#amount").text(`Rp ${amount}`);
+        $("#amount").text(`Rp ${formatRupiah(amount)}`);
 
         $("#withdraw-info").show();
-      });
-
-      $("#cancel-button").on("click", function () {
-        $("#withdraw-info").hide();
-        $("#cancel-button").hide();
-        $("#ok-button").hide();
-      });
-
-      $("#ok-button").on("click", function () {
-        alert("Penarikan saldo sebesar " + $("#amount").text() + " berhasil!");
       });
 
       $(document).on("click", "#addCustomNominal", function (e) {
@@ -198,6 +198,7 @@
           <div class="col">
             <label for="inputCustomNominal" class="form-label">Isi nominal lain</label>
             <input type="text" class="form-control" placeholder="Masukkan nominal" id="inputCustomNominal" />
+            <p id='customNominalError' class='text-danger mb-1' style="display: none">Nominal lebih besar dari saldo!</p>
           </div>
         </div>
         `;
@@ -229,7 +230,7 @@
           requestData.nominal.amount = customNominal;
           requestData.nominal.type = "custom";
           console.log(requestData);
-          $("#amount").text(`Rp ${customNominal}`);
+          $("#amount").text(`Rp ${formatRupiah(customNominal)}`);
         }
         $("#inputCustomNominal").val(null);
         $("#baseModal").modal("hide");
@@ -242,6 +243,14 @@
 
         if (isNaN(value)) {
           $input.val(value.slice(0, value.length).replace(/\D/g, ""));
+        } else {
+          if (parseInt(value) > customerBalance) {
+            $("#customNominalButton .btn-ok").addClass("disabled");
+            $("#customNominalError").show();
+          } else {
+            $("#customNominalError").hide();
+            $("#customNominalButton .btn-ok").removeClass("disabled");
+          }
         }
       });
 
@@ -300,26 +309,69 @@
 
       $(document).on("click", "#submitPin", function (e) {
         e.preventDefault();
+        let pin = "";
 
-        setModal(
-          "Autentikasi",
-          `
-        Proses autentikasi berhasil
-        `
-        );
-        $("#baseModal").modal("show");
-        setTimeout(() => {
-          const title = "Tarik Saldo";
-          const body = `
-         <div class="text-center">
-            <p>Proses penarikan saldo berhasil</p>
-            <h5 class="fw-bolder">OTP anda: <span>123432</span></h5>
-            <p class="fs-tiny fst-italic">*OTP aka kadaluarsa setelah 1 jam</p>
+        $(".pin-input").each(function () {
+          pin += $(this).val();
+        });
 
-          <div/>
-          `;
-          setModal(title, body);
-        }, 1000);
+        const pinData = { pin };
+
+        $.ajax({
+          type: "post",
+          url: BE_BASE_URL + "/patient/customer-wallet/check-pin",
+          data: JSON.stringify(pinData),
+          contentType: "application/json",
+          success: function (response) {
+            requestData.pin = pin;
+            setModal("Autentikasi", response.message);
+            $(".withdraw-btn").removeClass("disabled");
+            $("#baseModal").modal("show");
+          },
+          error(response) {
+            setModal("Autentikasi", response.responseJSON.message);
+
+            $("#baseModal").modal("show");
+          },
+        });
+      });
+
+      $("#processWithdraw button").click(function (e) {
+        e.preventDefault();
+        const button = $(this);
+        if (button.hasClass("continue-process")) {
+          const reqJson = JSON.stringify(requestData);
+
+          $.ajax({
+            type: "post",
+            url: BE_BASE_URL + "/patient/wallet-withdraw",
+            data: reqJson,
+            contentType: "application/json",
+            success: function (response) {
+              const title = "Tarik Saldo";
+              const body = `
+                <div class="text-center">
+                  <p>Proses penarikan saldo berhasil</p>
+                  <h5 class="fw-bolder">OTP anda: <span>${response.data.otp}</span></h5>
+                  <p class="fs-tiny fst-italic">*OTP aka kadaluarsa setelah ${response.data.expiredIn}</p>
+
+                <div/>
+                `;
+              setModal(title, body);
+              $("#baseModal").modal("show");
+            },
+            error(response) {
+              setModal("Autentikasi", response.responseJSON.message);
+
+              $("#baseModal").modal("show");
+            },
+          });
+        } else {
+          $("#amount").text("");
+          resetRequestData();
+          $("#withdraw-info").hide();
+          $(".withdraw-btn").addClass("disabled");
+        }
       });
 
       function setModal(title, body, footer = "") {
