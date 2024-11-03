@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
-
 @RestController
 @RequestMapping("/api/bank")
 public class BankController {
@@ -37,7 +35,7 @@ public class BankController {
     private BankRepository bankRepository;
 
     @GetMapping("")
-    public ResponseEntity<?> findAllBanks() {
+    public ResponseEntity<?> getAllBanks() {
         try {
             List<BankResponseDTO> bankResponseDTOs = bankService.findAll();
             ApiResponse<List<BankResponseDTO>> successResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bankResponseDTOs);
@@ -48,10 +46,32 @@ public class BankController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getBankByID(@PathVariable Long id) {
+        try {
+            Optional<BankResponseDTO> bank = bankService.findById(id);
+            if (bank.isPresent()) {
+                ApiResponse<BankResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bank.get());
+                return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+            } else {
+                ApiResponse<BankResponseDTO> notFoundResponse =
+                        new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Bank not found", null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
+            }
+        } catch (Exception e) {
+            ApiResponse<List<BankResponseDTO>> errorResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PostMapping("")
-    public ResponseEntity<?> saveBank(@Valid @RequestBody BankRequestDTO bankRequestDTO) {
+    public ResponseEntity<?> createBank(@Valid @RequestBody BankRequestDTO bankRequestDTO) {
         if (bankRepository.existsByName(bankRequestDTO.getName())) {
             ApiResponse<BankResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Bank already exist", null);
+            return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
+        }
+        if (bankRepository.existsByVaCode(bankRequestDTO.getVaCode())) {
+            ApiResponse<BankResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "VA Code already exist", null);
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
         }
         try {
@@ -81,14 +101,30 @@ public class BankController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> softDeleteBank(@PathVariable Long id) {
+        try {
+            Optional<BankResponseDTO> bankResponseDTO = bankService.findById(id);
+            if (bankResponseDTO.isEmpty()) {
+                ApiResponse<BankResponseDTO> notFoundResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Bank not found", null);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
+            }
+            bankService.softDeleteById(id);
+            ApiResponse<BankResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Bank deleted", null);
+            return ResponseEntity.ok(successResponse);
+        } catch (Exception e) {
+            ApiResponse<BankResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to delete Bank", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
+        }
+    }
+
+    @DeleteMapping("/hard-delete/{id}")
     public ResponseEntity<?> hardDeleteBank(@PathVariable Long id) {
         try {
             Optional<BankResponseDTO> bankResponseDTO = bankService.findById(id);
             if (bankResponseDTO.isEmpty()) {
                 ApiResponse<BankResponseDTO> notFoundResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Bank not found", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
-
             }
             bankService.deleteById(id);
             ApiResponse<BankResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Bank deleted", null);

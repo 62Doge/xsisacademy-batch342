@@ -1,5 +1,6 @@
 package com._a.backend.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,13 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
     public List<BankResponseDTO> findAll() {
         List<Bank> banks = bankRepository.findAll();
         List<BankResponseDTO> bankResponseDTOs = banks.stream().map(
+                bank -> modelMapper.map(bank, BankResponseDTO.class)).toList();
+        return bankResponseDTOs;
+    }
+
+    public List<BankResponseDTO> findAllActive() {
+        List<Bank> banks = bankRepository.findAllActive();
+        List<BankResponseDTO> bankResponseDTOs = banks.stream().map(
             bank -> modelMapper.map(bank, BankResponseDTO.class)).toList();
         return bankResponseDTOs;
     }
@@ -35,7 +43,7 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         Optional<Bank> bank = bankRepository.findById(id);
         if (bank.isPresent()) {
             Optional<BankResponseDTO> bankResponseDTO = bank.map(
-                bankOptional -> modelMapper.map(bankOptional, BankResponseDTO.class));
+                    bankOptional -> modelMapper.map(bankOptional, BankResponseDTO.class));
             return bankResponseDTO;
         }
         return Optional.empty();
@@ -63,6 +71,18 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
     @Override
     public void deleteById(Long id) {
         bankRepository.deleteById(id);
+    }
+
+    public void softDeleteById(Long id) {
+        Optional<Bank> optionalBank = bankRepository.findById(id);
+        if (optionalBank.isPresent()) {
+            Bank bank = optionalBank.get();
+            bank.setIsDelete(true);
+            bank.setDeletedOn(LocalDateTime.now());
+            bankRepository.save(bank);
+        } else {
+            throw new RuntimeException("Bank not found");
+        }
     }
 
 }

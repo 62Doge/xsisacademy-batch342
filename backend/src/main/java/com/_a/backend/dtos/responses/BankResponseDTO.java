@@ -8,5 +8,6 @@ public class BankResponseDTO {
     Long id;
     String name;
     String vaCode;
+    Boolean isDelete;
 
 }
