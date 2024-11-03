@@ -17,7 +17,7 @@ public interface CustomerCustomNominalRepository extends JpaRepository<CustomerC
       join c.biodata b
       join User u on u.biodataId=b.id
       where cc.isDelete=false
-      and cc.nominal <= cast(?1 as integer)
+      and cast(cc.nominal as double) <=?1
       and u.id=?2
       """)
   Optional<List<CustomerCustomNominalProjectionDto>> findAllByNominalLessThanEqual(Double balance, Long userId);

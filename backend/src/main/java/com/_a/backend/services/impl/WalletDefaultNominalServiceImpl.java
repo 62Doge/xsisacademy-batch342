@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com._a.backend.dtos.projections.WalletDefaultNominalProjectionDto;
 import com._a.backend.entities.WalletDefaultNominal;
 import com._a.backend.repositories.WalletDefaultNominalRepository;
-import com._a.backend.services.AuthService;
 import com._a.backend.services.CustomerWalletService;
 import com._a.backend.services.WalletDefaultNominalService;
 
@@ -18,17 +17,13 @@ public class WalletDefaultNominalServiceImpl implements WalletDefaultNominalServ
   WalletDefaultNominalRepository defaultNominalRepository;
 
   @Autowired
-  AuthService authService;
-
-  @Autowired
   CustomerWalletService customerWalletService;
 
   @Override
   public List<WalletDefaultNominalProjectionDto> getNominalLessThanEqualBalance() {
-    Long userId = authService.getDetails().getId();
     Double balance = customerWalletService.getBalance();
 
-    return defaultNominalRepository.findAllByNominalLessThanEqual(balance, userId);
+    return defaultNominalRepository.findAllByNominalLessThanEqual(balance);
   }
 
   @Override
