@@ -49,6 +49,13 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         return Optional.empty();
     }
 
+    public List<BankResponseDTO> findByName(String name) {
+        List<Bank> banks = bankRepository.findByNameContainingIgnoreCase(name);
+        List<BankResponseDTO> bankResponseDTOs = banks.stream().map(
+            bank -> modelMapper.map(bank, BankResponseDTO.class)).toList();
+        return bankResponseDTOs;
+    }
+
     @Override
     public BankResponseDTO save(BankRequestDTO bankRequestDTO) {
         Bank bank = bankRepository.save(modelMapper.map(bankRequestDTO, Bank.class));

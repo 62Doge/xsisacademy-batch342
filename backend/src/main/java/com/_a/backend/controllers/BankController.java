@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
-@RequestMapping("/api/bank")
+@RequestMapping("/api/admin/bank")
 @CrossOrigin("http://localhost:9002")
 public class BankController {
 
@@ -49,7 +49,7 @@ public class BankController {
     }
 
     @GetMapping("/active")
-    public ResponseEntity<?> getAllActive() {
+    public ResponseEntity<?> getAllActiveBanks() {
         try {
             List<BankResponseDTO> bankResponseDTOs = bankService.findAllActive();
             ApiResponse<List<BankResponseDTO>> successResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bankResponseDTOs);
@@ -75,6 +75,20 @@ public class BankController {
         } catch (Exception e) {
             ApiResponse<List<BankResponseDTO>> errorResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getBankByName(@PathVariable String name) {
+        try {
+            List<BankResponseDTO> bankResponseDTOs = bankService.findByName(name);
+            ApiResponse<List<BankResponseDTO>> successResponse =
+                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bankResponseDTOs);
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        } catch (Exception e) {
+            ApiResponse<List<BankResponseDTO>> errorResponse =
+                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 

@@ -1,11 +1,56 @@
 $(document).ready(function () {
+    loadData();
+    $('#searchBankInput').on('input', function () {
+        const searchQuery = $(this).val();
+        if (searchQuery) {
+            searchBank(searchQuery);
+        } else {
+            $('#bankTable').empty();
+            loadData();
+        }
+    });
+})
+
+function searchBank(query) {
     $.ajax({
         type: "get",
-        url: "http://localhost:9001/api/bank/active",
+        url: `http://localhost:9001/api/admin/bank/name/${query}`,
         contentType: "application/json",
         success: function (response) {
-            let bankResponse = response.data;
-            bankResponse.forEach(bank => {
+            let bankData = response.data;
+            let tableData = ``;
+            bankData.forEach(bank => {
+                tableData += `
+                    <tr>
+                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>${bank.name}</strong></td>
+                        <td>${bank.vaCode}</td>
+                        <td>
+                            <button onclick="openEditForm(${bank.id})" type="button" class="btn btn-icon btn-outline-warning">
+                                <span class="tf-icons bx bxs-edit"></span>
+                            </button>
+                            <button onclick="openDeleteModal(${bank.id})" type="button" class="btn btn-icon btn-outline-danger">
+                                <span class="tf-icons bx bxs-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                `
+            });
+            $('#bankTable').html(tableData);
+        },
+        error: function(error) {
+            console.log("Error searching bank: ", error);
+        }
+    });
+}
+
+function loadData() {
+    $.ajax({
+        type: "get",
+        url: "http://localhost:9001/api/admin/bank/active",
+        contentType: "application/json",
+        success: function (response) {
+            let bankData = response.data;
+            bankData.forEach(bank => {
                 $('#bankTable').append(`
                     <tr>
                         <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>${bank.name}</strong></td>
@@ -26,7 +71,7 @@ $(document).ready(function () {
             console.log(error);
         }
     });
-})
+}
 
 function openAddForm() {
     $.ajax({
@@ -69,7 +114,7 @@ function addBank() {
     }
     $.ajax({
         type: "post",
-        url: "http://localhost:9001/api/bank",
+        url: "http://localhost:9001/api/admin/bank",
         data: JSON.stringify(addBankJSON),
         contentType: "application/json",
         success: function () {
@@ -99,7 +144,7 @@ function openEditForm(id) {
 
             $.ajax({
                 type: "get",
-                url: `http://localhost:9001/api/bank/${id}`,
+                url: `http://localhost:9001/api/admin/bank/${id}`,
                 contentType: "application/json",
                 success: function (response) {
                     let bank = response.data;
@@ -137,7 +182,7 @@ function editBank(id) {
     }
     $.ajax({
         type: "put",
-        url: `http://localhost:9001/api/bank/update/${id}`,
+        url: `http://localhost:9001/api/admin/bank/update/${id}`,
         data: JSON.stringify(editBankJSON),
         contentType: "application/json",
         success: function () {
@@ -167,7 +212,7 @@ function openDeleteModal(id) {
 
             $.ajax({
                 type: "get",
-                url: `http://localhost:9001/api/bank/${id}`,
+                url: `http://localhost:9001/api/admin/bank/${id}`,
                 contentType: "application/json",
                 success: function (response) {
                     let bank = response.data;
@@ -188,7 +233,7 @@ function openDeleteModal(id) {
 function deleteBank(id) {
     $.ajax({
         type: "put",
-        url: `http://localhost:9001/api/bank/delete/${id}`,
+        url: `http://localhost:9001/api/admin/bank/delete/${id}`,
         contentType: "application/json",
         success: function () {
             location.reload();
