@@ -2,41 +2,63 @@ package com._a.backend.services.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.UserRequestDTO;
 import com._a.backend.dtos.responses.UserResponseDTO;
+import com._a.backend.entities.User;
+import com._a.backend.repositories.UserRepository;
 import com._a.backend.services.Services;
 
-public class UserServiceImpl implements Services<UserRequestDTO,UserResponseDTO>{
+import jakarta.transaction.Transactional;
+
+@Service
+public class UserServiceImpl implements Services<UserRequestDTO, UserResponseDTO> {
+
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    ModelMapper modelMapper;
 
     @Override
     public void deleteById(Long id) {
-        // TODO Auto-generated method stub
-        
+        userRepository.deleteById(id);
     }
 
     @Override
     public List<UserResponseDTO> findAll() {
-        // TODO Auto-generated method stub
-        return null;
+        // using less optimal approach, but easier to understand
+        return userRepository.findAll().stream()
+                .map(user -> modelMapper.map(user, UserResponseDTO.class))
+                .collect(Collectors.toList());
     }
 
     @Override
     public Optional<UserResponseDTO> findById(Long id) {
-        // TODO Auto-generated method stub
-        return Optional.empty();
+        return userRepository.findById(id)
+                .map(user -> modelMapper.map(user, UserResponseDTO.class));
     }
 
     @Override
-    public UserResponseDTO save(UserRequestDTO requestDTO) {
-        // TODO Auto-generated method stub
-        return null;
+    public UserResponseDTO save(UserRequestDTO userRequestDTO) {
+        User user = userRepository.save(modelMapper.map(userRequestDTO, User.class));
+        return modelMapper.map(user, UserResponseDTO.class);
     }
 
+    @Transactional
     @Override
-    public UserResponseDTO update(UserRequestDTO requestDTO, Long id) {
-        // TODO Auto-generated method stub
-        return null;
+    public UserResponseDTO update(UserRequestDTO userRequestDTO, Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Location Level not found"));
+
+        modelMapper.map(userRequestDTO, user);
+        User updatedUser = userRepository.save(user);
+
+        return modelMapper.map(updatedUser, UserResponseDTO.class);
     }
 
 }
