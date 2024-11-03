@@ -15,7 +15,7 @@ public interface BankRepository extends JpaRepository<Bank, Long> {
     
     Boolean existsByVaCode(String vaCode);
 
-    List<Bank> findByNameContainingIgnoreCase(String name);
+    List<Bank> findByNameContainingIgnoreCaseAndIsDeleteFalse(String name);
     
     @Query(value = "select * from m_bank where is_delete = false", nativeQuery = true)
     List<Bank> findAllActive();
