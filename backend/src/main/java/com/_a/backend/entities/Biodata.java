@@ -1,7 +1,5 @@
 package com._a.backend.entities;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
@@ -22,15 +20,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Table(name = "m_biodata")
-public class Biodata extends BaseEntity{
-  
-  public Biodata(String fullname, String mobile_phone,byte[] image, String image_path){
+public class Biodata extends BaseEntity {
+
+  public Biodata(String fullname, String mobile_phone, byte[] image, String image_path) {
     this.fullname = fullname;
     this.mobilePhone = mobile_phone;
     this.image = image;
     this.imagePath = image_path;
   }
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
