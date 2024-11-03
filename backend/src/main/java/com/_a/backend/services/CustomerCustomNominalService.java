@@ -9,4 +9,6 @@ public interface CustomerCustomNominalService {
   CustomerCustomNominal create(int nominal);
 
   List<CustomerCustomNominalProjectionDto> getNominalLessThanEqualBalance();
+
+  CustomerCustomNominal getById(Long id);
 }

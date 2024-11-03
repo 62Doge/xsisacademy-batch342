@@ -10,6 +10,7 @@ import com._a.backend.entities.CustomerCustomNominal;
 import com._a.backend.repositories.CustomerCustomNominalRepository;
 import com._a.backend.services.AuthService;
 import com._a.backend.services.CustomerCustomNominalService;
+import com._a.backend.services.CustomerService;
 import com._a.backend.services.CustomerWalletService;
 
 @Service
@@ -23,6 +24,9 @@ public class CustomerCustomNominalServiceImpl implements CustomerCustomNominalSe
   @Autowired
   CustomerWalletService customerWalletService;
 
+  @Autowired
+  CustomerService customerService;
+
   @Override
   public CustomerCustomNominal create(int nominal) {
     Double balance = customerWalletService.getBalance();
@@ -33,17 +37,23 @@ public class CustomerCustomNominalServiceImpl implements CustomerCustomNominalSe
     Long userId = authService.getDetails().getId();
     CustomerCustomNominal customNominal = new CustomerCustomNominal();
     customNominal.setNominal(nominal);
-    customNominal.setCustomerId(userId);
+    customNominal.setCustomerId(customerService.getByUserId(userId).getId());
+    customNominal.setCreatedBy(userId);
     return customerCustomNominalRepository.save(customNominal);
   }
 
   @Override
   public List<CustomerCustomNominalProjectionDto> getNominalLessThanEqualBalance() {
     Double balance = customerWalletService.getBalance();
-    System.out.println("balance: " + balance);
     Long userId = authService.getDetails().getId();
 
     return customerCustomNominalRepository.findAllByNominalLessThanEqual(balance, userId).orElse(null);
+  }
+
+  @Override
+  public CustomerCustomNominal getById(Long id) {
+    return customerCustomNominalRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Custom nominal with id: " + id + " not found"));
   }
 
 }
