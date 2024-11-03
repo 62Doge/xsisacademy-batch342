@@ -15,10 +15,21 @@ public class LocationLevelController {
     }
 
     @GetMapping("/addForm")
-    public ModelAndView addForm() {
-        ModelAndView modelAndView = new ModelAndView("pages/location-level/addForm");
-        return modelAndView;
+    public ModelAndView form() {
+        ModelAndView view = new ModelAndView("pages/location-level/addForm");
+        return view;
     }
 
+    @GetMapping("/editForm")
+    public ModelAndView edit() {
+        ModelAndView view = new ModelAndView("pages/location-level/editForm");
+        return view;
+    }
+
+    @GetMapping("/deleteModal")
+    public ModelAndView delete() {
+        ModelAndView view = new ModelAndView("pages/location-level/deleteModal");
+        return view;
+    }
 
 }
