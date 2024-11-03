@@ -1,0 +1,335 @@
+<div class="container m-0 p-0 mt-5" th:fragment="withdrawContent">
+  <div class="row g-2">
+    <div class="col-12 col-md-6 d-flex">
+      <div class="card border rounded-2 w-100 h-100">
+        <div class="card-header mb-0 pb-2">
+          <h5 class="mb-2">Saldo saaat ini:</h5>
+          <p class="fs-3 mb-3 fw-bold" id="walletBalance">Rp 0.00</p>
+          <h5 class="mb-0">Pilih Nominal Penarikan</h5>
+        </div>
+        <div class="card-body d-flex">
+          <div class="d-flex flex-column flex-grow-1 nominal-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 d-flex">
+      <div class="card border rounded-2 w-100 h-100">
+        <div class="card-header">
+          <h5 class="mb-0">Informasi Penarikan</h5>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <div
+            id="withdraw-info"
+            class="alert flex-grow-1"
+            style="display: none"
+          >
+            <p>
+              Anda akan menarik saldo sebesar <span id="amount">Rp 0</span>.
+            </p>
+            <button
+              id="continueWithdraw"
+              class="btn btn-outline-primary w-100 mt-3"
+            >
+              Lanjut
+            </button>
+          </div>
+        </div>
+        <div class="card-footer mt-auto d-flex justify-content-end">
+          <button id="cancel-button-info" class="btn btn-danger me-2 disabled">
+            Cancel
+          </button>
+          <button id="ok-button-info" class="btn btn-primary disabled">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block th:fragment="withdrawScript">
+  <script>
+    let requestData = {
+      pin: null,
+      nominal: {
+        type: null,
+        id: null,
+        amount: null,
+      },
+    };
+
+    function formatRupiah(amount) {
+      let [integerPart, decimalPart] = amount.toString().split(".");
+
+      let integerArray = Array.from(integerPart);
+      let formattedInteger = "";
+      let counter = 0;
+
+      for (let i = integerArray.length - 1; i >= 0; i--) {
+        formattedInteger = integerArray[i] + formattedInteger;
+        counter++;
+
+        if (counter % 3 === 0 && i !== 0) {
+          formattedInteger = "," + formattedInteger;
+        }
+      }
+
+      return `${formattedInteger}.${decimalPart}`;
+    }
+    $(document).ready(function () {
+      function renderBalance() {
+        $.ajax({
+          type: "get",
+          url: BE_BASE_URL + "/patient/customer-wallet",
+          dataType: "json",
+          success: function (response) {
+            let balance = response.data.balance.toFixed(2);
+
+            $("#walletBalance").text(formatRupiah(balance));
+          },
+          error(response) {
+            console.log("error");
+            console.log(response);
+
+            $("#errorModal").modal("show");
+          },
+        });
+      }
+      // call render for first time
+      renderBalance();
+
+      function renderNominalWithdraw() {
+        const uniqueNominals = new Set();
+
+        const customNominalRequest = $.ajax({
+          type: "get",
+          url:
+            BE_BASE_URL + "/patient/customer-custom-nominal/less-than-balance",
+          dataType: "json",
+          success: function (response) {
+            response.data.forEach((nominalData) => {
+              if (!uniqueNominals.has(nominalData.nominal)) {
+                uniqueNominals.add(nominalData.nominal);
+                $(".nominal-list").append(`
+            <button data-type="${nominalData.type}" data-id="${nominalData.id}"
+              class="btn btn-outline-primary flex-fill mb-2 nominal-item"
+              data-amount="${nominalData.nominal}">
+              ${nominalData.nominal}
+            </button>
+          `);
+              }
+            });
+          },
+          error: function (response) {
+            console.log("error");
+            console.log(response.responseJSON.message);
+            $("#errorModal").modal("show");
+          },
+        });
+
+        const defaultNominalRequest = $.ajax({
+          type: "get",
+          url:
+            BE_BASE_URL + "/patient/wallet-default-nominal/less-than-balance",
+          dataType: "json",
+          success: function (response) {
+            response.data.forEach((nominalData) => {
+              if (!uniqueNominals.has(nominalData.nominal)) {
+                uniqueNominals.add(nominalData.nominal);
+                $(".nominal-list").append(`
+            <button data-type="${nominalData.type}" data-id="${nominalData.id}"
+              class="btn btn-outline-primary flex-fill mb-2 nominal-item"
+              data-amount="${nominalData.nominal}">
+              ${nominalData.nominal}
+            </button>
+          `);
+              }
+            });
+          },
+          error: function (response) {
+            console.log("error");
+            console.log(response.responseJSON.message);
+            $("#errorModal").modal("show");
+          },
+        });
+
+        Promise.all([customNominalRequest, defaultNominalRequest]).then(() => {
+          $(".nominal-list").append(`
+      <button
+        class="btn btn-outline-primary flex-fill"
+        id="addCustomNominal"
+      >
+        Nominal Lain
+      </button>
+    `);
+        });
+      }
+      renderNominalWithdraw();
+
+      $(document).on("click", ".nominal-list .nominal-item", function () {
+        const button = $(this);
+        const amount = button.data("amount");
+        resetRequestData();
+        requestData.nominal.type = button.data("type");
+        requestData.nominal.id = button.data("id");
+        console.log(requestData);
+
+        $("#amount").text(`Rp ${amount}`);
+
+        $("#withdraw-info").show();
+      });
+
+      $("#cancel-button").on("click", function () {
+        $("#withdraw-info").hide();
+        $("#cancel-button").hide();
+        $("#ok-button").hide();
+      });
+
+      $("#ok-button").on("click", function () {
+        alert("Penarikan saldo sebesar " + $("#amount").text() + " berhasil!");
+      });
+
+      $(document).on("click", "#addCustomNominal", function (e) {
+        e.preventDefault();
+        const modalTitle = `<h3 class="fs-4">Isi Nominal Lain</h3>`;
+        const modalBody = `
+        <div class="row">
+          <div class="col">
+            <label for="inputCustomNominal" class="form-label">Isi nominal lain</label>
+            <input type="text" class="form-control" placeholder="Masukkan nominal" id="inputCustomNominal" />
+          </div>
+        </div>
+        `;
+        const modalFooter = `
+        <div class="d-flex justify-content-center" id="customNominalButton">
+          <button class="btn btn-outline-danger me-2 btn-cancel">Batal</button>
+          <button class="btn btn-outline-primary btn-ok">OK</button>
+        </div>
+        `;
+        setModal(modalTitle, modalBody, modalFooter);
+        $("#baseModal").modal("show");
+      });
+
+      function resetRequestData() {
+        requestData.pin = null;
+        requestData.nominal.type = null;
+        requestData.nominal.id = null;
+        requestData.nominal.amount = null;
+      }
+
+      // custom nominal
+      $(document).on("click", "#customNominalButton button", function (e) {
+        e.preventDefault();
+
+        let button = $(this);
+        if (button.hasClass("btn-ok")) {
+          let customNominal = $("#inputCustomNominal").val();
+          resetRequestData();
+          requestData.nominal.amount = customNominal;
+          requestData.nominal.type = "custom";
+          console.log(requestData);
+          $("#amount").text(`Rp ${customNominal}`);
+        }
+        $("#inputCustomNominal").val(null);
+        $("#baseModal").modal("hide");
+      });
+
+      $(document).on("input", "#inputCustomNominal", function (e) {
+        e.preventDefault();
+        const $input = $(this);
+        const value = $input.val();
+
+        if (isNaN(value)) {
+          $input.val(value.slice(0, value.length).replace(/\D/g, ""));
+        }
+      });
+
+      $(document).on("click", "#continueWithdraw", function (e) {
+        e.preventDefault();
+        const modalTitle = `<h3 class="fs-4">Masukkan PIN</h3>`;
+        const modalBody = `
+        <div class="row">
+            <div class="col d-flex justify-content-center gap-2 text-xl" id="inputPin">
+                <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin1" />
+                <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin2" />
+                <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin3" />
+                <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin4" />
+                <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin5" />
+                <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin6" />
+            </div>
+        </div>
+    `;
+        const modalFooter = `
+        <div class="w-100 d-flex justify-content-center">
+            <button class="btn btn-outline-primary" id="submitPin">OK</button>
+        </div>
+    `;
+        setModal(modalTitle, modalBody, modalFooter);
+        $("#baseModal").modal("show");
+      });
+
+      $(document).on("input", "#inputPin .pin-input", function () {
+        const $input = $(this);
+        const value = $input.val();
+
+        if (value.length > 1 || isNaN(value)) {
+          $input.val(value.slice(0, 1).replace(/\D/g, ""));
+        }
+
+        if ($input.val().length === 1) {
+          setTimeout(() => {
+            $input.prop("type", "password");
+          }, 200);
+          $input.next(".pin-input").focus();
+        }
+      });
+
+      $(document).on("keydown", "#inputPin .pin-input", function (e) {
+        const $input = $(this);
+
+        if ((e.key < "0" || e.key > "9") && e.key !== "Backspace") {
+          e.preventDefault();
+          return;
+        }
+
+        if (e.key === "Backspace" && $input.val() === "") {
+          $input.prev(".pin-input").focus();
+        }
+      });
+
+      $(document).on("click", "#submitPin", function (e) {
+        e.preventDefault();
+
+        setModal(
+          "Autentikasi",
+          `
+        Proses autentikasi berhasil
+        `
+        );
+        $("#baseModal").modal("show");
+        setTimeout(() => {
+          const title = "Tarik Saldo";
+          const body = `
+         <div class="text-center">
+            <p>Proses penarikan saldo berhasil</p>
+            <h5 class="fw-bolder">OTP anda: <span>123432</span></h5>
+            <p class="fs-tiny fst-italic">*OTP aka kadaluarsa setelah 1 jam</p>
+
+          <div/>
+          `;
+          setModal(title, body);
+        }, 1000);
+      });
+
+      function setModal(title, body, footer = "") {
+        $("#baseModalTitle").html(title);
+        $("#baseModalBody").html(body);
+        $("#baseModalBody").addClass("py-0");
+        $("#baseModalFooter").html(footer);
+      }
+    });
+  </script>
+</th:block>
+
+<th:block th:fragment="style"> </th:block>

@@ -53,7 +53,7 @@
             role="tabpanel"
           >
             <th:block
-              th:replace="~{pages/profile/tab-withdraw::withdrawContent}"
+              th:replace="~{pages/profile/tabWithdraw::withdrawContent}"
             ></th:block>
           </div>
         </div>
@@ -62,14 +62,18 @@
 
     <th:block layout:fragment="pageBottom">
       <th:block
-        th:replace="~{pages/profile/tab-withdraw::withdrawScript}"
+        th:replace="~{pages/profile/tabWithdraw::withdrawScript}"
       ></th:block>
     </th:block>
 
     <th:block layout:fragment="pageAbove">
-      <th:block th:replace="~{pages/profile/tab-withdraw::style}"></th:block>
+      <th:block th:replace="~{pages/profile/tabWithdraw::style}"></th:block>
       <th:block
         th:replace="~{fragments/BaseModal::modal(class='modal-sm')}"
+      ></th:block>
+
+      <th:block
+        th:replace="~{fragments/ErrorModal::modal(class='modal-sm')}"
       ></th:block>
     </th:block>
   </body>

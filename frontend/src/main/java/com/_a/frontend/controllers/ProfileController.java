@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-@RequestMapping("/wallet")
+@RequestMapping("/profile")
 public class ProfileController {
   @GetMapping("")
   public String index() {
