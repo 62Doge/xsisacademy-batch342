@@ -2,7 +2,6 @@ package com._a.backend.controllers;
 
 import com._a.backend.dtos.requests.LocationLevelRequestDTO;
 import com._a.backend.dtos.responses.LocationLevelResponseDTO;
-import com._a.backend.entities.LocationLevel;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.repositories.LocationLevelRepository;
 import com._a.backend.services.impl.LocationLevelServiceImpl;
@@ -108,7 +107,6 @@ public class LocationLevelController {
             }
 
             LocationLevelResponseDTO locationLevelResponseDTOSaved = locationLevelService.update(locationLevelRequestDTO, id);
-
             ApiResponse<LocationLevelResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), locationLevelResponseDTOSaved);
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
