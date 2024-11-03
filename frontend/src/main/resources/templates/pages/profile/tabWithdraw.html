@@ -165,13 +165,13 @@
 
         Promise.all([customNominalRequest, defaultNominalRequest]).then(() => {
           $(".nominal-list").append(`
-      <button
-        class="btn btn-outline-primary flex-fill"
-        id="addCustomNominal"
-      >
-        Nominal Lain
-      </button>
-    `);
+              <button
+                class="btn btn-outline-primary flex-fill"
+                id="addCustomNominal"
+              >
+                Nominal Lain
+              </button>
+            `);
         });
       }
       renderNominalWithdraw();
@@ -182,8 +182,6 @@
         const amount = button.data("amount");
         requestData.nominal.type = button.data("type");
         requestData.nominal.id = button.data("id");
-        console.log(requestData);
-        console.log(typeof amount);
 
         $("#amount").text(`Rp ${formatRupiah(amount)}`);
 
@@ -231,6 +229,7 @@
           requestData.nominal.type = "custom";
           console.log(requestData);
           $("#amount").text(`Rp ${formatRupiah(customNominal)}`);
+          $("#withdraw-info").show();
         }
         $("#inputCustomNominal").val(null);
         $("#baseModal").modal("hide");
@@ -358,7 +357,12 @@
                 <div/>
                 `;
               setModal(title, body);
+
               $("#baseModal").modal("show");
+              $("#amount").text("");
+              resetRequestData();
+              $("#withdraw-info").hide();
+              $(".withdraw-btn").addClass("disabled");
             },
             error(response) {
               setModal("Autentikasi", response.responseJSON.message);
