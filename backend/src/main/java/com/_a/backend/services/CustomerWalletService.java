@@ -10,4 +10,6 @@ public interface CustomerWalletService {
   Double getBalance();
 
   ApiResponse<Void> checkPin(CustomerWalletCheckPinRequestDto requestDto);
+
+  void updateBalance(Double amount);
 }

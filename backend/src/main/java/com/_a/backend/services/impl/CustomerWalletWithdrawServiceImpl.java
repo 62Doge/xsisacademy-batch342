@@ -9,6 +9,7 @@ import com._a.backend.dtos.requests.CustomerWalletWithdrawRequestDto;
 import com._a.backend.dtos.responses.CustomerWalletWithdrawOtpResponseDto;
 import com._a.backend.entities.CustomerCustomNominal;
 import com._a.backend.entities.CustomerWalletWithdraw;
+import com._a.backend.exceptions.InvalidUpdateException;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.repositories.CustomerWalletWithdrawRepository;
 import com._a.backend.services.AuthService;
@@ -65,6 +66,12 @@ public class CustomerWalletWithdrawServiceImpl implements CustomerWalletWithdraw
         }
       }
     }
+    Double walletBalance = customerWalletService.getBalance();
+
+    if (amount > walletBalance) {
+      throw new InvalidUpdateException("Nominal can't greather than balance");
+    }
+    customerWalletService.updateBalance(walletBalance - amount);
 
     String otpString = OtpGenerator.generate();
     Long userId = authService.getDetails().getId();

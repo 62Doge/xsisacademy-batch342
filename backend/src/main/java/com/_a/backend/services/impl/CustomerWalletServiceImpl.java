@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.CustomerWalletCheckPinRequestDto;
 import com._a.backend.dtos.responses.CustomerWalletSummaryResponseDto;
+import com._a.backend.entities.CustomerWallet;
+import com._a.backend.exceptions.InvalidUpdateException;
 import com._a.backend.exceptions.UserNotFoundException;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.repositories.CustomerWalletRepository;
@@ -25,8 +27,9 @@ public class CustomerWalletServiceImpl implements CustomerWalletService {
   public CustomerWalletSummaryResponseDto getCustomerWallet() {
     Long userId = authService.getDetails().getId();
 
-    return walletRepository.findByUserId(userId).orElseThrow(
-        () -> new RuntimeException("User with id: " + userId + " don't have wallet. Wallet just for patient role"));
+    return walletRepository.findSummaryByUserId(userId).orElseThrow(
+        () -> new UserNotFoundException(
+            "User with id: " + userId + " don't have wallet. Wallet just for patient role"));
   }
 
   @Override
@@ -34,7 +37,8 @@ public class CustomerWalletServiceImpl implements CustomerWalletService {
     Long userId = authService.getDetails().getId();
 
     return walletRepository.findBalanceByUserId(userId).orElseThrow(
-        () -> new RuntimeException("User with id: " + userId + " don't have wallet. Wallet just for patient role"));
+        () -> new UserNotFoundException(
+            "User with id: " + userId + " don't have wallet. Wallet just for patient role"));
   }
 
   @Override
@@ -43,7 +47,7 @@ public class CustomerWalletServiceImpl implements CustomerWalletService {
     String pin = walletRepository.findPinByUserId(userId)
         .orElseThrow(() -> new UserNotFoundException("User with id: " + userId + " not found!"));
 
-    CustomerWalletSummaryResponseDto walletSummaryResponseDto = walletRepository.findByUserId(userId)
+    CustomerWalletSummaryResponseDto walletSummaryResponseDto = walletRepository.findSummaryByUserId(userId)
         .orElseThrow(() -> new UserNotFoundException("User with id: " + userId + " not found!"));
 
     if (walletSummaryResponseDto.isBlocked()) {
@@ -66,6 +70,20 @@ public class CustomerWalletServiceImpl implements CustomerWalletService {
     int attemptsChance = MAX_PIN_ATTEMPTS - (walletSummaryResponseDto.getPinAttempt() + 1);
     return new ApiResponse<Void>(400,
         "PIN salah. Anda memiliki " + attemptsChance + " percobaan lagi sebelum akun diblokir.", null);
+  }
+
+  @Override
+  public void updateBalance(Double newBalance) {
+    if (newBalance < 0) {
+      throw new InvalidUpdateException("Balance can't less than 0");
+    }
+    Long userId = authService.getDetails().getId();
+
+    CustomerWallet wallet = walletRepository.findByUserId(userId).orElseThrow(
+        () -> new UserNotFoundException(
+            "User with id: " + userId + " don't have wallet. Wallet just for patient role"));
+    wallet.setBalance(newBalance);
+    walletRepository.save(wallet);
   }
 
 }
