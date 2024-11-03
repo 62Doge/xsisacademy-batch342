@@ -79,18 +79,15 @@
   <script>
     $(document).ready(function () {
       $(".list-group-item[data-amount]").on("click", function () {
-        // Ambil nilai nominal penarikan dari data-amount
         const amount = $(this).data("amount");
         $("#amount").text(`Rp ${amount.toLocaleString()}`);
 
-        // Tampilkan informasi dan tombol
         $("#withdraw-info").show();
         $("#cancel-button").show();
         $("#ok-button").show();
       });
 
       $("#cancel-button").on("click", function () {
-        // Sembunyikan informasi dan tombol ketika cancel diklik
         $("#withdraw-info").hide();
         $("#cancel-button").hide();
         $("#ok-button").hide();
@@ -98,7 +95,6 @@
 
       $("#ok-button").on("click", function () {
         alert("Penarikan saldo sebesar " + $("#amount").text() + " berhasil!");
-        // Anda dapat menambahkan logika lain di sini jika diperlukan
       });
 
       $("#addCustomNominal").click(function (e) {
@@ -146,35 +142,30 @@
         $("#baseModal").modal("show");
       });
 
-      // Membatasi input ke satu digit angka dan mengalihkan fokus ke input berikutnya
       $(document).on("input", "#inputPin .pin-input", function () {
         const $input = $(this);
         const value = $input.val();
 
-        // Izinkan hanya satu angka
         if (value.length > 1 || isNaN(value)) {
-          $input.val(value.slice(0, 1).replace(/\D/g, "")); // Hapus non-digit
+          $input.val(value.slice(0, 1).replace(/\D/g, ""));
         }
 
         if ($input.val().length === 1) {
           setTimeout(() => {
             $input.prop("type", "password");
-          }, 200); // Delay untuk melihat digit yang dimasukkan
+          }, 200);
           $input.next(".pin-input").focus();
         }
       });
 
-      // Mengatur tombol backspace agar fokus beralih ke kotak sebelumnya jika kosong
       $(document).on("keydown", "#inputPin .pin-input", function (e) {
         const $input = $(this);
 
-        // Cegah karakter non-digit kecuali backspace
         if ((e.key < "0" || e.key > "9") && e.key !== "Backspace") {
           e.preventDefault();
           return;
         }
 
-        // Fungsi backspace: kembali ke input sebelumnya jika kosong
         if (e.key === "Backspace" && $input.val() === "") {
           $input.prev(".pin-input").focus();
         }
@@ -214,17 +205,4 @@
   </script>
 </th:block>
 
-<th:block th:fragment="style">
-  <style>
-    #inputPin .pin-input::-webkit-outer-spin-button,
-    #inputPin .pin-input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
-    /* Menghilangkan spinner di Firefox */
-    #inputPin .pin-input[type="number"] {
-      -moz-appearance: textfield;
-    }
-  </style>
-</th:block>
+<th:block th:fragment="style"> </th:block>
