@@ -17,6 +17,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/bank")
+@CrossOrigin("http://localhost:9002")
 public class BankController {
 
     @Autowired
@@ -38,6 +40,18 @@ public class BankController {
     public ResponseEntity<?> getAllBanks() {
         try {
             List<BankResponseDTO> bankResponseDTOs = bankService.findAll();
+            ApiResponse<List<BankResponseDTO>> successResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bankResponseDTOs);
+            return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResponse<List<BankResponseDTO>> errorResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<?> getAllActive() {
+        try {
+            List<BankResponseDTO> bankResponseDTOs = bankService.findAllActive();
             ApiResponse<List<BankResponseDTO>> successResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bankResponseDTOs);
             return new ResponseEntity<>(successResponse, HttpStatus.OK);
         } catch (Exception e) {
@@ -101,7 +115,7 @@ public class BankController {
         }
     }
 
-    @PostMapping("/delete/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<?> softDeleteBank(@PathVariable Long id) {
         try {
             Optional<BankResponseDTO> bankResponseDTO = bankService.findById(id);

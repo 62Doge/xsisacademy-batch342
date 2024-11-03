@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class BankResponseDTO {
     
-    Long id;
-    String name;
-    String vaCode;
-    Boolean isDelete;
+    private Long id;
+    private String name;
+    private String vaCode;
+    private Boolean isDelete;
 
 }

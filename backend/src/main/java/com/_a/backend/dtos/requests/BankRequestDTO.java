@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class BankRequestDTO {
     
-    String name;
-    String vaCode;
+    private String name;
+    private String vaCode;
 
 }
