@@ -24,9 +24,9 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Table(name = "m_medical_facility")
-public class MedicalFacility extends BaseEntity{
-  
-  public MedicalFacility(String name, String fullAdress, String email, String phoneCode, String phone, String fax){
+public class MedicalFacility extends BaseEntity {
+
+  public MedicalFacility(String name, String fullAdress, String email, String phoneCode, String phone, String fax) {
     this.name = name;
     this.fullAddress = fullAdress;
     this.email = email;
@@ -75,7 +75,7 @@ public class MedicalFacility extends BaseEntity{
   @Column(name = "location_id")
   private Long locationId;
 
-  @OneToMany(mappedBy = "medicalfacility", cascade = CascadeType.ALL)
-  @JsonBackReference
-  private List<DoctorOffice> doctorOffices;
+  // @OneToMany(mappedBy = "medicalfacility", cascade = CascadeType.ALL)
+  // @JsonBackReference
+  // private List<DoctorOffice> doctorOffices;
 }
