@@ -41,6 +41,12 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
     User user = userRepository.findByEmail(requestDto.getEmail())
         .orElseThrow(() -> new UserNotFoundException("Email tidak terdaftar"));
 
+    tokenRepository.findActiveTokenByEmail(user.getEmail(), LocalDateTime.now())
+        .ifPresent(token -> {
+          token.setIsExpired(true);
+          tokenRepository.save(token);
+        });
+
     emailService.sendOtp(user);
   }
 

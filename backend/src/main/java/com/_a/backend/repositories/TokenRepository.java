@@ -19,6 +19,15 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
       """)
   Optional<Token> findActiveTokenByEmailAndToken(String email, String otp, LocalDateTime now);
 
+  @Query(value = """
+      select t
+      from Token t
+      where t.email=?1
+      and t.isExpired=false
+      and t.expiredOn > ?2
+      """)
+  Optional<Token> findActiveTokenByEmail(String email, LocalDateTime now);
+
   @Query("""
         SELECT CASE WHEN COUNT(t) > 0 THEN true ELSE false END FROM Token t WHERE t.email = ?1 AND t.token = ?2 AND t.expiredOn < ?3
       """)
