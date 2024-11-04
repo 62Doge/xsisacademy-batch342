@@ -1,5 +1,7 @@
 let currentPage = 1;
 let dataPerPage = 5;
+let sortBy = 'name';
+let sortDir = 'ASC';
 let totalPages;
 
 $(document).ready(function () {
@@ -50,11 +52,9 @@ function searchBank(query) {
 function loadData() {
     $.ajax({
         type: "get",
-        url: `http://localhost:9001/api/admin/bank/active?page=${currentPage-1}&size=${dataPerPage}`,
+        url: `http://localhost:9001/api/admin/bank/active?page=${currentPage-1}&size=${dataPerPage}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
-            console.log(response);
-            
             let bankData = response.data.content;
             totalPages = response.data.totalPages;
 
@@ -105,6 +105,10 @@ function loadData() {
                         <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
                     </li>
                 `);
+
+                // dropdown button default value
+                $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
+                $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
             }
         },
         error: function (error) {
@@ -134,6 +138,12 @@ function previousPage() {
 
 function setDataPerPage(query) {
     dataPerPage = query;
+    loadData();
+}
+
+function setPageOrder() {
+    sortBy = $('input[name="orderColumnRadio"]:checked').val();
+    sortDir = $('input[name="orderTypeRadio"]:checked').val();
     loadData();
 }
 

@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.BankRequestDTO;
@@ -94,8 +96,10 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         }
     }
 
-    public Page<Bank> findActiveBankPages(int page, int size) {
-        return bankRepository.findAllByIsDeleteFalse(PageRequest.of(page, size));
+    public Page<Bank> findActiveBankPages(int page, int size, String sortBy, String sortDir) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        return bankRepository.findAllByIsDeleteFalse(pageable);
     }
 
 }

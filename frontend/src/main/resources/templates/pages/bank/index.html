@@ -34,7 +34,7 @@
                                     <div class="form-check">
                                         <label class="form-check-label w-100" for="bankNameCheckbox">
                                             <input type="radio" class="form-check-input" name="orderColumnRadio"
-                                                id="bankNameCheckbox">
+                                                id="bankNameCheckbox" value="name">
                                             Nama Bank
                                         </label>
                                     </div>
@@ -45,7 +45,7 @@
                                     <div class="form-check">
                                         <label class="form-check-label w-100" for="vaCodeCheckbox">
                                             <input type="radio" class="form-check-input" name="orderColumnRadio"
-                                                id="vaCodeCheckbox">
+                                                id="vaCodeCheckbox" value="vaCode">
                                             Kode VA
                                         </label>
                                     </div>
@@ -59,7 +59,7 @@
                                     <div class="form-check">
                                         <label class="form-check-label w-100" for="AZOrderCheckbox">
                                             <input type="radio" class="form-check-input" name="orderTypeRadio"
-                                                id="AZOrderCheckbox">
+                                                id="AZOrderCheckbox" value="ASC">
                                             A-Z
                                         </label>
                                     </div>
@@ -70,33 +70,22 @@
                                     <div class="form-check">
                                         <label class="form-check-label w-100" for="ZAOrderCheckbox">
                                             <input type="radio" class="form-check-input" name="orderTypeRadio"
-                                                id="ZAOrderCheckbox">
+                                                id="ZAOrderCheckbox" value="DESC">
                                             Z-A
                                         </label>
                                     </div>
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="defaulOrderCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderTypeRadio"
-                                                id="defaulOrderCheckbox">
-                                            Default
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
                                 <div class="w-100 text-center p-2">
-                                    <button type="button" class="btn btn-primary mt-2 w-100">Terapkan</button>
+                                    <button type="button" class="btn btn-primary mt-2 w-100" onclick="setPageOrder()">Terapkan</button>
                                 </div>
                             </li>
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <button type="button" class="btn btn-outline-primary dropdown-toggle"
-                            data-bs-toggle="dropdown" aria-expanded="true">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="true">
                             Data Per Halaman
                         </button>
                         <ul class="dropdown-menu"
@@ -110,9 +99,11 @@
                             </li>
                             <li>
                                 <div class="p-2">
-                                    <input id="dataPerPageInput" class="form-control" type="number" placeholder="Data Per Halaman" value="1" min="1">
+                                    <input id="dataPerPageInput" class="form-control" type="number"
+                                        placeholder="Data Per Halaman" value="3" min="1">
                                     <div class="w-100 text-center">
-                                        <button type="button" class="btn btn-primary mt-2 w-100" onclick="customDataPerPage()">Terapkan</button>
+                                        <button type="button" class="btn btn-primary mt-2 w-100"
+                                            onclick="customDataPerPage()">Terapkan</button>
                                     </div>
                                 </div>
                             </li>
