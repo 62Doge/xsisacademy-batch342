@@ -2,7 +2,7 @@ package com._a.backend.controllers;
 
 import com._a.backend.dtos.requests.LocationLevelRequestDTO;
 import com._a.backend.dtos.responses.LocationLevelResponseDTO;
-import com._a.backend.dtos.responses.PaginatedResponse;
+import com._a.backend.dtos.responses.PaginatedResponseDTO;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.repositories.LocationLevelRepository;
 import com._a.backend.services.impl.LocationLevelServiceImpl;
@@ -27,17 +27,17 @@ public class LocationLevelController {
 
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse<PaginatedResponse<LocationLevelResponseDTO>>> getLocationLevels(
+    public ResponseEntity<ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>>> getLocationLevels(
             @RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "3") int pageSize) {
         try {
             Page<LocationLevelResponseDTO> locationLevelResponseDTOS = locationLevelService.findAll(pageNo, pageSize);
-            PaginatedResponse<LocationLevelResponseDTO> paginatedResponse = new PaginatedResponse<>(locationLevelResponseDTOS);
+            PaginatedResponseDTO<LocationLevelResponseDTO> paginatedResponse = new PaginatedResponseDTO<>(locationLevelResponseDTOS);
 
-            ApiResponse<PaginatedResponse<LocationLevelResponseDTO>> successResponse =
+            ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>> successResponse =
                     new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), paginatedResponse);
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
         }catch (Exception e){
-            ApiResponse<PaginatedResponse<LocationLevelResponseDTO>> errorResponse =
+            ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>> errorResponse =
                     new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
