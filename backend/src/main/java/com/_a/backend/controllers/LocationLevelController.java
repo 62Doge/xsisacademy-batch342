@@ -28,9 +28,13 @@ public class LocationLevelController {
 
     @GetMapping("")
     public ResponseEntity<ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>>> getLocationLevels(
-            @RequestParam(defaultValue = "0") int pageNo, @RequestParam(defaultValue = "3") int pageSize) {
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "3") int pageSize,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
         try {
-            Page<LocationLevelResponseDTO> locationLevelResponseDTOS = locationLevelService.findAll(pageNo, pageSize);
+            Page<LocationLevelResponseDTO> locationLevelResponseDTOS =
+                        locationLevelService.findAll(pageNo, pageSize, sortBy, sortDirection);
             PaginatedResponseDTO<LocationLevelResponseDTO> paginatedResponse = new PaginatedResponseDTO<>(locationLevelResponseDTOS);
 
             ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>> successResponse =

@@ -2,6 +2,7 @@ package com._a.backend.dtos.responses;
 
 import lombok.Data;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -12,6 +13,8 @@ public class PaginatedResponseDTO<T> {
     private int size;
     private long totalElements;
     private int totalPages;
+    private String sortBy;
+    private String sortDirection;
 
     public PaginatedResponseDTO(Page<T> pageData) {
         this.content = pageData.getContent();
@@ -19,5 +22,17 @@ public class PaginatedResponseDTO<T> {
         this.size = pageData.getSize();
         this.totalElements = pageData.getTotalElements();
         this.totalPages = pageData.getTotalPages();
+        extractSortByAndSortDirection(pageData);
+    }
+
+    public void extractSortByAndSortDirection(Page<T> pageData) {
+        Sort.Order order = pageData.getSort().stream().findFirst().orElse(null);
+        if (order != null) {
+            this.sortBy = order.getProperty();
+            this.sortDirection = order.getDirection().toString();
+        } else {
+            this.sortBy = "id";
+            this.sortDirection = "asc";
+        }
     }
 }
