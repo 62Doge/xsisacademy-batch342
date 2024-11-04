@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com._a.backend.dtos.requests.ForgotPasswordRequestDto;
+import com._a.backend.dtos.requests.VerifyOtpRequestDto;
 import com._a.backend.entities.ResetPassword;
 import com._a.backend.entities.User;
 import com._a.backend.exceptions.TokenNotFoundException;
@@ -40,11 +41,12 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
   }
 
   @Override
-  public void verifyOtp(String email, String otp) {
-    tokenRepository.findActiveTokenByEmailAndToken(email, otp, LocalDateTime.now())
+  public void verifyOtp(VerifyOtpRequestDto requestDto) {
+    tokenRepository.findActiveTokenByEmailAndToken(requestDto.getEmail(), requestDto.getOtp(), LocalDateTime.now())
         .orElseThrow(() -> new TokenNotFoundException("OTP salah"));
 
-    if (tokenRepository.existsExpiredTokenByEmailAndToken(email, otp, LocalDateTime.now())) {
+    if (tokenRepository.existsExpiredTokenByEmailAndToken(requestDto.getEmail(), requestDto.getOtp(),
+        LocalDateTime.now())) {
       throw new RuntimeException("Kode OTP kadaluarsa");
     }
   }
@@ -52,7 +54,7 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
   @Transactional
   @Override
   public void resetPassword(String email, String otp, String newPassword, String confirmPassword) throws Exception {
-    verifyOtp(email, otp);
+    // verifyOtp(email, otp);
     if (!newPassword.equals(confirmPassword)) {
       throw new Exception("Password tidak sama");
     }
