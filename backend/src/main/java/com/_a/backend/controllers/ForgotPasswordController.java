@@ -34,7 +34,7 @@ public class ForgotPasswordController {
   }
 
   @PostMapping({ "/verify-otp", "/verify-otp/" })
-  public ResponseEntity<ApiResponse<Void>> verifyOtp(@RequestBody VerifyOtpRequestDto requestDto) {
+  public ResponseEntity<ApiResponse<Void>> verifyOtp(@RequestBody @Valid VerifyOtpRequestDto requestDto) {
     resetPasswordService.verifyOtp(requestDto);
     ApiResponse<Void> apiResponse = new ApiResponse<Void>(200, "OTP berhasil diverifikasi", null);
 

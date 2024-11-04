@@ -57,4 +57,11 @@ public class GlobalExceptionHandler {
                 ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiResponse<String>> handleTokenNotFoundException(InvalidTokenException ex) {
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Token invalid",
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }

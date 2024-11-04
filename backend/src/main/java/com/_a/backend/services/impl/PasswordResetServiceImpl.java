@@ -10,8 +10,9 @@ import com._a.backend.dtos.requests.ForgotPasswordRequestDto;
 import com._a.backend.dtos.requests.ResetPasswordRequestDTO;
 import com._a.backend.dtos.requests.VerifyOtpRequestDto;
 import com._a.backend.entities.ResetPassword;
+import com._a.backend.entities.Token;
 import com._a.backend.entities.User;
-import com._a.backend.exceptions.TokenNotFoundException;
+import com._a.backend.exceptions.InvalidTokenException;
 import com._a.backend.exceptions.UserNotFoundException;
 import com._a.backend.repositories.ResetPasswordRepository;
 import com._a.backend.repositories.TokenRepository;
@@ -43,13 +44,18 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
 
   @Override
   public void verifyOtp(VerifyOtpRequestDto requestDto) {
-    tokenRepository.findActiveTokenByEmailAndToken(requestDto.getEmail(), requestDto.getOtp(), LocalDateTime.now())
-        .orElseThrow(() -> new TokenNotFoundException("OTP salah"));
+    Token token = tokenRepository
+        .findActiveTokenByEmailAndToken(requestDto.getEmail(), requestDto.getOtp(), LocalDateTime.now()).orElse(null);
 
-    if (tokenRepository.existsExpiredTokenByEmailAndToken(requestDto.getEmail(), requestDto.getOtp(),
-        LocalDateTime.now())) {
-      throw new RuntimeException("Kode OTP kadaluarsa");
+    if (token == null) {
+      if (tokenRepository.existsExpiredTokenByEmailAndToken(requestDto.getEmail(), requestDto.getOtp(),
+          LocalDateTime.now())) {
+        throw new InvalidTokenException("Kode OTP kadaluarsa");
+      } else {
+        throw new InvalidTokenException("OTP salah");
+      }
     }
+
   }
 
   @Transactional
