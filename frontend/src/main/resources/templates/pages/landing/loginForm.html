@@ -1,3 +1,12 @@
+<th:block th:fragment="style">
+  <style>
+    #forgotPasswordButton:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+  </style>
+</th:block>
+
 <th:block th:fragment="script">
   <script>
     $("#buttonLogin").click(function (e) {
@@ -24,9 +33,9 @@
             <div class="mb-3 form-password-toggle">
               <div class="d-flex justify-content-between">
                 <label class="form-label" for="password">Password</label>
-                <a href="/lupa-password">
+                <button class="btn" id="forgotPasswordButton">
                   <small>Lupa Password?</small>
-                </a>
+                </button>
               </div>
               <div class="input-group input-group-merge">
                 <input type="password" id="password" class="form-control" name="password" placeholder="••••••••" aria-describedby="password" />
@@ -54,6 +63,76 @@
       
       `);
       $("#baseModal").modal("show");
+    });
+
+    $(document).on("click", "#forgotPasswordButton", function (e) {
+      e.preventDefault();
+      $("#baseModalTitle").text("");
+      $("#baseModal").modal("hide");
+
+      $("#baseModal").on("hidden.bs.modal", function () {
+        $("#baseModalTitle").text("Lupa Password");
+
+        $("#baseModalBody").html(`
+     <div class="nav-align-left">
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+      <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#forgot-password-send-otp">Kirim OTP</button>
+    </li>
+    <li class="nav-item">
+      <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#forgot-password-verify-email">Verifikasi Email</button>
+    </li>
+    <li class="nav-item">
+      <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#forgot-password-set-new-password">Buat Password Baru</button>
+    </li>
+  </ul>
+  
+  <div class="tab-content p-3">
+    <!-- Tab Kirim OTP -->
+    <div class="tab-pane fade show active" id="forgot-password-send-otp">
+      <form id="sendOtpForm">
+        <div class="mb-3">
+          <label for="emailInput" class="form-label">Email</label>
+          <input type="email" class="form-control" id="emailInput" placeholder="Masukkan email Anda" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Kirim OTP</button>
+      </form>
+    </div>
+
+    <!-- Tab Verifikasi Email -->
+    <div class="tab-pane fade" id="forgot-password-verify-email">
+      <form id="verifyOtpForm">
+        <div class="mb-3">
+          <label for="otpInput" class="form-label">Kode OTP</label>
+          <input type="text" class="form-control" id="otpInput" placeholder="Masukkan kode OTP" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Verifikasi OTP</button>
+      </form>
+    </div>
+
+    <!-- Tab Buat Password Baru -->
+    <div class="tab-pane fade" id="forgot-password-set-new-password">
+      <form id="setNewPasswordForm">
+        <div class="mb-3">
+          <label for="newPasswordInput" class="form-label">Password Baru</label>
+          <input type="password" class="form-control" id="newPasswordInput" placeholder="Masukkan password baru" required>
+        </div>
+        <div class="mb-3">
+          <label for="confirmPasswordInput" class="form-label">Konfirmasi Password</label>
+          <input type="password" class="form-control" id="confirmPasswordInput" placeholder="Konfirmasi password baru" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Simpan Password Baru</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+    `);
+
+        $("#baseModal").modal("show");
+        // Lepas event listener ini setelah selesai untuk menghindari duplikasi
+        $(this).off("hidden.bs.modal");
+      });
     });
   </script>
 </th:block>
