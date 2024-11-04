@@ -87,4 +87,11 @@ public class GlobalExceptionHandler {
                 "Password invalid", errors);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @ExceptionHandler(TokenRequestTooSoonException.class)
+    public ResponseEntity<ApiResponse<String>> handleTokenRequestTooSoonException(TokenRequestTooSoonException ex) {
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.TOO_MANY_REQUESTS.value(), "Request too soon",
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response);
+    }
 }

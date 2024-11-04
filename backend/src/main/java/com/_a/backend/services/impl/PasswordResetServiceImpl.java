@@ -1,5 +1,6 @@
 package com._a.backend.services.impl;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import com._a.backend.entities.User;
 import com._a.backend.exceptions.InvalidPasswordException;
 import com._a.backend.exceptions.InvalidTokenException;
 import com._a.backend.exceptions.NewPasswordConfirmationException;
+import com._a.backend.exceptions.TokenRequestTooSoonException;
 import com._a.backend.exceptions.UserNotFoundException;
 import com._a.backend.repositories.ResetPasswordRepository;
 import com._a.backend.repositories.TokenRepository;
@@ -41,11 +43,22 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
     User user = userRepository.findByEmail(requestDto.getEmail())
         .orElseThrow(() -> new UserNotFoundException("Email tidak terdaftar"));
 
-    tokenRepository.findActiveTokenByEmail(user.getEmail(), LocalDateTime.now())
-        .ifPresent(token -> {
-          token.setIsExpired(true);
-          tokenRepository.save(token);
-        });
+    Token actiToken = tokenRepository.findActiveTokenByEmail(user.getEmail(), LocalDateTime.now())
+        .orElse(null);
+
+    if (actiToken != null) {
+      LocalDateTime createdOn = actiToken.getCreatedOn();
+      if (createdOn != null
+          && LocalDateTime.now().isBefore(createdOn.plusMinutes(3))) {
+        Duration duration = Duration.between(LocalDateTime.now(), createdOn.plusMinutes(3));
+        long minutes = duration.toMinutes();
+        long seconds = duration.minusMinutes(minutes).toSeconds();
+
+        throw new TokenRequestTooSoonException(
+            "Anda harus menunggu sebelum meminta token baru. Silakan coba lagi setelah "
+                + minutes + ":" + seconds + " (menit:detik)");
+      }
+    }
 
     emailService.sendOtp(user);
   }
