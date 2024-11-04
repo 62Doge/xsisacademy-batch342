@@ -2,6 +2,8 @@ package com._a.backend.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,5 +21,7 @@ public interface BankRepository extends JpaRepository<Bank, Long> {
     
     @Query(value = "select * from m_bank where is_delete = false", nativeQuery = true)
     List<Bank> findAllActive();
+
+    Page<Bank> findAllByIsDeleteFalse(Pageable page);
 
 }

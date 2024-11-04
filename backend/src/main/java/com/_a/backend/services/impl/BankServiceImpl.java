@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.BankRequestDTO;
@@ -90,6 +92,10 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         } else {
             throw new RuntimeException("Bank not found");
         }
+    }
+
+    public Page<Bank> findActiveBanksPage(int page, int size) {
+        return bankRepository.findAllByIsDeleteFalse(PageRequest.of(page, size));
     }
 
 }

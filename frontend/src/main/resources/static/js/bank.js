@@ -1,3 +1,7 @@
+let currentPage = 1;
+let dataPerPage = 5;
+let totalPages;
+
 $(document).ready(function () {
     loadData();
     $('#searchBankInput').on('input', function () {
@@ -37,7 +41,7 @@ function searchBank(query) {
             });
             $('#bankTable').html(tableData);
         },
-        error: function(error) {
+        error: function (error) {
             console.log("Error searching bank: ", error);
         }
     });
@@ -46,10 +50,14 @@ function searchBank(query) {
 function loadData() {
     $.ajax({
         type: "get",
-        url: "http://localhost:9001/api/admin/bank/active",
+        url: `http://localhost:9001/api/admin/bank/active?page=${currentPage-1}&size=${dataPerPage}`,
         contentType: "application/json",
         success: function (response) {
-            let bankData = response.data;
+            let bankData = response.content;
+            totalPages = response.totalPages;
+
+            $('#bankTable').empty();
+
             bankData.forEach(bank => {
                 $('#bankTable').append(`
                     <tr>
@@ -66,11 +74,72 @@ function loadData() {
                     </tr>
                 `);
             });
+
+            // show pages
+            if (totalPages > 1) {
+                $('#pageList').empty();
+                $('#pageList').append(`
+                    <li class="page-item prev" id="previousPageControl">
+                        <a class="page-link" href="javascript:previousPage();"><i class='bx bx-chevron-left'></i></a>
+                    </li>
+                `);
+                for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                    if (pageNum == currentPage) {
+                        $('#pageList').append(`
+                            <li class="page-item active">
+                                <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                            </li>
+                        `);
+                    } else {
+                        $('#pageList').append(`
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                            </li>
+                        `);
+                    }
+                }
+                $('#pageList').append(`
+                    <li class="page-item next" id="nextPageControl">
+                        <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
+                    </li>
+                `);
+            }
         },
         error: function (error) {
             console.log(error);
         }
     });
+}
+
+function moveToPage(pageNumber) {
+    currentPage = pageNumber;
+    loadData();
+}
+
+function nextPage() {
+    if (currentPage + 1 <= totalPages) {
+        currentPage++;
+    }
+    loadData();
+}
+
+function previousPage() {
+    if (currentPage - 1 >= 0) {
+        currentPage--;
+    }
+    loadData();
+}
+
+function setDataPerPage(query) {
+    dataPerPage = query;
+    loadData();
+}
+
+function customDataPerPage() {
+    let query = $('#dataPerPageInput').val();
+    console.log(query);
+    dataPerPage = query;
+    loadData();
 }
 
 function openAddForm() {

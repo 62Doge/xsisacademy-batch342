@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.BankRequestDTO;
 import com._a.backend.dtos.responses.BankResponseDTO;
+import com._a.backend.entities.Bank;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.repositories.BankRepository;
 import com._a.backend.services.impl.BankServiceImpl;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/api/admin/bank")
@@ -48,8 +52,13 @@ public class BankController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     @GetMapping("/active")
+    public Page<Bank> getActiveBanksPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return bankService.findActiveBanksPage(page, size);
+    }
+
+    @GetMapping("/active/data")
     public ResponseEntity<?> getAllActiveBanks() {
         try {
             List<BankResponseDTO> bankResponseDTOs = bankService.findAllActive();
