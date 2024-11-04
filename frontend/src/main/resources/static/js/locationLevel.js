@@ -52,11 +52,12 @@ function loadData() {
     let tableData = ``;
     $.ajax({
         type: "get",
-        url: "http://localhost:9001/api/admin/location-level",
+        url: "http://localhost:9001/api/admin/location-level?pageNo=0",
         contentType: "application/json",
         success: function (locationLevelResponse) {
             console.log(locationLevelResponse);
-            let locationLevelData = locationLevelResponse.data;
+            // fixed routing to get content in Paging
+            let locationLevelData = locationLevelResponse.data.content;
 
             locationLevelData.forEach((locationLevel, index) => {
                 tableData += `
