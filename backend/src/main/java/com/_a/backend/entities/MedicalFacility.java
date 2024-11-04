@@ -66,7 +66,6 @@ public class MedicalFacility extends BaseEntity {
   @Column(name = "medical_facility_category_id")
   private Long medicalFacilityCategoryId;
 
-  // Waiting Location Entity
   @ManyToOne
   @JoinColumn(name = "location_id", insertable = false, updatable = false)
   @JsonManagedReference

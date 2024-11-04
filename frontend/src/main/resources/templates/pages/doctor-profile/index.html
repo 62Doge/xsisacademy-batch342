@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{layouts/main-without-search}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doctor Profile</title>
+  <style>
+    .container-fluid {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .tab-pane{
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-top: -47px;
+      margin-left: -24px;
+    }
+    </style>
+
+</head>
+<body>
+  <div layout:fragment="content">
+    <div class="content-wrapper">
+      <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="container-fluid text-center">
+              <img alt="Profile picture of dr. Tatjana Saphira, Sp.A" height="100" src="https://storage.googleapis.com/a1aa/image/5jC7fzEHSBSSWCUv6TsZvnqOCL8dTlJKisaLYepLxqxAHOsTA.jpg" width="100", style="width: 100px; height: 100px; border-radius: 50%;">
+              <h5>Dr. Tatjana Saphira</h5>
+              <p>Spesialis Anak</p>
+              <div class="stars" style="color: #FFD700;">
+                <i class='bx bxs-star'></i>
+                <i class='bx bxs-star'></i>
+                <i class='bx bxs-star'></i>
+                <i class='bx bxs-star'></i>
+                <i class='bx bxs-star'></i>
+              </div>
+              <hr>
+              <button class="btn btn-primary">Janji</button>
+              <button class="btn btn-secondary">Obrolan / Konsultasi</button>
+            </div>
+            <div class="container-fluid">
+              <div class="section-title", style="background-color: #eaf4fc; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                Tentang Saya
+              </div>
+              
+              <h6>Tindakan medis</h6>
+              <ul>
+                <li>
+                  Fisioterapi anak
+                </li>
+              </ul>
+              
+              <h6>Riwayat Praktek</h6>
+              <p>
+                RS Mitra, Depok
+                <br>
+                <small>
+                  Dokter anak
+                </small>
+                <br>
+                <small>
+                  2019 - sekarang
+                </small>
+              </p>
+
+              <h6>Pendidikan</h6>
+              <p>
+                Universitas Padjadjaran
+                <br>
+                <small>
+                  Spesialis Anak
+                </small>
+                <br>
+                <small>
+                  2016
+                </small>
+              </p>
+            </div>
+          </div>
+          <div class="col-md-8">
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" href="#tindakan" onclick="showTindakan(event, this)">Tindakan</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#spesialisasi" onclick="showSpesialisasi(event, this)">Spesialisasi</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#aktifitas" onclick="showAktifitas(event, this)">Aktifitas</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#Konsultasi" onclick="showKonsultasi(event, this)">Konsultasi</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#Pengaturan" onclick="showPengaturan(event, this)">Pengaturan</a>
+              </li>
+            </ul>
+            
+            <div class="tab-content mt-3">
+
+              <div class="tab-pane fade show active" id="tindakan">
+                <!-- Konten Tindakan -->
+                <h2>Tindakan</h2>
+                <p>Ini adalah konten Tindakan</p>
+              </div>
+
+              <div class="tab-pane fade show" id="spesialisasi">
+                <!-- Konten Spesialisasi -->
+                <h2>Spesialisasi</h2>
+                <p>Ini adalah konten Spesialisasi</p>
+              </div>
+
+              <div class="tab-pane fade show" id="aktifitas">
+                <!-- Konten Aktifitas -->
+                <h2>Aktifitas</h2>
+                <p>Ini adalah konten Aktifitas</p>
+              </div>
+
+              <div class="tab-pane fade show" id="konsultasi">
+                <!-- Konten Konsultasi -->
+                <h2>Konsultasi</h2>
+                <p>Ini adalah konten Konsultasi</p>
+              </div>
+              
+              <div class="tab-pane fade show" id="pengaturan">
+                <!-- Konten Pengaturan -->
+                <h2>Pengaturan</h2>
+                <p>Ini adalah konten Pengaturan</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/doctorProfile.js"></script>
+  </div>
+</body>
+</html>
