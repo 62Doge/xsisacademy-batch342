@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,16 +39,19 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
   @Autowired
   private EmailService emailService;
 
+  @Autowired
+  private PasswordEncoder passwordEncoder;
+
   @Override
   public void requestPasswordReset(ForgotPasswordRequestDto requestDto) throws Exception {
     User user = userRepository.findByEmail(requestDto.getEmail())
         .orElseThrow(() -> new UserNotFoundException("Email tidak terdaftar"));
 
-    Token actiToken = tokenRepository.findActiveTokenByEmail(user.getEmail(), LocalDateTime.now())
+    Token activeToken = tokenRepository.findActiveTokenByEmail(user.getEmail(), LocalDateTime.now())
         .orElse(null);
 
-    if (actiToken != null) {
-      LocalDateTime createdOn = actiToken.getCreatedOn();
+    if (activeToken != null) {
+      LocalDateTime createdOn = activeToken.getCreatedOn();
       if (createdOn != null
           && LocalDateTime.now().isBefore(createdOn.plusMinutes(3))) {
         Duration duration = Duration.between(LocalDateTime.now(), createdOn.plusMinutes(3));
@@ -58,6 +62,9 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
             "Anda harus menunggu sebelum meminta token baru. Silakan coba lagi setelah "
                 + minutes + ":" + seconds + " (menit:detik)");
       }
+
+      activeToken.setIsExpired(true);
+      tokenRepository.save(activeToken);
     }
 
     emailService.sendOtp(user);
@@ -100,13 +107,15 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
 
     User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("Email tidak terdaftar"));
 
+    String newPasswordEncrypted = passwordEncoder.encode(newPassword);
+
     ResetPassword resetPassword = new ResetPassword();
     resetPassword.setOldPassword(user.getPassword());
-    resetPassword.setNewPassword(newPassword);
+    resetPassword.setNewPassword(newPasswordEncrypted);
     resetPassword.setResetFor("RESET_PASSWORD");
     resetPasswordRepository.save(resetPassword);
 
-    user.setPassword(newPassword);
+    user.setPassword(newPasswordEncrypted);
     userRepository.save(user);
   }
 
