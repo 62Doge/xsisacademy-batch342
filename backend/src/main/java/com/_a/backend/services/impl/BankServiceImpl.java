@@ -94,7 +94,7 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         }
     }
 
-    public Page<Bank> findActiveBanksPage(int page, int size) {
+    public Page<Bank> findActiveBankPages(int page, int size) {
         return bankRepository.findAllByIsDeleteFalse(PageRequest.of(page, size));
     }
 

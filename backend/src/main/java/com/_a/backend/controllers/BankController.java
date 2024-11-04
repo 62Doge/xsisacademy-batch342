@@ -54,8 +54,15 @@ public class BankController {
     }
     
     @GetMapping("/active")
-    public Page<Bank> getActiveBanksPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return bankService.findActiveBanksPage(page, size);
+    public ResponseEntity<?> getActiveBanksPage(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        try {
+            Page<Bank> bank = bankService.findActiveBankPages(page, size);
+            ApiResponse<Page<Bank>> successResponse = new ApiResponse<Page<Bank>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bank);
+            return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            ApiResponse<List<BankResponseDTO>> errorResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/active/data")

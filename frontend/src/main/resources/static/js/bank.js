@@ -53,8 +53,10 @@ function loadData() {
         url: `http://localhost:9001/api/admin/bank/active?page=${currentPage-1}&size=${dataPerPage}`,
         contentType: "application/json",
         success: function (response) {
-            let bankData = response.content;
-            totalPages = response.totalPages;
+            console.log(response);
+            
+            let bankData = response.data.content;
+            totalPages = response.data.totalPages;
 
             $('#bankTable').empty();
 
