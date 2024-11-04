@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.ForgotPasswordRequestDto;
+import com._a.backend.dtos.requests.ResetPasswordRequestDTO;
 import com._a.backend.dtos.requests.VerifyOtpRequestDto;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.services.ResetPasswordService;
@@ -34,6 +35,16 @@ public class ForgotPasswordController {
   public ResponseEntity<ApiResponse<Void>> verifyOtp(@RequestBody VerifyOtpRequestDto requestDto) {
     resetPasswordService.verifyOtp(requestDto);
     ApiResponse<Void> apiResponse = new ApiResponse<Void>(200, "OTP berhasil diverifikasi", null);
+
+    return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+  }
+
+  @PostMapping({ "/reset-password", "/reset-password/" })
+  public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestBody ResetPasswordRequestDTO requestDTO)
+      throws Exception {
+    resetPasswordService.resetPassword(requestDTO);
+
+    ApiResponse<Void> apiResponse = new ApiResponse<Void>(200, "Password berhasil direset", null);
 
     return new ResponseEntity<>(apiResponse, HttpStatus.OK);
   }

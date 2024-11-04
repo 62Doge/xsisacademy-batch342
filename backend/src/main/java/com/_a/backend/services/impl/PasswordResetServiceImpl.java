@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com._a.backend.dtos.requests.ForgotPasswordRequestDto;
+import com._a.backend.dtos.requests.ResetPasswordRequestDTO;
 import com._a.backend.dtos.requests.VerifyOtpRequestDto;
 import com._a.backend.entities.ResetPassword;
 import com._a.backend.entities.User;
@@ -53,14 +54,21 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
 
   @Transactional
   @Override
-  public void resetPassword(String email, String otp, String newPassword, String confirmPassword) throws Exception {
-    // verifyOtp(email, otp);
+  public void resetPassword(ResetPasswordRequestDTO requestDTO) throws Exception {
+    String email = requestDTO.getEmail();
+    String newPassword = requestDTO.getNewPassword();
+    String confirmPassword = requestDTO.getConfirmPassword();
+    String otp = requestDTO.getOtp();
+    VerifyOtpRequestDto verifyOtpRequestDto = new VerifyOtpRequestDto(email, otp);
+    verifyOtp(verifyOtpRequestDto);
+
     if (!newPassword.equals(confirmPassword)) {
       throw new Exception("Password tidak sama");
     }
 
     if (!isValidPassword(newPassword)) {
-      throw new Exception("Password tidak memenuhi standar");
+      throw new Exception(
+          "password tidak memenuhi standar (minimal 8 karakter, harus mengandung huruf besar, huruf kecil, angka, dan special character)");
     }
 
     User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User tidak ditemukan"));
