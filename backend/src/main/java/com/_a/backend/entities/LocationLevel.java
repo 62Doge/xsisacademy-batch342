@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.xml.stream.Location;
 import java.util.List;
 
 @Data
@@ -28,10 +27,7 @@ public class LocationLevel extends BaseEntity {
     @Column(name = "abbreviation", length = 50)
     private String abbreviation;
 
-    // This is for m_location relation
-    // @JsonManagedReference
-    // private List<Location> locations;
-    //// This is for m_location relation
-    // @JsonManagedReference
-    // private List<> locations;
+    @OneToMany(mappedBy = "locationLevel", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Location> locations;
 }

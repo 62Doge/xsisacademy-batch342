@@ -7,8 +7,12 @@ import com._a.backend.repositories.LocationLevelRepository;
 import com._a.backend.services.Services;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,16 +25,26 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
     private ModelMapper modelMapper;
 
 
+//    with pagination
+    public Page<LocationLevelResponseDTO> findAll(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<LocationLevel> locationLevels = locationLevelRepository.findAll(pageable);
+        Page<LocationLevelResponseDTO> locationLevelResponseDTOS =
+                locationLevels.map(locationLevel -> modelMapper.map(locationLevel, LocationLevelResponseDTO.class));
+        return locationLevelResponseDTOS;
+    }
+
+
     @Override
-    public List<LocationLevelResponseDTO> findAll() {
-        List<LocationLevel> locationLevels = locationLevelRepository.findAll();
+    public  List<LocationLevelResponseDTO> findAll() {
+        List<LocationLevel> locationLevels = locationLevelRepository.findAllByIsDeleteFalse();
         List<LocationLevelResponseDTO> locationLevelResponseDTOs = locationLevels.stream().map(
                 locationLevel -> modelMapper.map(locationLevel, LocationLevelResponseDTO.class)).toList();
         return locationLevelResponseDTOs;
     }
 
     public List<LocationLevelResponseDTO> findByName(String name) {
-        List<LocationLevel> locationLevels = locationLevelRepository.findByNameContainingIgnoreCase(name);
+        List<LocationLevel> locationLevels = locationLevelRepository.findByNameContainingIgnoreCaseAndIsDeleteFalse(name);
         List<LocationLevelResponseDTO> locationLevelResponseDTOS = locationLevels.stream().map(
                 locationLevel -> modelMapper.map(locationLevel, LocationLevelResponseDTO.class)).toList();
         return locationLevelResponseDTOS;
@@ -67,12 +81,25 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
 
             return modelMapper.map(updatedLocationLevel, LocationLevelResponseDTO.class);
         }
-        throw new RuntimeException("Location Level not found");
+        throw new IllegalArgumentException("Location Level not found");
     }
 
-//    public LocationLevelResponseDTO softDelete(Long id) {
-//        LocationLevel locationLevel = locationLevelRepository.findById(id).get();
-//    }
+    public void softDeleteLocationLevel(Long id) {
+        LocationLevel locationLevel = locationLevelRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("LocationLevel not found"));
+
+        boolean hasActiveLocations = locationLevel.getLocations().stream()
+                .anyMatch(location -> !location.getIsDelete());
+
+        if (hasActiveLocations) {
+            throw new IllegalStateException("Cannot delete location level: it's active on locations.");
+        }
+
+        locationLevel.setIsDelete(true);
+//        locationLevel.setDeletedBy(userId);
+        locationLevel.setDeletedOn(LocalDateTime.now());
+        locationLevelRepository.save(locationLevel);
+    }
 
     @Override
     public void deleteById(Long id) {

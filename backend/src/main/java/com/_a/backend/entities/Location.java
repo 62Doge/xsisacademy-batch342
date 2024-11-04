@@ -45,6 +45,7 @@ public class Location extends BaseEntity {
 
     @ManyToOne(fetch= FetchType.EAGER)
     @JoinColumn(name = "location_level_id", insertable = false, updatable = false)
+    @JsonBackReference
     private LocationLevel locationLevel;
 
     @Column(name = "location_level_id")

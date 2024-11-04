@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface LocationLevelRepository extends JpaRepository<LocationLevel, Long> {
     Boolean existsByName(String name);
-    List<LocationLevel> findByNameContainingIgnoreCase(String name);
-    //    Boolean existsByLocations(Locations locations);
+    List<LocationLevel> findByNameContainingIgnoreCaseAndIsDeleteFalse(String name);
+    List<LocationLevel> findAllByIsDeleteFalse();
 
 }
