@@ -27,17 +27,17 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
 
 
 //    with pagination
-    public Page<LocationLevelResponseDTO> findAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
+//    @Override
+    public Page<LocationLevelResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
         Sort sort = Sort.by(sortBy);
         sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<LocationLevel> locationLevels = locationLevelRepository.findAll(pageable);
+        Page<LocationLevel> locationLevels = locationLevelRepository.findAllByIsDeleteFalse(pageable);
         Page<LocationLevelResponseDTO> locationLevelResponseDTOS =
                 locationLevels.map(locationLevel -> modelMapper.map(locationLevel, LocationLevelResponseDTO.class));
         return locationLevelResponseDTOS;
     }
-
 
     @Override
     public  List<LocationLevelResponseDTO> findAll() {
@@ -47,10 +47,14 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
         return locationLevelResponseDTOs;
     }
 
-    public List<LocationLevelResponseDTO> findByName(String name) {
-        List<LocationLevel> locationLevels = locationLevelRepository.findByNameContainingIgnoreCaseAndIsDeleteFalse(name);
-        List<LocationLevelResponseDTO> locationLevelResponseDTOS = locationLevels.stream().map(
-                locationLevel -> modelMapper.map(locationLevel, LocationLevelResponseDTO.class)).toList();
+    public Page<LocationLevelResponseDTO> getByName(int pageNo, int pageSize, String sortBy, String sortDirection, String name) {
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<LocationLevel> locationLevels = locationLevelRepository.findByNameContainingIgnoreCaseAndIsDeleteFalse(pageable, name);
+        Page<LocationLevelResponseDTO> locationLevelResponseDTOS =
+                locationLevels.map(locationLevel -> modelMapper.map(locationLevel, LocationLevelResponseDTO.class));
         return locationLevelResponseDTOS;
     }
 
