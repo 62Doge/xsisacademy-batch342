@@ -34,7 +34,7 @@ public class LocationLevelController {
             @RequestParam(defaultValue = "asc") String sortDirection) {
         try {
             Page<LocationLevelResponseDTO> locationLevelResponseDTOS =
-                        locationLevelService.findAll(pageNo, pageSize, sortBy, sortDirection);
+                        locationLevelService.getAll(pageNo, pageSize, sortBy, sortDirection);
             PaginatedResponseDTO<LocationLevelResponseDTO> paginatedResponse = new PaginatedResponseDTO<>(locationLevelResponseDTOS);
 
             ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>> successResponse =
@@ -84,15 +84,23 @@ public class LocationLevelController {
     }
 
     @GetMapping("/name/{name}")
-    public ResponseEntity<?> getLocationLevelByName(@PathVariable String name) {
+    public ResponseEntity<ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>>> getLocationLevelByName(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "3") int pageSize,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @PathVariable String name) {
         try {
-            List<LocationLevelResponseDTO> locationLevelResponseDTOS = locationLevelService.findByName(name);
+            Page<LocationLevelResponseDTO> locationLevelResponseDTOS =
+                    locationLevelService.getByName(pageNo, pageSize, sortBy, sortDirection, name);
 
-            ApiResponse<List<LocationLevelResponseDTO>> successResponse =
-                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), locationLevelResponseDTOS);
+            PaginatedResponseDTO<LocationLevelResponseDTO> paginatedResponse = new PaginatedResponseDTO<>(locationLevelResponseDTOS);
+
+            ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>> successResponse =
+                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), paginatedResponse);
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
         }catch (Exception e) {
-            ApiResponse<List<LocationLevelResponseDTO>> errorResponse =
+            ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>> errorResponse =
                     new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }

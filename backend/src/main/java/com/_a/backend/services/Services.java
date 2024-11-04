@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface Services<RequestDTO, ResponseDTO> {
 //    for pagination
-//    Page<ResponseDTO> findAll(Pageable pageable);
+//    Page<ResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection);
     List<ResponseDTO> findAll();
     Optional<ResponseDTO> findById(Long id);
     ResponseDTO save(RequestDTO requestDTO);
