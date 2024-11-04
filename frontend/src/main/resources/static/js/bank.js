@@ -232,7 +232,7 @@ function openDeleteModal(id) {
 
 function deleteBank(id) {
     $.ajax({
-        type: "put",
+        type: "patch",
         url: `http://localhost:9001/api/admin/bank/delete/${id}`,
         contentType: "application/json",
         success: function () {
