@@ -13,6 +13,8 @@ import com._a.backend.dtos.requests.VerifyOtpRequestDto;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.services.ResetPasswordService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -24,7 +26,7 @@ public class ForgotPasswordController {
   private ResetPasswordService resetPasswordService;
 
   @PostMapping({ "/forgot-password", "/forgot-password" })
-  public ResponseEntity<ApiResponse<Void>> forgotPassword(@RequestBody ForgotPasswordRequestDto requestDto)
+  public ResponseEntity<ApiResponse<Void>> forgotPassword(@RequestBody @Valid ForgotPasswordRequestDto requestDto)
       throws Exception {
     resetPasswordService.requestPasswordReset(requestDto);
     ApiResponse<Void> apiResponse = new ApiResponse<Void>(200, "OTP telah dikirim ke email anda", null);
