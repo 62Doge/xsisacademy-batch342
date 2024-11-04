@@ -1,5 +1,5 @@
 let currentPage = 1;
-let dataPerPage = 5;
+let pageSize = 5;
 let sortBy = 'name';
 let sortDir = 'ASC';
 let totalPages;
@@ -20,10 +20,13 @@ $(document).ready(function () {
 function searchBank(query) {
     $.ajax({
         type: "get",
-        url: `http://localhost:9001/api/admin/bank/name/${query}`,
+        url: `http://localhost:9001/api/admin/bank/name/${query}?page=${currentPage-1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
-            let bankData = response.data;
+            console.log(response);
+            let bankData = response.data.content;
+            totalPages = response.data.totalPages;
+
             let tableData = ``;
             bankData.forEach(bank => {
                 tableData += `
@@ -42,6 +45,40 @@ function searchBank(query) {
                 `
             });
             $('#bankTable').html(tableData);
+
+            // show pages
+            $('#pageList').empty();
+            $('#pageList').append(`
+                <li class="page-item prev" id="previousPageControl">
+                    <a class="page-link" href="javascript:previousPage();"><i class='bx bx-chevron-left'></i></a>
+                </li>
+            `);
+
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (pageNum == currentPage) {
+                    $('#pageList').append(`
+                        <li class="page-item active">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                } else {
+                    $('#pageList').append(`
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                }
+            }
+            
+            $('#pageList').append(`
+                <li class="page-item next" id="nextPageControl">
+                    <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
+                </li>
+            `);
+            
+            // dropdown button default value
+            $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
+            $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
         },
         error: function (error) {
             console.log("Error searching bank: ", error);
@@ -52,7 +89,7 @@ function searchBank(query) {
 function loadData() {
     $.ajax({
         type: "get",
-        url: `http://localhost:9001/api/admin/bank/active?page=${currentPage-1}&size=${dataPerPage}&sortBy=${sortBy}&sortDir=${sortDir}`,
+        url: `http://localhost:9001/api/admin/bank/active?page=${currentPage-1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
             let bankData = response.data.content;
@@ -78,38 +115,38 @@ function loadData() {
             });
 
             // show pages
-            if (totalPages > 1) {
-                $('#pageList').empty();
-                $('#pageList').append(`
-                    <li class="page-item prev" id="previousPageControl">
-                        <a class="page-link" href="javascript:previousPage();"><i class='bx bx-chevron-left'></i></a>
-                    </li>
-                `);
-                for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-                    if (pageNum == currentPage) {
-                        $('#pageList').append(`
-                            <li class="page-item active">
-                                <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
-                            </li>
-                        `);
-                    } else {
-                        $('#pageList').append(`
-                            <li class="page-item">
-                                <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
-                            </li>
-                        `);
-                    }
-                }
-                $('#pageList').append(`
-                    <li class="page-item next" id="nextPageControl">
-                        <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
-                    </li>
-                `);
+            $('#pageList').empty();
+            $('#pageList').append(`
+                <li class="page-item prev" id="previousPageControl">
+                    <a class="page-link" href="javascript:previousPage();"><i class='bx bx-chevron-left'></i></a>
+                </li>
+            `);
 
-                // dropdown button default value
-                $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
-                $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (pageNum == currentPage) {
+                    $('#pageList').append(`
+                        <li class="page-item active">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                } else {
+                    $('#pageList').append(`
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                }
             }
+
+            $('#pageList').append(`
+                <li class="page-item next" id="nextPageControl">
+                    <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
+                </li>
+            `);
+
+            // dropdown button default value
+            $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
+            $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
         },
         error: function (error) {
             console.log(error);
@@ -136,8 +173,8 @@ function previousPage() {
     loadData();
 }
 
-function setDataPerPage(query) {
-    dataPerPage = query;
+function setPageSize(query) {
+    pageSize = query;
     loadData();
 }
 
@@ -147,10 +184,10 @@ function setPageOrder() {
     loadData();
 }
 
-function customDataPerPage() {
-    let query = $('#dataPerPageInput').val();
+function customPageSize() {
+    let query = $('#pageSizeInput').val();
     console.log(query);
-    dataPerPage = query;
+    pageSize = query;
     loadData();
 }
 

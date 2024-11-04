@@ -27,6 +27,12 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
     @Autowired
     private ModelMapper modelMapper;
 
+    public Page<Bank> findActiveBankPages(int page, int size, String sortBy, String sortDir) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        return bankRepository.findAllByIsDeleteFalse(pageable);
+    }
+
     @Override
     public List<BankResponseDTO> findAll() {
         List<Bank> banks = bankRepository.findAll();
@@ -58,6 +64,12 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         List<BankResponseDTO> bankResponseDTOs = banks.stream().map(
             bank -> modelMapper.map(bank, BankResponseDTO.class)).toList();
         return bankResponseDTOs;
+    }
+
+    public Page<Bank> findByNameContaining(String name, int page, int size, String sortBy, String sortDir) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        return bankRepository.findByNameContainingIgnoreCaseAndIsDeleteFalse(name, pageable);
     }
 
     @Override
@@ -94,12 +106,6 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         } else {
             throw new RuntimeException("Bank not found");
         }
-    }
-
-    public Page<Bank> findActiveBankPages(int page, int size, String sortBy, String sortDir) {
-        Sort.Direction direction = Sort.Direction.fromString(sortDir);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return bankRepository.findAllByIsDeleteFalse(pageable);
     }
 
 }

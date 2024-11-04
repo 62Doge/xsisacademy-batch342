@@ -100,12 +100,32 @@ public class BankController {
         }
     }
 
-    @GetMapping("/name/{name}")
+    @GetMapping("/active/data/name/{name}")
     public ResponseEntity<?> getBankByName(@PathVariable String name) {
         try {
             List<BankResponseDTO> bankResponseDTOs = bankService.findByName(name);
             ApiResponse<List<BankResponseDTO>> successResponse =
                     new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bankResponseDTOs);
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        } catch (Exception e) {
+            ApiResponse<List<BankResponseDTO>> errorResponse =
+                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getBankByName(
+        @PathVariable String name,
+        @RequestParam(defaultValue = "0") int page, 
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "name") String sortBy,
+        @RequestParam(defaultValue = "ASC") String sortDir
+        ) {
+        try {
+            Page<Bank> bank = bankService.findByNameContaining(name, page, size, sortBy, sortDir);
+            ApiResponse<Page<Bank>> successResponse =
+                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bank);
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
         } catch (Exception e) {
             ApiResponse<List<BankResponseDTO>> errorResponse =

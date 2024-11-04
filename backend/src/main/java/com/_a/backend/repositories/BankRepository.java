@@ -19,6 +19,8 @@ public interface BankRepository extends JpaRepository<Bank, Long> {
 
     List<Bank> findByNameContainingIgnoreCaseAndIsDeleteFalse(String name);
     
+    Page<Bank> findByNameContainingIgnoreCaseAndIsDeleteFalse(String name, Pageable pageable);
+    
     @Query(value = "select * from m_bank where is_delete = false", nativeQuery = true)
     List<Bank> findAllActive();
 

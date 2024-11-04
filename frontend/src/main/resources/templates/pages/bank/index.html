@@ -91,19 +91,19 @@
                         <ul class="dropdown-menu"
                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(0px, 41px, 0px);"
                             data-popper-placement="bottom-start">
-                            <li><a class="dropdown-item" href="javascript:setDataPerPage(5);">5</a></li>
-                            <li><a class="dropdown-item" href="javascript:setDataPerPage(10);">10</a></li>
-                            <li><a class="dropdown-item" href="javascript:setDataPerPage(25);">25</a></li>
+                            <li><a class="dropdown-item" href="javascript:setPageSize(5);">5</a></li>
+                            <li><a class="dropdown-item" href="javascript:setPageSize(10);">10</a></li>
+                            <li><a class="dropdown-item" href="javascript:setPageSize(25);">25</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
                                 <div class="p-2">
-                                    <input id="dataPerPageInput" class="form-control" type="number"
+                                    <input id="pageSizeInput" class="form-control" type="number"
                                         placeholder="Data Per Halaman" value="3" min="1">
                                     <div class="w-100 text-center">
                                         <button type="button" class="btn btn-primary mt-2 w-100"
-                                            onclick="customDataPerPage()">Terapkan</button>
+                                            onclick="customPageSize()">Terapkan</button>
                                     </div>
                                 </div>
                             </li>
