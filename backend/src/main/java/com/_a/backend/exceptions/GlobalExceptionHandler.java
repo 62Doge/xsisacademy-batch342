@@ -14,18 +14,23 @@ import java.util.Map;
 
 @ControllerAdvice
 // When annotated with @ControllerAdvice,
-// a class can define methods that handle exceptions thrown by any controller method.
-// This means you don't have to repeat the error handling logic in every controller.
+// a class can define methods that handle exceptions thrown by any controller
+// method.
+// This means you don't have to repeat the error handling logic in every
+// controller.
 public class GlobalExceptionHandler {
 
     // When a controller method throws an exception, Spring checks if any method
-    // in the current controller has an @ExceptionHandler annotation for that exception type.
-    // If no local handlers are found, Spring will look for @ControllerAdvice classes.
-    // If a matching @ExceptionHandler is found in any @ControllerAdvice, that method will be invoked.
+    // in the current controller has an @ExceptionHandler annotation for that
+    // exception type.
+    // If no local handlers are found, Spring will look for @ControllerAdvice
+    // classes.
+    // If a matching @ExceptionHandler is found in any @ControllerAdvice, that
+    // method will be invoked.
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ApiResponse<Exception>> handleResponseStatusException(ResponseStatusException ex) {
         return ResponseEntity.status(ex.getStatusCode())
-                .body(ApiResponse.error(ex.getStatusCode().value(),ex));
+                .body(ApiResponse.error(ex.getStatusCode().value(), ex));
     }
 
     @ExceptionHandler(Exception.class)
@@ -35,13 +40,21 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
         }
-        ApiResponse<Map<String, String>> response =
-                new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Validation error", errors);
+        ApiResponse<Map<String, String>> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),
+                "Validation error", errors);
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> handleUserNotFoundException(UserNotFoundException ex) {
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "User not found",
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }
