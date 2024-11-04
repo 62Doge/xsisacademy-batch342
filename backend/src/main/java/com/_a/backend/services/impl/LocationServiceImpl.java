@@ -1,5 +1,6 @@
 package com._a.backend.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,10 +54,30 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
                 .collect(Collectors.toList());
     }
 
+    public Page<LocationResponseDTO> findAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        // using less optimal approach, but easier to understand
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Location> locations = locationRepository.findAll(pageable);
+        Page<LocationResponseDTO> locationResponseDTOS = locations
+                .map(location -> modelMapper.map(location, LocationResponseDTO.class));
+        return locationResponseDTOS;
+    }
+
     @Override
     public Optional<LocationResponseDTO> findById(Long id) {
         return locationRepository.findById(id)
                 .map(location -> modelMapper.map(location, LocationResponseDTO.class));
+    }
+
+    public List<LocationResponseDTO> findByName(String name) {
+        List<Location> locations = locationRepository
+                .findByNameContainingIgnoreCaseAndIsDeleteFalse(name);
+        List<LocationResponseDTO> locationResponseDTOS = locations.stream().map(
+                location -> modelMapper.map(location, LocationResponseDTO.class)).toList();
+        return locationResponseDTOS;
     }
 
     @Override
@@ -75,6 +96,29 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
         Location updatedLocation = locationRepository.save(location);
 
         return modelMapper.map(updatedLocation, LocationResponseDTO.class);
+    }
+
+    public void softDeleteLocation(Long id) {
+        Location location = locationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Location not found"));
+
+        boolean hasActiveLocations = location.getChilds().stream()
+                .anyMatch(childLocation -> !childLocation.getIsDelete());
+
+        boolean hasActiveBiodataAddress = location.getBiodataAddresses().stream()
+                .anyMatch(biodataAddress -> !biodataAddress.getIsDelete());
+
+        boolean hasActiveMedicalFacility = location.getMedicalFacilities().stream()
+        .anyMatch(medicalFacility -> !medicalFacility.getIsDelete());
+        // m_biodata_address & m_medical_facility uses this (and also itself)
+        if (hasActiveLocations || hasActiveBiodataAddress || hasActiveMedicalFacility) {
+            throw new IllegalStateException("Cannot delete location : Active usage found.");
+        }
+
+        location.setIsDelete(true);
+        // location.setDeletedBy(userId);
+        location.setDeletedOn(LocalDateTime.now());
+        locationRepository.save(location);
     }
 
 }

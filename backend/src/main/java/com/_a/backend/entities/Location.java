@@ -37,21 +37,29 @@ public class Location extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
-    @JsonBackReference
+    // @JsonBackReference
     private Location parent;
-
+    
     @Column(name = "parent_id")
     private Long parentId;
-
+    
     @ManyToOne(fetch= FetchType.EAGER)
     @JoinColumn(name = "location_level_id", insertable = false, updatable = false)
     @JsonBackReference
     private LocationLevel locationLevel;
-
+    
     @Column(name = "location_level_id")
     private Long locationLevelId;
-
+    
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     @JsonBackReference
     private List<MedicalFacility> medicalFacilities;
+    
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<BiodataAddress> biodataAddresses;
+    
+    @OneToMany(mappedBy="parent", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<Location> childs;
 }
