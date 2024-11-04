@@ -13,14 +13,84 @@
             <div class="container-xxl flex-grow-1 container-p-y">
                 <div class="d-flex mb-2">
                     <div class="me-2">
-                        <input id="searchBankInput" type="text" class="form-control" placeholder="Cari Bank"/>
+                        <input id="searchBankInput" type="text" class="form-control" placeholder="Cari Bank" />
                     </div>
-                    <div>
+                    <div class="me-2">
                         <button id="addBankButton" type="button" class="btn btn-primary" onclick="openAddForm()">
                             <span class="tf-icons bx bx-add-to-queue"></span> Tambah Bank
                         </button>
                     </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false" data-bs-auto-close="false">
+                            Urutkan Data
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <h6 class="dropdown-header text-uppercase">Urutkan bersadarkan:</h6>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="bankNameCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderColumnRadio" id="bankNameCheckbox">
+                                            Nama Bank
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="vaCodeCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderColumnRadio" id="vaCodeCheckbox">
+                                            Kode VA
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="AZOrderCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderTypeRadio" id="AZOrderCheckbox">
+                                            A-Z
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="ZAOrderCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderTypeRadio" id="ZAOrderCheckbox">
+                                            Z-A
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="defaulOrderCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderTypeRadio" id="defaulOrderCheckbox">
+                                            Default
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <button type="button" class="btn btn-primary">Terapkan</button>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+                
                 <div class="card">
                     <h5 class="card-header"><strong>Bank</strong></h5>
                     <div class="table-responsive text-nowrap">
@@ -33,10 +103,37 @@
                                 </tr>
                             </thead>
                             <tbody id="bankTable" class="table-border-bottom-0">
-                                
+
                             </tbody>
                         </table>
                     </div>
+                    <nav aria-label="Page navigation" id="paginationControls">
+                        <ul class="pagination justify-content-end mx-3 mt-2">
+                            <li class="page-item prev">
+                                <a class="page-link" href="javascript:void(0);"><i
+                                        class="tf-icon bx bx-chevrons-left"></i></a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link" href="javascript:void(0);">1</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);">4</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="javascript:void(0);">5</a>
+                            </li>
+                            <li class="page-item next">
+                                <a class="page-link" href="javascript:void(0);"><i
+                                        class="tf-icon bx bx-chevrons-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </div>
