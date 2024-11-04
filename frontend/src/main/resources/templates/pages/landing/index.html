@@ -7,21 +7,17 @@
   </head>
   <body>
     <th:block layout:fragment="pageAbove">
-      <script>
-        console.log("js/css at head");
-      </script>
+      <th:block
+        th:replace="~{fragments/BaseModal::modal(class='modal-md')}"
+      ></th:block>
     </th:block>
 
-    <div layout:fragment="content" class="container mt-5">
-      <div class="row row-cols-1 row-cols-md-3 g-4" id="menuContainer">
-        
-        <!-- Add more cards as needed -->
-      </div>
+    <div layout:fragment="content">
+      <h1 class="text-center">Hello world</h1>
     </div>
 
     <th:block layout:fragment="pageBottom">
-      <script src="js/home.js"></script>
+      <th:block th:replace="~{pages/landing/loginForm::script}"></th:block>
     </th:block>
-    
   </body>
 </html>
