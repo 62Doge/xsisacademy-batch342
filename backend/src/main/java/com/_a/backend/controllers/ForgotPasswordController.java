@@ -42,7 +42,7 @@ public class ForgotPasswordController {
   }
 
   @PostMapping({ "/reset-password", "/reset-password/" })
-  public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestBody ResetPasswordRequestDTO requestDTO)
+  public ResponseEntity<ApiResponse<Void>> resetPassword(@RequestBody @Valid ResetPasswordRequestDTO requestDTO)
       throws Exception {
     resetPasswordService.resetPassword(requestDTO);
 

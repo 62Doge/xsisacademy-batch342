@@ -12,7 +12,9 @@ import com._a.backend.dtos.requests.VerifyOtpRequestDto;
 import com._a.backend.entities.ResetPassword;
 import com._a.backend.entities.Token;
 import com._a.backend.entities.User;
+import com._a.backend.exceptions.InvalidPasswordException;
 import com._a.backend.exceptions.InvalidTokenException;
+import com._a.backend.exceptions.NewPasswordConfirmationException;
 import com._a.backend.exceptions.UserNotFoundException;
 import com._a.backend.repositories.ResetPasswordRepository;
 import com._a.backend.repositories.TokenRepository;
@@ -69,15 +71,15 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
     verifyOtp(verifyOtpRequestDto);
 
     if (!newPassword.equals(confirmPassword)) {
-      throw new Exception("Password tidak sama");
+      throw new NewPasswordConfirmationException("Password tidak sama dengan konfirrmasi password");
     }
 
     if (!isValidPassword(newPassword)) {
-      throw new Exception(
+      throw new InvalidPasswordException(
           "password tidak memenuhi standar (minimal 8 karakter, harus mengandung huruf besar, huruf kecil, angka, dan special character)");
     }
 
-    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User tidak ditemukan"));
+    User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("Email tidak terdaftar"));
 
     ResetPassword resetPassword = new ResetPassword();
     resetPassword.setOldPassword(user.getPassword());

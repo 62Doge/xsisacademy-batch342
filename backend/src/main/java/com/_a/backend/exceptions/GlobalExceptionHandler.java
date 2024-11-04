@@ -64,4 +64,27 @@ public class GlobalExceptionHandler {
                 ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleInvalidPasswordException(
+            InvalidPasswordException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("password", ex.getMessage());
+
+        ApiResponse<Map<String, String>> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),
+                "Password invalid", errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(NewPasswordConfirmationException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleNewPasswordConfirmationException(
+            NewPasswordConfirmationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("password", ex.getMessage());
+        errors.put("confirmPassword", ex.getMessage());
+
+        ApiResponse<Map<String, String>> response = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),
+                "Password invalid", errors);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }
