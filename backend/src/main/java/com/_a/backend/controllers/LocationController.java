@@ -139,6 +139,11 @@ public class LocationController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateLocation(@Valid @RequestBody LocationRequestDTO locationRequestDTO, @PathVariable Long id) {
+        if (locationRepository.existsByNameAndParentId(locationRequestDTO.getName(), locationRequestDTO.getParentId())) {
+            ApiResponse<LocationResponseDTO> alreadyExistResponse =
+                    new ApiResponse<>(HttpStatus.CONFLICT.value(), "Location name already exists", null);
+            return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
+        }
         try {
             LocationResponseDTO locationResponseDTOSaved = locationService.update(locationRequestDTO, id);
             ApiResponse<LocationResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), locationResponseDTOSaved);

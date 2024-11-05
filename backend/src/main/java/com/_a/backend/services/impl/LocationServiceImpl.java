@@ -72,14 +72,15 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
                 .map(location -> modelMapper.map(location, LocationResponseDTO.class));
     }
 
-    public Page<LocationResponseDTO> getByName(int pageNo, int pageSize, String sortBy, String sortDirection, String name) {
+    public Page<LocationResponseDTO> getByName(int pageNo, int pageSize, String sortBy, String sortDirection,
+            String name) {
         Sort sort = Sort.by(sortBy);
         sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Location> locations = locationRepository.findByNameContainingIgnoreCaseAndIsDeleteFalse(pageable, name);
-        Page<LocationResponseDTO> locationResponseDTOS =
-                locations.map(location -> modelMapper.map(location, LocationResponseDTO.class));
+        Page<LocationResponseDTO> locationResponseDTOS = locations
+                .map(location -> modelMapper.map(location, LocationResponseDTO.class));
         return locationResponseDTOS;
     }
 
@@ -94,6 +95,13 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
     public LocationResponseDTO update(LocationRequestDTO locationRequestDTO, Long id) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Location not found"));
+
+        boolean hasActiveLocations = location.getChilds().stream()
+                .anyMatch(childLocation -> !childLocation.getIsDelete());
+
+        if (!location.getLocationLevelId().equals(locationRequestDTO.getLocationLevelId()) && hasActiveLocations) {
+            throw new IllegalStateException("Cannot edit location's level: Active usage found.");
+        }
 
         modelMapper.map(locationRequestDTO, location);
         Location updatedLocation = locationRepository.save(location);
@@ -112,7 +120,7 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
                 .anyMatch(biodataAddress -> !biodataAddress.getIsDelete());
 
         boolean hasActiveMedicalFacility = location.getMedicalFacilities().stream()
-        .anyMatch(medicalFacility -> !medicalFacility.getIsDelete());
+                .anyMatch(medicalFacility -> !medicalFacility.getIsDelete());
         // m_biodata_address & m_medical_facility uses this (and also itself)
         if (hasActiveLocations || hasActiveBiodataAddress || hasActiveMedicalFacility) {
             throw new IllegalStateException("Cannot delete location : Active usage found.");
