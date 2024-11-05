@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.LocationRequestDTO;
@@ -23,6 +27,18 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
     LocationRepository locationRepository;
     @Autowired
     ModelMapper modelMapper;
+
+    @Override
+    public Page<LocationResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Location> locations = locationRepository.findAllByIsDeleteFalse(pageable);
+        Page<LocationResponseDTO> locationResponseDTOS = locations
+                .map(location -> modelMapper.map(location, LocationResponseDTO.class));
+        return locationResponseDTOS;
+    }
 
     @Override
     public void deleteById(Long id) {

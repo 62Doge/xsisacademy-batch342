@@ -21,6 +21,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "m_education_level")
 public class EducationLevel extends BaseEntity {
+
+  public EducationLevel(String name) {
+    this.name = name;
+  }
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

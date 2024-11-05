@@ -25,8 +25,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name= "m_doctor")
 public class Doctor extends BaseEntity {
-  public Doctor(String str){
+  public Doctor(String str, Long biodataId){
     this.str = str;
+    this.biodataId = biodataId;
   }
 
   @Id

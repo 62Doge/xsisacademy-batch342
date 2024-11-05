@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 @RequestMapping("/doctor-profile")
-public class DoctorProfile {
+public class DoctorProfileController {
 
   @GetMapping("")
     public String index() {

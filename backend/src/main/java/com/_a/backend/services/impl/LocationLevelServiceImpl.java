@@ -1,10 +1,9 @@
 package com._a.backend.services.impl;
 
-import com._a.backend.dtos.requests.LocationLevelRequestDTO;
-import com._a.backend.dtos.responses.LocationLevelResponseDTO;
-import com._a.backend.entities.LocationLevel;
-import com._a.backend.repositories.LocationLevelRepository;
-import com._a.backend.services.Services;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,9 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com._a.backend.dtos.requests.LocationLevelRequestDTO;
+import com._a.backend.dtos.responses.LocationLevelResponseDTO;
+import com._a.backend.entities.LocationLevel;
+import com._a.backend.repositories.LocationLevelRepository;
+import com._a.backend.services.Services;
 
 @Service
 public class LocationLevelServiceImpl implements Services<LocationLevelRequestDTO, LocationLevelResponseDTO> {
@@ -27,7 +28,7 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
 
 
 //    with pagination
-//    @Override
+   @Override
     public Page<LocationLevelResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
         Sort sort = Sort.by(sortBy);
         sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();

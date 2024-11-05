@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.BiodataRequestDTO;
@@ -23,6 +27,18 @@ public class BiodataServiceImpl implements Services<BiodataRequestDTO, BiodataRe
     BiodataRepository biodataRepository;
     @Autowired
     ModelMapper modelMapper;
+
+    @Override
+    public Page<BiodataResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Biodata> biodatas = biodataRepository.findAllByIsDeleteFalse(pageable);
+        Page<BiodataResponseDTO> biodataResponseDTOS = biodatas
+                .map(biodata -> modelMapper.map(biodata, BiodataResponseDTO.class));
+        return biodataResponseDTOS;
+    }
 
     @Override
     public void deleteById(Long id) {
