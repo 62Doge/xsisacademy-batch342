@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html lang="en" layout:decorate="~{layouts/main}">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home Page</title>
-  </head>
-  <body>
-    <th:block layout:fragment="pageAbove">
-      <th:block th:replace="~{pages/landing/forgotPassword::style}"></th:block>
-      <th:block
-        th:replace="~{fragments/BaseModal::modal(class='modal-md')}"
-      ></th:block>
 
-      <th:block
-        th:replace="~{fragments/ErrorModal::modal(class='modal-sm')}"
-      ></th:block>
-    </th:block>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home Page</title>
+</head>
 
-    <div layout:fragment="content">
-      <h1 class="text-center">Hello world</h1>
+<body>
+  <th:block layout:fragment="pageAbove">
+    <th:block th:replace="~{pages/landing/forgotPassword::style}"></th:block>
+    <th:block th:replace="~{fragments/BaseModal::modal(class='modal-md')}"></th:block>
+
+    <th:block th:replace="~{fragments/ErrorModal::modal(class='modal-sm')}"></th:block>
+  </th:block>
+
+  <div layout:fragment="content" class="container mt-5">
+    <h1 class="text-center">Hello world</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="menuContainer">
+
+      <!-- Add more cards as needed -->
     </div>
+  </div>
 
-    <th:block layout:fragment="pageBottom">
-      <th:block th:replace="~{pages/landing/loginForm::script}"></th:block>
-      <th:block th:replace="~{pages/landing/forgotPassword::script}"></th:block>
-    </th:block>
-  </body>
+  <th:block layout:fragment="pageBottom">
+    <th:block th:replace="~{pages/landing/loginForm::script}"></th:block>
+    <th:block th:replace="~{pages/landing/forgotPassword::script}"></th:block>
+    <script th:src="@{/js/landing.js}"></script>
+  </th:block>
+</body>
+
 </html>

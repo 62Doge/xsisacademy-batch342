@@ -1,23 +1,16 @@
+let currentUserRoleId = 1;
+
 document.addEventListener("DOMContentLoaded", (event) => {
   // $("#layout-menu").addClass("d-none");
 });
 
 $(document).ready(function () {
-  $.ajax({
-    url: "http://localhost:9001/api/auth/current-user", // Replace with your actual URL
-    method: "GET",
-    success: function (response) {
-      const user = response.data;
-      console.log(user);
-      console.log(response);
-    },
-    error: function (error) {
-      console.error("Error fetching user data:", error);
-    },
-  });
+  loadMenuCards(currentUserRoleId);
+});
 
+function loadMenuCards(roleId) {
   $.ajax({
-    url: "http://localhost:9001/api/admin/menu/role/2", // Replace with your actual URL
+    url: `http://localhost:9001/api/admin/menu/role/${roleId}`,
     method: "GET",
     success: function (response) {
       if (response.status === 200) {
@@ -50,4 +43,4 @@ $(document).ready(function () {
       console.error("Error fetching menu data:", error);
     },
   });
-});
+}
