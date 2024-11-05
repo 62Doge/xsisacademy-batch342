@@ -6,6 +6,10 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.RoleRequestDTO;
@@ -23,6 +27,18 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
     RoleRepository roleRepository;
     @Autowired
     ModelMapper modelMapper;
+
+    @Override
+    public Page<RoleResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Role> roles = roleRepository.findAllByIsDeleteFalse(pageable);
+        Page<RoleResponseDTO> roleResponseDTOS = roles
+                .map(role -> modelMapper.map(role, RoleResponseDTO.class));
+        return roleResponseDTOS;
+    }
 
     @Override
     public void deleteById(Long id) {

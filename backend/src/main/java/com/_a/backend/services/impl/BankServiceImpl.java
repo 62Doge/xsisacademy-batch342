@@ -27,6 +27,18 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
     @Autowired
     private ModelMapper modelMapper;
 
+    @Override
+    public Page<BankResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Bank> banks = bankRepository.findAllByIsDeleteFalse(pageable);
+        Page<BankResponseDTO> bankResponseDTOS = banks
+                .map(bank -> modelMapper.map(bank, BankResponseDTO.class));
+        return bankResponseDTOS;
+    }
+
     public Page<Bank> findActiveBankPages(int page, int size, String sortBy, String sortDir) {
         Sort.Direction direction = Sort.Direction.fromString(sortDir);
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
@@ -44,7 +56,7 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
     public List<BankResponseDTO> findAllActive() {
         List<Bank> banks = bankRepository.findAllActive();
         List<BankResponseDTO> bankResponseDTOs = banks.stream().map(
-            bank -> modelMapper.map(bank, BankResponseDTO.class)).toList();
+                bank -> modelMapper.map(bank, BankResponseDTO.class)).toList();
         return bankResponseDTOs;
     }
 
@@ -62,7 +74,7 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
     public List<BankResponseDTO> findByName(String name) {
         List<Bank> banks = bankRepository.findByNameContainingIgnoreCaseAndIsDeleteFalse(name);
         List<BankResponseDTO> bankResponseDTOs = banks.stream().map(
-            bank -> modelMapper.map(bank, BankResponseDTO.class)).toList();
+                bank -> modelMapper.map(bank, BankResponseDTO.class)).toList();
         return bankResponseDTOs;
     }
 
