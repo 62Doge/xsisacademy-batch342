@@ -61,6 +61,10 @@
     </div>
 
     <th:block layout:fragment="pageBottom">
+      <script>
+        // reassign default user status login for this page
+        IS_USER_LOGGED = true;
+      </script>
       <th:block
         th:replace="~{pages/profile/tabWithdraw::withdrawScript}"
       ></th:block>

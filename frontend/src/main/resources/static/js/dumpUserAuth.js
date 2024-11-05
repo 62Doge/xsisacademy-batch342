@@ -1,1 +1,1 @@
-const IS_USER_LOGGED = false;
+let IS_USER_LOGGED = false;
