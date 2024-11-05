@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id" layout:decorate="~{layouts/profile-share-layout}">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pasien</title>
+    <style>
+        .container-fluid {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div layout:fragment="profileSidebar">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="javascript:void(0);">Beranda</a>
+              </li>
+              <li class="breadcrumb-item">
+                <a href="javascript:void(0);">Profil</a>
+              </li>
+              <li class="breadcrumb-item active">Pasien</li>
+            </ol>
+          </nav>
+        <div class="container-fluid align-content-center p-4">
+            <div class="profile-top">
+                <div class="w-100 text-end">
+                    <button type="button" class="btn btn-sm btn-icon btn-outline-secondary">
+                        <i class='bx bxs-pencil'></i>
+                    </button>
+                </div>
+                <div class="text-center">
+                    <div>
+                        <img alt="Profile picture of dr. Tatjana Saphira, Sp.A" height="100"
+                            src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?semt=ais_hybrid"
+                            width="100" ,="" style="width: 100px; height: 100px; border-radius: 50%;">
+                    </div>
+                    <div class="stars mt-3" style="color: #cb8c47;">
+                        <i class="bx bxs-star"></i>
+                    </div>
+                    <div class="mt-2">
+                        <p>Bronze Member</p>
+                        <p>Since 2020</p>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="profile-bottom">
+                <div class="my-2">
+                    <a href="javascript:void(0);">Pasien</a>
+                </div>
+                <div class="my-2">
+                    <a href="javascript:void(0);">Pembelian Obat</a>
+                </div>
+                <div class="my-2">
+                    <a href="javascript:void(0);">Rencana Kedatangan</a>
+                </div>
+                <div class="my-2">
+                    <a href="javascript:void(0);">Riwayat Chat Dokter</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" layout:fragment="profileTab">
+        <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+                <div class="d-flex mb-2">
+                    <!-- search box -->
+                    <div class="me-2">
+                        <input id="searchPatientInput" type="text" class="form-control"
+                            placeholder="Cari Nama Pasien" />
+                    </div>
+                    <!-- buttons beside the search box -->
+                    <button type="button" class="btn btn-icon btn-primary me-1">
+                        <i class='bx bx-search'></i>
+                    </button>
+                    <div class="btn-group me-1">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="false" data-bs-auto-close="outside">
+                            Urutkan
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <h6 class="dropdown-header text-uppercase">Urutkan bersadarkan:</h6>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="patientNameCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderColumnRadio"
+                                                id="patientNameCheckbox" value="name">
+                                            Nama
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="vaCodeCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderColumnRadio"
+                                                id="vaCodeCheckbox" value="vaCode">
+                                            Umur
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="AZOrderCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderTypeRadio"
+                                                id="AZOrderCheckbox" value="ASC">
+                                            A-Z
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="javascript:void(0);">
+                                    <div class="form-check">
+                                        <label class="form-check-label w-100" for="ZAOrderCheckbox">
+                                            <input type="radio" class="form-check-input" name="orderTypeRadio"
+                                                id="ZAOrderCheckbox" value="DESC">
+                                            Z-A
+                                        </label>
+                                    </div>
+                                </a>
+                            </li>
+                            <li>
+                                <div class="w-100 text-center p-2">
+                                    <button type="button" class="btn btn-primary mt-2 w-100"
+                                        onclick="setPageOrder()">Terapkan</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="btn-group me-1">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="true">
+                            Data Per Halaman
+                        </button>
+                        <ul class="dropdown-menu"
+                            style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(0px, 41px, 0px);"
+                            data-popper-placement="bottom-start">
+                            <li><a class="dropdown-item" href="javascript:setPageSize(5);">5</a></li>
+                            <li><a class="dropdown-item" href="javascript:setPageSize(10);">10</a></li>
+                            <li><a class="dropdown-item" href="javascript:setPageSize(25);">25</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <div class="p-2">
+                                    <input id="pageSizeInput" class="form-control" type="number"
+                                        placeholder="Data Per Halaman" value="3" min="1">
+                                    <div class="w-100 text-center">
+                                        <button type="button" class="btn btn-primary mt-2 w-100"
+                                            onclick="customPageSize()">Terapkan</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <!-- card header -->
+                    <h5 class="card-header px-4 pt-4 pb-3" style="padding: 0;"><strong>Daftar Pasien</strong></h5>
+                    <!-- buttons inside card -->
+                    <div class="mx-4 mb-2">
+                        <button type="button" class="btn btn-outline-secondary me-1" onclick="openDeleteModal()">
+                            <i class='bx bxs-trash'></i> Hapus
+                        </button>
+                        <button id="addPatientButton" type="button" class="btn btn-primary" onclick="openAddForm()">
+                            <i class='bx bx-add-to-queue'></i> Tambah Pasien
+                        </button>
+                    </div>
+
+                    <div class="table-responsive text-nowrap">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="col-1">[x]</th>
+                                    <th>Pasien</th>
+                                    <th class="col-3">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="patientTable" class="table-border-bottom-0">
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong>Elga</strong><br>
+                                        Anak, 5 tahun<br>
+                                        9 Chat Online, 5 Janji Online
+                                    </td>
+                                    <td>
+                                        <button onclick="openEditForm()" type="button" class="btn btn-icon btn-outline-warning">
+                                            <span class="tf-icons bx bxs-edit"></span>
+                                        </button>
+                                        <button onclick="openDeleteModal()" type="button" class="btn btn-icon btn-outline-danger">
+                                            <span class="tf-icons bx bxs-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong>Elga</strong><br>
+                                        Anak, 5 tahun<br>
+                                        9 Chat Online, 5 Janji Online
+                                    </td>
+                                    <td>
+                                        <button onclick="openEditForm()" type="button" class="btn btn-icon btn-outline-warning">
+                                            <span class="tf-icons bx bxs-edit"></span>
+                                        </button>
+                                        <button onclick="openDeleteModal()" type="button" class="btn btn-icon btn-outline-danger">
+                                            <span class="tf-icons bx bxs-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong>Elga</strong><br>
+                                        Anak, 5 tahun<br>
+                                        9 Chat Online, 5 Janji Online
+                                    </td>
+                                    <td>
+                                        <button onclick="openEditForm()" type="button" class="btn btn-icon btn-outline-warning">
+                                            <span class="tf-icons bx bxs-edit"></span>
+                                        </button>
+                                        <button onclick="openDeleteModal()" type="button" class="btn btn-icon btn-outline-danger">
+                                            <span class="tf-icons bx bxs-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong>Elga</strong><br>
+                                        Anak, 5 tahun<br>
+                                        9 Chat Online, 5 Janji Online
+                                    </td>
+                                    <td>
+                                        <button onclick="openEditForm()" type="button" class="btn btn-icon btn-outline-warning">
+                                            <span class="tf-icons bx bxs-edit"></span>
+                                        </button>
+                                        <button onclick="openDeleteModal()" type="button" class="btn btn-icon btn-outline-danger">
+                                            <span class="tf-icons bx bxs-trash"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-end mx-3 mt-2" id="pageList">
+                            <li class="page-item prev" id="previousPageControl">
+                                <a class="page-link" href="javascript:previousPage();"><i
+                                        class='bx bx-chevron-left'></i></a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link">1</a>
+                            </li>
+                            <li class="page-item next" id="nextPageControl">
+                                <a class="page-link" href="javascript:nextPage();"><i
+                                        class='bx bx-chevron-right'></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block layout:fragment="pageAbove">
+        <th:block th:replace="~{fragments/BaseModal::modal(class='modal-dialog-centered')}"></th:block>
+    </th:block>
+
+    <th:block layout:fragment="pageBottom">
+        <script src="js/patient.js"></script>
+    </th:block>
+    
+</body>
+
+</html>
