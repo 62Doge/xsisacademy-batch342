@@ -21,6 +21,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "m_doctor_education")
 public class DoctorEducation extends BaseEntity{
   
+  public DoctorEducation(String institutionName, String major, Integer startYear, Integer endYear, Boolean isLastEducation, Long doctorId, Long educationLevelId) {
+    this.institutionName = institutionName;
+    this.major = major;
+    this.startYear = startYear;
+    this.endYear = endYear;
+    this.isLastEducation = isLastEducation;
+    this.doctorId = doctorId;
+    this.educationLevelId = educationLevelId;
+  }
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)

@@ -74,7 +74,7 @@ public class MedicalFacility extends BaseEntity {
   @Column(name = "location_id")
   private Long locationId;
 
-  // @OneToMany(mappedBy = "medicalfacility", cascade = CascadeType.ALL)
-  // @JsonBackReference
-  // private List<DoctorOffice> doctorOffices;
+  @OneToMany(mappedBy = "medicalFacility", cascade = CascadeType.ALL)
+  @JsonBackReference
+  private List<DoctorOffice> doctorOffices;
 }

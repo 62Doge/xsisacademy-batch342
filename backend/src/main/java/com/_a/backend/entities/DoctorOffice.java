@@ -62,6 +62,9 @@ public class DoctorOffice extends BaseEntity{
   @JsonManagedReference
   private ServiceUnit serviceUnit;
 
+  @Column(name = "service_unit_id")
+  private Long serviceUnitId;
+
   @OneToMany(mappedBy = "doctorOffice", cascade = CascadeType.ALL)
   @JsonBackReference
   private List<DoctorOfficeTreatment> doctorOfficeTreatments;
