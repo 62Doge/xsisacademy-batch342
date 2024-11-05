@@ -3,6 +3,7 @@ package com._a.backend.entities;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -37,7 +38,6 @@ public class Location extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id", insertable = false, updatable = false)
-    // @JsonBackReference
     private Location parent;
     
     @Column(name = "parent_id")
@@ -45,7 +45,7 @@ public class Location extends BaseEntity {
     
     @ManyToOne(fetch= FetchType.EAGER)
     @JoinColumn(name = "location_level_id", insertable = false, updatable = false)
-    @JsonBackReference
+    @JsonManagedReference
     private LocationLevel locationLevel;
     
     @Column(name = "location_level_id")

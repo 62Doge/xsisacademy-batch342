@@ -1,6 +1,11 @@
 let locationLevelData = [];
 let locationData = [];
 
+document.addEventListener("DOMContentLoaded", (event) => {
+  loadParent();
+  loadLocationLevel();
+});
+
 $(document).ready(function () {
   loadData();
 
@@ -21,7 +26,6 @@ function loadLocationLevel() {
     contentType: "application/json",
     success: function (locationLevelResponse) {
       locationLevelData = locationLevelResponse.data.content;
-      populateLocationLevelSelect(locationLevelResponse.data.content);
     },
   }).responseText;
 }
@@ -33,71 +37,42 @@ function loadParent() {
     contentType: "application/json",
     success: function (locationResponse) {
       locationData = locationResponse.data.content;
-      populateLocationSelect(locationData);
     },
   }).responseText;
 }
 
-function loadParentByLevel(selectId = null) {
-  let locationLevelName = $("#levelLocationId :selected").text();
+// FIXME:  This function is not correct
+
+function populateParentByLevel(selectId = null) {
+  let locationLevelName = $("#levelLocationId :selected").text().toLowerCase();
   $("#parentId").empty();
   $("#parentId").append(
     `<option value="" selected disabled hidden>Choose here</option>`
   );
-  if (locationLevelName == "Provinsi") {
+  if (locationLevelName === "provinsi") {
     $("#parentId").append(
       `<option value="" selected>Buat Provinsi Baru</option>`
     );
   } else {
     $.each(locationData, function (index, location) {
-      if (
-        locationLevelName === "kota" ||
-        locationLevelName === "kabupaten" ||
-        locationLevelName === "Kota" ||
-        locationLevelName === "Kabupaten"
-      ) {
-        if (location.parent === null) {
-          const isSelected = selectId === location.id ? "selected" : "";
-          $("#parentId").append(
-            `<option value=${location.id} ${isSelected}> ${location.name}</option>`
-          );
-        }
-      } else {
-        let locLevelOne = location.name;
-        let locLevelTwo = "";
-        if (location.parent !== null) {
-          locLevelTwo =
-            location.parent !== null ? ", " + location.parent.name : "";
-        } else {
-          return;
-        }
-        let loc = `${locLevelOne}${locLevelTwo}`;
-        const isSelected = selectId === location.id ? "selected" : "";
-        $("#parentId").append(
-          `<option value=${location.id} ${isSelected}> ${loc}</option>`
-        );
+      let loc = "";
+      let tempLocation = location;
+      while (tempLocation.parent !== null) {
+        loc += `${tempLocation.locationLevel.abbreviation} ${tempLocation.name}, `;
+        tempLocation = tempLocation.parent;
       }
+      loc += `${tempLocation.locationLevel.abbreviation} ${tempLocation.name}`;
+      const isSelected = selectId === location.id ? "selected" : "";
+      const isHidden =
+        (locationLevelName === "kota" || locationLevelName === "kabupaten") &&
+        location.parentId !== null
+          ? "hidden"
+          : "";
+      $("#parentId").append(
+        `<option value=${location.id} ${isSelected} ${isHidden}> ${loc}</option>`
+      );
     });
   }
-}
-
-function populateLocationSelect(locationContent, selectId = null) {
-  $("#parentId").empty();
-  $("#parentId").append(
-    `<option value="" selected disabled hidden>Choose here</option>`
-  );
-  $.each(locationContent, function (index, location) {
-    let locLevelOne = location.name;
-    let locLevelTwo = "";
-    if (location.parent !== null) {
-      locLevelTwo = location.parent !== null ? ", " + location.parent.name : "";
-    }
-    let loc = `${locLevelOne}${locLevelTwo}`;
-    const isSelected = selectId === location.id ? "selected" : "";
-    $("#parentId").append(
-      `<option value=${location.id} ${isSelected}> ${loc}</option>`
-    );
-  });
 }
 
 function populateLocationLevelSelect(locationLevelContent, selectId = null) {
@@ -121,29 +96,19 @@ function searchLocation(name) {
     contentType: "application/json",
     success: function (response) {
       console.log(response);
-      let locationData = response.data;
+      let locationData = response.data.content;
       let tableData = ``;
 
       locationData.forEach((location) => {
         let locLevelOne = "";
-        let locLevelTwo = "";
         if (location.parent !== null) {
-          locLevelOne = location.parent.name;
-          locLevelTwo =
-            location.parent.parent !== null
-              ? ", " + location.parent.parent.name
-              : "";
-        }
-        let loc = `${locLevelOne}${locLevelTwo}`;
-        console.log(location.parent);
-        if (location.parent !== null) {
-          console.log(location.parent.parent);
+          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
         }
         tableData += `
                   <tr>
                     <td>${location.name}</td>
                     <td>${location.locationLevel.name}</td>
-                    <td>${loc}</td>
+                    <td>${locLevelOne}</td>
                     <td>
                         <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
                             <span class="tf-icons bx bxs-edit"></span>
@@ -177,24 +142,14 @@ function loadData() {
 
       locationData.forEach((location, index) => {
         let locLevelOne = "";
-        let locLevelTwo = "";
         if (location.parent !== null) {
-          locLevelOne = location.parent.name;
-          locLevelTwo =
-            location.parent.parent !== null
-              ? ", " + location.parent.parent.name
-              : "";
-        }
-        let loc = `${locLevelOne}${locLevelTwo}`;
-        console.log(location.parent);
-        if (location.parent !== null) {
-          console.log(location.parent.parent);
+          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
         }
         tableData += `
                   <tr>
                     <td>${location.name}</td>
                     <td>${location.locationLevel.name}</td>
-                    <td>${loc}</td>
+                    <td>${locLevelOne}</td>
                     <td>
                         <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
                             <span class="tf-icons bx bxs-edit"></span>
@@ -221,6 +176,7 @@ function openAddForm() {
     url: "/location/addForm",
     contentType: "html",
     success: function (addForm) {
+      $("#baseModalBody").empty();
       $("#baseModal").modal("show");
       $("#baseModalTitle").html(`<strong>Tambah Lokasi</strong>`);
       $("#baseModalBody").append(addForm);
@@ -240,8 +196,7 @@ function openAddForm() {
             form.reportValidity();
           }
         });
-      loadLocationLevel();
-      loadParent();
+      populateLocationLevelSelect(locationLevelData);
     },
   });
 }
@@ -266,7 +221,9 @@ function saveLocation() {
       location.reload();
     },
     error: function (error) {
-      console.error(error);
+      if (error.status === 409)
+        alert("Failed to save location: location already exist");
+      console.error("Failed to save location: ", error);
     },
   });
 }
@@ -285,21 +242,35 @@ function openEditForm(id) {
         url: "/location/editForm",
         contentType: "html",
         success: function (editForm) {
+          $("#baseModalBody").empty();
           $("#baseModal").modal("show");
           $("#baseModalTitle").html(`<strong>Edit Lokasi</strong>`);
-          $("#baseModalBody").html(editForm);
-
+          $("#baseModalBody").append(editForm);
           $("#locationName").val(location.name);
-          $("#levelLocationId").val(location.locationLevelId);
 
           $("#baseModalFooter").html(`
                         <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
                             Batal
                         </button>
-                        <button onclick="updateLocation(${id})" type="button" class="btn btn-primary">
+                        <button id="updateLocationBtn" type="button" class="btn btn-primary">
                             Simpan
                         </button>
                     `);
+          document
+            .getElementById("updateLocationBtn")
+            .addEventListener("click", function () {
+              const form = document.getElementById("locationForm");
+              if (form.checkValidity()) {
+                updateLocation(id);
+              } else {
+                form.reportValidity();
+              }
+            });
+          populateLocationLevelSelect(
+            locationLevelData,
+            location.locationLevelId
+          );
+          populateParentByLevel(location.parentId);
         },
       });
     },
@@ -375,7 +346,13 @@ function deleteLocation(id) {
       loadData();
     },
     error: function (error) {
-      console.error("Failed to delete location:", error);
+      if (error.status === 409) {
+        alert("Failed to delete: Location is used!");
+      }
+      console.error(
+        "Failed to delete location: location is used",
+        error.status
+      );
     },
   });
 }

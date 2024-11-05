@@ -72,11 +72,14 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
                 .map(location -> modelMapper.map(location, LocationResponseDTO.class));
     }
 
-    public List<LocationResponseDTO> findByName(String name) {
-        List<Location> locations = locationRepository
-                .findByNameContainingIgnoreCaseAndIsDeleteFalse(name);
-        List<LocationResponseDTO> locationResponseDTOS = locations.stream().map(
-                location -> modelMapper.map(location, LocationResponseDTO.class)).toList();
+    public Page<LocationResponseDTO> getByName(int pageNo, int pageSize, String sortBy, String sortDirection, String name) {
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Location> locations = locationRepository.findByNameContainingIgnoreCaseAndIsDeleteFalse(pageable, name);
+        Page<LocationResponseDTO> locationResponseDTOS =
+                locations.map(location -> modelMapper.map(location, LocationResponseDTO.class));
         return locationResponseDTOS;
     }
 
