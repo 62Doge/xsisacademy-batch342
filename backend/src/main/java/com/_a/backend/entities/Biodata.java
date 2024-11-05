@@ -1,7 +1,5 @@
 package com._a.backend.entities;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.CascadeType;
