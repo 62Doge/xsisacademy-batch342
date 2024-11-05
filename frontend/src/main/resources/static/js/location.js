@@ -6,6 +6,7 @@ let sortBy = "id";
 let sortDir = "asc";
 let totalPages;
 let currentSearchQuery;
+let currentLocationLevelId;
 
 document.addEventListener("DOMContentLoaded", (event) => {
   loadParent();
@@ -184,6 +185,8 @@ function moveToPage(pageNumber) {
   currentPage = pageNumber;
   if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+  } else if (currentLocationLevelId) {
+    getLocationByLevel(currentLocationLevelId);
   } else {
     loadData();
   }
@@ -195,6 +198,8 @@ function nextPage() {
   }
   if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+  } else if (currentLocationLevelId) {
+    getLocationByLevel(currentLocationLevelId);
   } else {
     loadData();
   }
@@ -206,6 +211,8 @@ function previousPage() {
   }
   if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+  } else if (currentLocationLevelId) {
+    getLocationByLevel(currentLocationLevelId);
   } else {
     loadData();
   }
@@ -215,6 +222,8 @@ function setPageSize(query) {
   pageSize = query;
   if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+  } else if (currentLocationLevelId) {
+    getLocationByLevel(currentLocationLevelId);
   } else {
     loadData();
   }
@@ -225,6 +234,8 @@ function setPageOrder() {
   sortDir = $('input[name="orderTypeRadio"]:checked').val();
   if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+  } else if (currentLocationLevelId) {
+    getLocationByLevel(currentLocationLevelId);
   } else {
     loadData();
   }
@@ -235,9 +246,59 @@ function customPageSize() {
   pageSize = query;
   if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+  } else if (currentLocationLevelId) {
+    getLocationByLevel(currentLocationLevelId);
   } else {
     loadData();
   }
+}
+
+function getLocationByLevel(locationLevelId) {
+  currentLocationLevelId = locationLevelId;
+  $.ajax({
+    type: "GET",
+    url: `http://localhost:9001/api/admin/location/level/${locationLevelId}?pageNo=${
+      currentPage - 1
+    }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
+    contentType: "application/json",
+    success: function (response) {
+      let locationData = response.data.content;
+      totalPages = response.data.metadata.totalPages;
+
+      let tableData = ``;
+      locationData.forEach((location) => {
+        let locLevelOne = "";
+        if (location.parent !== null) {
+          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
+        }
+        tableData += `
+                  <tr>
+                    <td>${location.name}</td>
+                    <td>${location.locationLevel.name}</td>
+                    <td>${locLevelOne}</td>
+                    <td>
+                        <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
+                            <span class="tf-icons bx bxs-edit"></span>
+                        </button>
+                        <button onclick="openDeleteModal(${location.id})" type="button" class="btn btn-icon btn-outline-danger">
+                            <span class="tf-icons bx bxs-trash"></span>
+                        </button>
+                    </td>
+                  </tr>
+                `;
+      });
+
+      $("#location-table").html(tableData);
+      pageButtons();
+      if (currentPage > totalPages) {
+        if (totalPages !== 0) moveToPage(totalPages);
+      }
+    },
+    error: function (error) {
+      alert("Failed to load locations by location level!");
+      console.error("Error loading locations by location level:", error);
+    },
+  });
 }
 
 function loadLocationLevel() {
@@ -247,6 +308,7 @@ function loadLocationLevel() {
     contentType: "application/json",
     success: function (locationLevelResponse) {
       locationLevelData = locationLevelResponse.data.content;
+      populateLocationLevelDropdown();
     },
   }).responseText;
 }
@@ -263,6 +325,7 @@ function loadParent() {
 }
 
 function loadData() {
+  currentLocationLevelId = null;
   let tableData = ``;
   $.ajax({
     type: "get",
@@ -365,6 +428,55 @@ function populateLocationLevelSelect(locationLevelContent, selectId = null) {
     );
   });
 }
+
+// Function to populate the dropdown menu
+function populateLocationLevelDropdown() {
+  console.log(locationLevelData);
+  const dropdown = document.getElementById("location-level-dropdown");
+  dropdown.innerHTML = ""; // Clear any existing content
+
+  // Create a form to wrap radio button items (optional, for better grouping)
+  const form = document.createElement("form");
+
+  // Add the "None" option with a radio button
+  const noneItem = document.createElement("li");
+  const noneLabel = document.createElement("label");
+  noneLabel.className = "dropdown-item d-flex align-items-center";
+
+  const noneRadio = document.createElement("input");
+  noneRadio.type = "radio";
+  noneRadio.name = "locationLevel";
+  noneRadio.value = "none";
+  noneRadio.onclick = function() { loadData(); }; // Reset function on click
+  noneRadio.className = "me-2";
+
+  noneLabel.appendChild(noneRadio);
+  noneLabel.appendChild(document.createTextNode("None"));
+  noneItem.appendChild(noneLabel);
+  form.appendChild(noneItem);
+
+  // Add the location level items dynamically with radio buttons
+  locationLevelData.forEach((level) => {
+    const listItem = document.createElement("li");
+    const label = document.createElement("label");
+    label.className = "dropdown-item d-flex align-items-center";
+
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "locationLevel";
+    radio.value = level.id;
+    radio.onclick = function() { getLocationByLevel(level.id); };
+    radio.className = "me-2"; // Adds some margin to the right
+
+    label.appendChild(radio);
+    label.appendChild(document.createTextNode(level.name));
+    listItem.appendChild(label);
+    form.appendChild(listItem);
+  });
+
+  dropdown.appendChild(form);
+}
+
 
 function openAddForm() {
   $.ajax({

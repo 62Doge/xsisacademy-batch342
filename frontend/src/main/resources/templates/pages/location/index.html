@@ -22,7 +22,7 @@
                     </div>
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                                aria-expanded="true" data-bs-auto-close="outside">
+                            aria-expanded="true" data-bs-auto-close="outside">
                             Urutkan Data
                         </button>
                         <ul class="dropdown-menu">
@@ -31,7 +31,8 @@
                             </li>
                             <li>
                                 <label class="dropdown-item w-100">
-                                    <input type="radio" class="form-check-input me-2" name="orderColumnRadio" id="locationNameCheckbox" value="name">
+                                    <input type="radio" class="form-check-input me-2" name="orderColumnRadio"
+                                        id="locationNameCheckbox" value="name">
                                     Nama Lokasi
                                 </label>
                             </li>
@@ -40,24 +41,38 @@
                             </li>
                             <li>
                                 <label class="dropdown-item w-100">
-                                    <input type="radio" class="form-check-input me-2" name="orderTypeRadio" id="AZOrderCheckbox" value="ASC">
+                                    <input type="radio" class="form-check-input me-2" name="orderTypeRadio"
+                                        id="AZOrderCheckbox" value="ASC">
                                     A-Z
                                 </label>
                             </li>
                             <li>
                                 <label class="dropdown-item w-100">
-                                    <input type="radio" class="form-check-input me-2" name="orderTypeRadio" id="ZAOrderCheckbox" value="DESC">
+                                    <input type="radio" class="form-check-input me-2" name="orderTypeRadio"
+                                        id="ZAOrderCheckbox" value="DESC">
                                     Z-A
                                 </label>
                             </li>
                             <li>
                                 <div class="w-100 text-center p-2">
-                                    <button type="button" class="btn btn-primary mt-2 w-100" onclick="setPageOrder()">Terapkan</button>
+                                    <button type="button" class="btn btn-primary mt-2 w-100"
+                                        onclick="setPageOrder()">Terapkan</button>
                                 </div>
                             </li>
                         </ul>
                     </div>
-                    
+
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                            aria-expanded="true" data-bs-auto-close="outside">
+                            Filter by Location Level
+                        </button>
+                        <ul class="dropdown-menu" id="location-level-dropdown">
+                            
+                        </ul>
+                    </div>
+
+
                     <div class="btn-group me-2">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
                             aria-expanded="true" data-bs-auto-close="outside">
