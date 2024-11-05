@@ -98,9 +98,6 @@
             $("#walletBalance").text(formatRupiah(balance));
           },
           error(response) {
-            console.log("error");
-            console.log(response);
-
             $("#errorModal").modal("show");
           },
         });
@@ -109,6 +106,7 @@
       renderBalance();
 
       function renderNominalWithdraw() {
+        $(".nominal-list").html("");
         const uniqueNominals = new Set();
 
         const customNominalRequest = $.ajax({
@@ -131,8 +129,6 @@
             });
           },
           error: function (response) {
-            console.log("error");
-            console.log(response.responseJSON.message);
             $("#errorModal").modal("show");
           },
         });
@@ -157,8 +153,6 @@
             });
           },
           error: function (response) {
-            console.log("error");
-            console.log(response.responseJSON.message);
             $("#errorModal").modal("show");
           },
         });
@@ -227,7 +221,6 @@
           resetRequestData();
           requestData.nominal.amount = customNominal;
           requestData.nominal.type = "custom";
-          console.log(requestData);
           $("#amount").text(`Rp ${formatRupiah(customNominal)}`);
           $("#withdraw-info").show();
         }
@@ -357,6 +350,9 @@
                 <div/>
                 `;
               setModal(title, body);
+              renderBalance();
+              renderNominalWithdraw();
+              console.log("withdraw");
 
               $("#baseModal").modal("show");
               $("#amount").text("");
