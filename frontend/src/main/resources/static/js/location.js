@@ -517,7 +517,7 @@ function openDeleteModal(id) {
       $("#baseModalTitle").html(`<strong>Hapus Lokasi</strong>`);
       $("#baseModalBody").html(`
                 <div>
-                    Anda akan menghapus <span id="locationName">${location.name}</span>?
+                    Anda yakin akan menghapus Lokasi <span id="locationName">'${location.name}'</span>?
                 </div>
             `);
 
@@ -531,7 +531,7 @@ function openDeleteModal(id) {
             `);
     },
     error: function (error) {
-      alert("Failed to load location data for deleteion!");
+      alert("Failed to load location data for deletion!");
       console.error("Failed to load location data for deletion:", error);
     },
   });
@@ -548,6 +548,20 @@ function deleteLocation(id) {
     error: function (error) {
       if (error.status === 409) {
         alert("Failed to delete: Location is used!");
+        $("#baseModal").modal("show");
+        $("#baseModalTitle").html(`<strong>Hapus Lokasi</strong>`);
+        $("#baseModalBody").html(`
+                  <div style="text-align: center;">
+                      Tidak dapat menghapus Lokasi '<span id="locationName">Pasar Minggu</span>'
+                      <br>
+                      Lokasi tersebut masih digunakan
+                  </div>
+              `);
+        $("#baseModalFooter").html(`
+                  <button data-bs-dismiss="modal" type="button" class="btn btn-primary">
+                      Kembali
+                  </button>
+              `);
       }
       console.error(
         "Failed to delete location: location is used",
