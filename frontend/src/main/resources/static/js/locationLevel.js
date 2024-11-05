@@ -1,87 +1,223 @@
-$(document).ready(function() {
-    loadData();
+let currentPage = 1;
+let pageSize = 5;
+let sortBy = 'id';
+let sortDir = 'asc';
+let totalPages;
+let currentSearchQuery;
 
-    $('#searchLocationLevel').on('input', function() {
-        const searchQuery = $(this).val();
+$(document).ready(function () {
+    loadData();
+    $('#searchLocationLevel').on('input', function () {
+        let searchQuery = $(this).val();
+        currentSearchQuery = searchQuery;
         if (searchQuery) {
             searchLocationLevel(searchQuery);
         } else {
+            $('#location-level-table').empty();
             loadData();
         }
     });
+})
 
-});
-
-function searchLocationLevel(name) {
+function searchLocationLevel(query) {
     $.ajax({
-        type: "GET",
-        url: `http://localhost:9001/api/admin/location-level/name/${name}`,
+        type: "get",
+        url: `http://localhost:9001/api/admin/location-level/name/${query}?pageNo=${currentPage-1}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
         contentType: "application/json",
-        success: function(response) {
-            console.log(response);
-            let locationLevelData = response.data;
-            let tableData = ``;
+        success: function (response) {
+            let locationLevelData = response.data.content;
+            totalPages = response.data.metadata.totalPages;
 
+
+            let tableData = ``;
             locationLevelData.forEach(locationLevel => {
                 tableData += `
-                  <tr>
-                    <td>${locationLevel.name}</td>
-                    <td>${locationLevel.abbreviation}</td>
-                    <td>
-                        <button onclick="openEditForm(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-warning">
-                            <span class="tf-icons bx bxs-edit"></span>
-                        </button>
-                        <button onclick="openDeleteModal(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-danger">
-                            <span class="tf-icons bx bxs-trash"></span>
-                        </button>
-                    </td>
-                  </tr>
-                `;
+                    <tr>
+                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>${locationLevel.name}</strong></td>
+                        <td>${locationLevel.abbreviation}</td>
+                        <td>
+                            <button onclick="openEditForm(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-warning">
+                                <span class="tf-icons bx bxs-edit"></span>
+                            </button>
+                            <button onclick="openDeleteModal(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-danger">
+                                <span class="tf-icons bx bxs-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                `
             });
-
             $('#location-level-table').html(tableData);
+
+            // show pages
+            $('#pageList').empty();
+            $('#pageList').append(`
+                <li class="page-item prev" id="previousPageControl">
+                    <a class="page-link" href="javascript:previousPage();"><i class='bx bx-chevron-left'></i></a>
+                </li>
+            `);
+
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (pageNum == currentPage) {
+                    $('#pageList').append(`
+                        <li class="page-item active">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                } else {
+                    $('#pageList').append(`
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                }
+            }
+
+            $('#pageList').append(`
+                <li class="page-item next" id="nextPageControl">
+                    <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
+                </li>
+            `);
+
+            // dropdown button default value
+            $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
+            $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
         },
-        error: function(error) {
-            console.error("Error searching location levels:", error);
+        error: function (error) {
+            console.log("Error searching Location Level: ", error);
         }
     });
 }
 
 
 function loadData() {
-    let tableData = ``;
     $.ajax({
         type: "get",
-        url: "http://localhost:9001/api/admin/location-level?pageNo=0",
+        url: `http://localhost:9001/api/admin/location-level?pageNo=${currentPage-1}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
         contentType: "application/json",
-        success: function (locationLevelResponse) {
-            console.log(locationLevelResponse);
-            // fixed routing to get content in Paging
-            let locationLevelData = locationLevelResponse.data.content;
+        success: function (response) {
+            let locationLevelData = response.data.content;
+            totalPages = response.data.metadata.totalPages;
 
-            locationLevelData.forEach((locationLevel, index) => {
-                tableData += `
-                  <tr>
-                    <td>${locationLevel.name}</td>
-                    <td>${locationLevel.abbreviation}</td>
-                    <td>
-                        <button onclick="openEditForm(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-warning">
-                            <span class="tf-icons bx bxs-edit"></span>
-                        </button>
-                        <button onclick="openDeleteModal(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-danger">
-                            <span class="tf-icons bx bxs-trash"></span>
-                        </button>
-                    </td>
-                  </tr>
-                `;
+            $('#location-level-table').empty();
+
+            locationLevelData.forEach(locationLevel => {
+                $('#location-level-table').append(`
+                    <tr>
+                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>${locationLevel.name}</strong></td>
+                        <td>${locationLevel.abbreviation}</td>
+                        <td>
+                            <button onclick="openEditForm(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-warning">
+                                <span class="tf-icons bx bxs-edit"></span>
+                            </button>
+                            <button onclick="openDeleteModal(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-danger">
+                                <span class="tf-icons bx bxs-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                `);
             });
 
-            $('#location-level-table').html(tableData);
+            // show pages
+            $('#pageList').empty();
+            $('#pageList').append(`
+                <li class="page-item prev" id="previousPageControl">
+                    <a class="page-link" href="javascript:previousPage();"><i class='bx bx-chevron-left'></i></a>
+                </li>
+            `);
+
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (pageNum == currentPage) {
+                    $('#pageList').append(`
+                        <li class="page-item active">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                    console.log(pageNum);
+                } else {
+                    $('#pageList').append(`
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                }
+            }
+
+            $('#pageList').append(`
+                <li class="page-item next" id="nextPageControl">
+                    <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
+                </li>
+            `);
+
+            // dropdown button default value
+            $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
+            $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
         },
-        error: function (xhr, status, error) {
-            console.error("Error loading data:", error);
+        error: function (error) {
+            console.log(error);
         }
     });
+}
+
+function moveToPage(pageNumber) {
+    currentPage = pageNumber;
+    if (currentSearchQuery) {
+        searchLocationLevel(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function nextPage() {
+    if (currentPage + 1 <= totalPages) {
+        currentPage++;
+    }
+    if (currentSearchQuery) {
+        searchLocationLevel(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+
+function previousPage() {
+    if (currentPage - 1 >= 0) {
+        currentPage--;
+    }
+    if (currentSearchQuery) {
+        searchLocationLevel(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function setPageSize(query) {
+    pageSize = query;
+    if (currentSearchQuery) {
+        searchLocationLevel(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function setPageOrder() {
+    sortBy = $('input[name="orderColumnRadio"]:checked').val();
+    sortDir = $('input[name="orderTypeRadio"]:checked').val();
+    if (currentSearchQuery) {
+        searchLocationLevel(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function customPageSize() {
+    let query = $('#pageSizeInput').val();
+    console.log(query);
+    pageSize = query;
+    if (currentSearchQuery) {
+        searchLocationLevel(currentSearchQuery);
+    } else {
+        loadData();
+    }
 }
 
 function openAddForm() {
@@ -97,7 +233,7 @@ function openAddForm() {
                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
                     Batal
                 </button>
-                <button onclick="saveLocationLevel()" id="saveBankBtn" type="button" class="btn btn-primary">Simpan</button>
+                <button onclick="saveLocationLevel()" id="saveLocationLevelBtn" type="button" class="btn btn-primary">Simpan</button>
             `);
         }
     });
@@ -224,7 +360,7 @@ function openDeleteModal(id) {
 function deleteLocationLevel(id) {
     $.ajax({
         type: "DELETE",
-        url: `http://localhost:9001/api/admin/location-level/delete/${id}`,
+        url: `http://localhost:9001/api/admin/location-level/soft-delete/${id}`,
         success: function (response) {
             $('#baseModal').modal('hide');
             loadData();
