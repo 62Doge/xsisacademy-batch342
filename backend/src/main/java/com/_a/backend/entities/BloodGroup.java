@@ -14,11 +14,24 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class BloodGroup extends BaseEntity {
+
+  public BloodGroup() {
+
+  }
+
+  public BloodGroup(String code, String description) {
+    this.code = code;
+    this.description = description;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+  
   @Column(length = 5)
   private String code;
+
   @Column(length = 255)
   private String description;
+
 }
