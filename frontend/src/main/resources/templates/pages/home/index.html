@@ -12,14 +12,16 @@
       </script>
     </th:block>
 
-    <div layout:fragment="content">
-      <h1 class="text-center">Hello world</h1>
+    <div layout:fragment="content" class="container mt-5">
+      <div class="row row-cols-1 row-cols-md-3 g-4" id="menuContainer">
+        
+        <!-- Add more cards as needed -->
+      </div>
     </div>
 
     <th:block layout:fragment="pageBottom">
-      <script>
-        console.log("js/css at end body");
-      </script>
+      <script src="js/home.js"></script>
     </th:block>
+    
   </body>
 </html>

@@ -9,4 +9,7 @@ public class MenuRequestDTO {
     private Long parentId;
     private String bigIcon;
     private String smallIcon;
+    private Long createdBy;
+    private Long ModifiedBy;
+    private Long deletedBy;
 }

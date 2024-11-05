@@ -15,7 +15,15 @@ public class ApiResponse<T> {
         return new ApiResponse<>(status, "success", data);
     }
 
+    public static <T> ApiResponse<T> success(int status, String message, T data) {
+        return new ApiResponse<>(status, message, data);
+    }
+
     public static <T> ApiResponse<Exception> error(int status, Exception e) {
         return new ApiResponse<>(status, "error", e);
+    }
+
+    public static <T> ApiResponse<Exception> error(int status, String message, Exception e) {
+        return new ApiResponse<>(status, message, e);
     }
 }
