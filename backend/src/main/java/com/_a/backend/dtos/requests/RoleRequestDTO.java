@@ -6,4 +6,5 @@ import lombok.Data;
 public class RoleRequestDTO {
     private String name;
     private String code;
+    private Long createdBy;
 }

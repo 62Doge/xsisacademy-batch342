@@ -1,5 +1,6 @@
 package com._a.backend.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -69,12 +70,45 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
     @Override
     public RoleResponseDTO update(RoleRequestDTO roleRequestDTO, Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Location Level not found"));
+                .orElseThrow(() -> new RuntimeException("Role not found"));
 
         modelMapper.map(roleRequestDTO, role);
         Role updatedRole = roleRepository.save(role);
 
         return modelMapper.map(updatedRole, RoleResponseDTO.class);
+    }
+
+    public Page<RoleResponseDTO> getByName(int pageNo, int pageSize, String sortBy, String sortDirection,
+            String name) {
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Role> roles = roleRepository
+                .findByNameContainingIgnoreCaseAndIsDeleteFalse(pageable, name);
+        Page<RoleResponseDTO> roleResponseDTOS = roles
+                .map(role -> modelMapper.map(role, RoleResponseDTO.class));
+        return roleResponseDTOS;
+    }
+
+    public void softDeleteRole(Long id) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+
+        boolean hasActiveUsers = role.getUsers().stream()
+                .anyMatch(location -> !location.getIsDelete());
+
+        boolean hasActiveMenuRoles = role.getMenuRoles().stream()
+                .anyMatch(location -> !location.getIsDelete());
+
+        if (hasActiveUsers || hasActiveMenuRoles) {
+            throw new IllegalStateException("Cannot delete role: active role found.");
+        }
+
+        role.setIsDelete(true);
+        // role.setDeletedBy(userId);
+        role.setDeletedOn(LocalDateTime.now());
+        roleRepository.save(role);
     }
 
 }
