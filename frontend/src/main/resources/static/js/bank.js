@@ -3,11 +3,13 @@ let pageSize = 5;
 let sortBy = 'name';
 let sortDir = 'ASC';
 let totalPages;
+let currentSearchQuery;
 
 $(document).ready(function () {
     loadData();
     $('#searchBankInput').on('input', function () {
-        const searchQuery = $(this).val();
+        let searchQuery = $(this).val();
+        currentSearchQuery = searchQuery;
         if (searchQuery) {
             searchBank(searchQuery);
         } else {
@@ -156,39 +158,63 @@ function loadData() {
 
 function moveToPage(pageNumber) {
     currentPage = pageNumber;
-    loadData();
+    if (currentSearchQuery) {
+        searchBank(currentSearchQuery);
+    } else {
+        loadData();
+    }
 }
 
 function nextPage() {
     if (currentPage + 1 <= totalPages) {
         currentPage++;
     }
-    loadData();
+    if (currentSearchQuery) {
+        searchBank(currentSearchQuery);
+    } else {
+        loadData();
+    }
 }
 
 function previousPage() {
     if (currentPage - 1 >= 0) {
         currentPage--;
     }
-    loadData();
+    if (currentSearchQuery) {
+        searchBank(currentSearchQuery);
+    } else {
+        loadData();
+    }
 }
 
 function setPageSize(query) {
     pageSize = query;
-    loadData();
+    if (currentSearchQuery) {
+        searchBank(currentSearchQuery);
+    } else {
+        loadData();
+    }
 }
 
 function setPageOrder() {
     sortBy = $('input[name="orderColumnRadio"]:checked').val();
     sortDir = $('input[name="orderTypeRadio"]:checked').val();
-    loadData();
+    if (currentSearchQuery) {
+        searchBank(currentSearchQuery);
+    } else {
+        loadData();
+    }
 }
 
 function customPageSize() {
     let query = $('#pageSizeInput').val();
     console.log(query);
     pageSize = query;
-    loadData();
+    if (currentSearchQuery) {
+        searchBank(currentSearchQuery);
+    } else {
+        loadData();
+    }
 }
 
 function openAddForm() {
