@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com._a.backend.entities.Menu;
 
@@ -16,4 +18,11 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
     Page<Menu> findAllByIsDeleteFalse(Pageable pageable);
 
     List<Menu> findAllByIsDeleteFalse();
+
+    @Query("SELECT m FROM Menu m " +
+            "LEFT JOIN MenuRole mr ON m.id = mr.menuId " +
+            "WHERE (mr.roleId = :roleId OR mr.roleId = -1) " +
+            "AND m.isDelete = false AND (mr.isDelete = false OR mr.roleId = -1)")
+    List<Menu> findMenusByRoleOrUniversalAccess(@Param("roleId") Long roleId);
+
 }

@@ -77,4 +77,10 @@ public class MenuServiceImpl implements Services<MenuRequestDTO, MenuResponseDTO
         return modelMapper.map(updatedMenu, MenuResponseDTO.class);
     }
 
+    @Transactional
+    public List<MenuResponseDTO> getMenuByRoleId(Long roleId) {
+        return menuRepository.findMenusByRoleOrUniversalAccess(roleId).stream()
+                .map(menu -> modelMapper.map(menu, MenuResponseDTO.class))
+                .collect(Collectors.toList());
+    }
 }

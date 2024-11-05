@@ -16,4 +16,6 @@ public interface MenuRoleRepository extends JpaRepository<MenuRole, Long> {
     Page<MenuRole> findAllByIsDeleteFalse(Pageable pageable);
 
     List<MenuRole> findAllByIsDeleteFalse();
+
+    List<MenuRole> findByRoleId(Long roleId);
 }

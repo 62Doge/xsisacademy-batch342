@@ -35,9 +35,9 @@ public class MenuController {
 
     @GetMapping("")
     public ResponseEntity<?> findAllMenus() {
-        List<MenuResponseDTO> menuResponseDTOS = menuService.findAll();
+        List<MenuResponseDTO> menuResponseDTOs = menuService.findAll();
         return ResponseEntity
-                .ok(ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), menuResponseDTOS));
+                .ok(ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), menuResponseDTOs));
 
     }
 
@@ -97,6 +97,12 @@ public class MenuController {
         ApiResponse<MenuResponseDTO> successResponse = new ApiResponse<>(HttpStatus.NO_CONTENT.value(),
                 "Menu deleted", null);
         return ResponseEntity.ok(successResponse);
+    }
+
+    @GetMapping("/role/{roleId}")
+    public ResponseEntity<?> getMenuByRoleId(@PathVariable Long roleId) {
+        List<MenuResponseDTO> menuResponseDTOs = menuService.getMenuByRoleId(roleId);
+        return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),menuResponseDTOs));
     }
 
 }

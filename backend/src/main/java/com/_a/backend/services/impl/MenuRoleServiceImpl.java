@@ -1,7 +1,9 @@
 package com._a.backend.services.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -75,6 +77,42 @@ public class MenuRoleServiceImpl implements Services<MenuRoleRequestDTO, MenuRol
         MenuRole updatedMenuRole = menuRoleRepository.save(menuRole);
 
         return modelMapper.map(updatedMenuRole, MenuRoleResponseDTO.class);
+    }
+
+    @Transactional
+    public void updateMenuAccessForRole(Long roleId, List<Long> selectedMenuIds) {
+        // Step 1: Retrieve existing MenuRole records for this roleId
+        List<MenuRole> existingMenuRoles = menuRoleRepository.findByRoleId(roleId);
+
+        // Step 2: Separate the existing menu IDs into two categories: selected and
+        // unselected
+        Set<Long> selectedMenuIdSet = new HashSet<>(selectedMenuIds);
+        Set<Long> existingMenuIds = existingMenuRoles.stream()
+                .map(MenuRole::getMenuId)
+                .collect(Collectors.toSet());
+
+        // Step 3: Iterate over existing records and update `isDelete` based on
+        // selection
+        for (MenuRole menuRole : existingMenuRoles) {
+            if (selectedMenuIdSet.contains(menuRole.getMenuId())) {
+                menuRole.setIsDelete(false); // Grant access
+            } else {
+                menuRole.setIsDelete(true); // Revoke access
+            }
+            menuRoleRepository.save(menuRole);
+        }
+
+        // Step 4: Insert new MenuRole records for selected menus that don’t exist in
+        // current records
+        for (Long menuId : selectedMenuIds) {
+            if (!existingMenuIds.contains(menuId)) {
+                MenuRole newMenuRole = new MenuRole();
+                newMenuRole.setRoleId(roleId);
+                newMenuRole.setMenuId(menuId);
+                newMenuRole.setIsDelete(false);
+                menuRoleRepository.save(newMenuRole);
+            }
+        }
     }
 
 }
