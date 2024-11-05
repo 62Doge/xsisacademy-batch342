@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Table(name = "t_current_doctor_specialization,")
+@Table(name = "t_current_doctor_specialization")
 public class CurrentDoctorSpecialization extends BaseEntity {
   
   @Id
