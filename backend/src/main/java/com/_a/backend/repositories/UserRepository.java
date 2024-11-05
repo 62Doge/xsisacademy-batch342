@@ -14,9 +14,9 @@ import com._a.backend.entities.User;
 public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findByEmail(String email);
 
-  Boolean existsByName(String name);
+  Boolean existsByEmail(String email);
 
-  Page<User> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
+  Page<User> findByEmailContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String email);
 
   Page<User> findAllByIsDeleteFalse(Pageable pageable);
 

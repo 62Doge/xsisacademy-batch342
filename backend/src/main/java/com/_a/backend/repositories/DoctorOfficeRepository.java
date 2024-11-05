@@ -15,9 +15,9 @@ public interface DoctorOfficeRepository extends JpaRepository<DoctorOffice, Long
   @Query(value = "SELECT * FROM t_doctor_office WHERE is_delete = false AND doctor_id = ?1 ORDER BY start_date DESC", nativeQuery = true)
   List<DoctorOffice> findByDoctorId(Long doctorId);
 
-  Boolean existsByName(String name);
+  Boolean existsBySpecialization(String specialization);
 
-  Page<DoctorOffice> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
+  Page<DoctorOffice> findBySpecializationContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String specialization);
 
   Page<DoctorOffice> findAllByIsDeleteFalse(Pageable pageable);
 

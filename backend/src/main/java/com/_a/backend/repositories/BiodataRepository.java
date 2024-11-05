@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com._a.backend.entities.Biodata;
 
 public interface BiodataRepository extends JpaRepository<Biodata, Long> {
-    Boolean existsByName(String name);
+    Boolean existsByFullname(String fullname);
 
-    Page<Biodata> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
+    Page<Biodata> findByFullnameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String fullname);
 
     Page<Biodata> findAllByIsDeleteFalse(Pageable pageable);
 

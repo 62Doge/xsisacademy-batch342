@@ -18,9 +18,9 @@ public interface DoctorEducationRepository extends JpaRepository<DoctorEducation
   @Query(value = "SELECT * FROM m_doctor_education WHERE is_delete = false AND doctor_id = ?1", nativeQuery = true)
   List<DoctorEducation> findByDoctorId(Long doctorId);
 
-  Boolean existsByName(String name);
+  // Boolean existsByName(String name);
 
-  Page<DoctorEducation> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
+  // Page<DoctorEducation> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
 
   Page<DoctorEducation> findAllByIsDeleteFalse(Pageable pageable);
 

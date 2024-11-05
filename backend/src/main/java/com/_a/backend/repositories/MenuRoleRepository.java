@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com._a.backend.entities.MenuRole;
 
 public interface MenuRoleRepository extends JpaRepository<MenuRole, Long> {
-    Boolean existsByName(String name);
+    Boolean existsByMenuId(Long menuId);
 
-    Page<MenuRole> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
+    Page<MenuRole> findByMenuIdContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, Long menuId);
 
     Page<MenuRole> findAllByIsDeleteFalse(Pageable pageable);
 
