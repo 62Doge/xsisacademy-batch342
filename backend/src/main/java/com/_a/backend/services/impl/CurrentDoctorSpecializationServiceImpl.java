@@ -1,14 +1,11 @@
 package com._a.backend.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.CurrentDoctorSpecializationRequestDTO;
@@ -84,7 +81,7 @@ public class CurrentDoctorSpecializationServiceImpl
         currentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
     return currentDoctorSpecializationResponseDTO;
   }
-
+  
   @Override
   public CurrentDoctorSpecializationResponseDTO update(
       CurrentDoctorSpecializationRequestDTO currentDoctorSpecializationRequestDTO, Long id) {
@@ -93,8 +90,7 @@ public class CurrentDoctorSpecializationServiceImpl
     if (optionalCurrentDoctorSpecialization.isPresent()) {
       CurrentDoctorSpecialization currentDoctorSpecialization = optionalCurrentDoctorSpecialization.get();
       modelMapper.map(currentDoctorSpecializationRequestDTO, currentDoctorSpecialization);
-      CurrentDoctorSpecialization updatedCurrentDoctorSpecialization = currentDoctorSpecializationRepository
-          .save(currentDoctorSpecialization);
+      CurrentDoctorSpecialization updatedCurrentDoctorSpecialization = currentDoctorSpecializationRepository.save(currentDoctorSpecialization);
       return modelMapper.map(updatedCurrentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
     }
     throw new RuntimeException("Current Doctor Specialization not found");
@@ -104,5 +100,5 @@ public class CurrentDoctorSpecializationServiceImpl
   public void deleteById(Long id) {
     currentDoctorSpecializationRepository.deleteById(id);
   }
-
+  
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" layout:decorate="~{layouts/main-without-search}">
+<html lang="id" layout:decorate="~{layouts/main-without-search-doctor}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,19 +28,29 @@
   <div layout:fragment="content">
     <div class="content-wrapper">
       <div class="container-xxl flex-grow-1 container-p-y">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+              <a href="javascript:void(0);">Beranda</a>
+            </li>
+            <li class="breadcrumb-item active">
+              <a href="http://localhost:9002/doctor-profile">Profil</a>
+            </li>
+          </ol>
+        </nav>
         <div class="row">
           <div class="col-md-4">
             <div class="container-fluid text-center">
               <div id="doctor-image">
 
-              </div>
+              </div><br>
               <!-- <img alt="Profile picture of dr. Tatjana Saphira, Sp.A" height="100" src="https://storage.googleapis.com/a1aa/image/5jC7fzEHSBSSWCUv6TsZvnqOCL8dTlJKisaLYepLxqxAHOsTA.jpg" width="100", style="width: 100px; height: 100px; border-radius: 50%;"> -->
               <div id="doctor-name">
 
               </div>
               <div id="doctor-specialization">
 
-              </div>
+              </div><br>
               <div class="stars" style="color: #FFD700;">
                 <i class='bx bxs-star'></i>
                 <i class='bx bxs-star'></i>
@@ -80,10 +90,10 @@
           <div class="col-md-8">
             <ul class="nav nav-tabs">
               <li class="nav-item" style="user-select: none;">
-                <p class="nav-link active" onclick="showTindakan(event, this)">Tindakan</p>
+                <p class="nav-link" onclick="showSpesialisasi(event, this)">Spesialisasi</p>
               </li>
               <li class="nav-item" style="user-select: none;">
-                <p class="nav-link" onclick="showSpesialisasi(event, this)">Spesialisasi</p>
+                <p class="nav-link active" onclick="showTindakan(event, this)">Tindakan</p>
               </li>
               <li class="nav-item" style="user-select: none;">
                 <p class="nav-link" onclick="showAktifitas(event, this)">Aktifitas</p>
@@ -97,17 +107,15 @@
             </ul>
             
             <div class="tab-content mt-3">
+              
+              <div class="tab-pane fade show" id="spesialisasi">
+                <!-- Konten Spesialisasi -->
+              </div>
 
               <div class="tab-pane fade show active" id="tindakan">
                 <!-- Konten Tindakan -->
                 <h2>Tindakan</h2>
                 <p>Ini adalah konten Tindakan</p>
-              </div>
-
-              <div class="tab-pane fade show" id="spesialisasi">
-                <!-- Konten Spesialisasi -->
-                <h2>Spesialisasi</h2>
-                <p>Ini adalah konten Spesialisasi</p>
               </div>
 
               <div class="tab-pane fade show" id="aktifitas">
@@ -133,6 +141,7 @@
       </div>
     </div>
 
+    <th:block th:replace="~{fragments/BaseModal::modal(class='modal-dialog-centered')}"></th:block>
     <script src="js/doctorProfile.js"></script>
   </div>
 </body>
