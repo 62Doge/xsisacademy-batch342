@@ -1,5 +1,7 @@
 package com._a.backend.repositories;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +13,7 @@ import com._a.backend.entities.CustomerMember;
 public interface CustomerMemberRepository extends JpaRepository<CustomerMember, Long> {
     
     Page<CustomerMember> findAllByIsDeleteFalse(Pageable page);
+
+    List<CustomerMember> findAllByParentBiodataIdAndIsDeleteFalse(Long parentBiodataId);
 
 }

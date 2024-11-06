@@ -1,3 +1,70 @@
+let selectedPatient = [];
+
+$(document).ready(function () {
+    loadData();
+})
+
+function loadData() {
+    $.ajax({
+        type: "get",
+        url: "http://localhost:9001/api/patient",
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response);
+            let patientData = response.data;
+            patientData.forEach(patient => {
+                let patientRelation = "";
+                if (patient.customerRelationId === 1) {
+                    patientRelation += "Diri Sendiri";
+                } else if (patient.customerRelationId === 2) {
+                    patientRelation += "Suami";
+                } else if (patient.customerRelationId === 3) {
+                    patientRelation += "Ibu";
+                } else if (patient.customerRelationId === 4) {
+                    patientRelation += "Anak";
+                }
+                let patientAge = calculateAge(patient.dob);
+                $('#patientTable').append(`
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>${patient.fullName}</strong><br>
+                            ${patientRelation}, ${patientAge} tahun<br>
+                            <span class="text-muted">9 Chat Online, 5 Janji Online</span>
+                        </td>
+                        <td>
+                            <button onclick="openEditForm(${patient.id})" type="button" class="btn btn-icon btn-outline-warning">
+                                <span class="tf-icons bx bxs-edit"></span>
+                            </button>
+                            <button onclick="openDeleteModal(${patient.id})" type="button" class="btn btn-icon btn-outline-danger">
+                                <span class="tf-icons bx bxs-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            });
+        },
+        error:  function (error) {
+            console.log(error);
+        }
+    });
+}
+
+function calculateAge(birthdate) {
+    const today = new Date();
+    const birthDate = new Date(birthdate);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
+
 function openAddForm() {
     $.ajax({
         type: "get",
@@ -13,6 +80,9 @@ function openAddForm() {
                 </button>
                 <button id="savePatientButton" type="button" class="btn btn-primary">Simpan</button>
             `);
+            $('#savePatientButton').on('click', function () {
+                addPatient();
+            });
         },
         error: function (error) {
             console.log(error);
@@ -20,7 +90,115 @@ function openAddForm() {
     });
 }
 
-function openDeleteModal() {
+function addPatient() {
+    let patientJSON = {
+        "fullName": $('#addPatientName').val(),
+        "dob": $('#addPatientBirthday').val(),
+        "gender": $('input[name="addPatientGender"]:checked').val(),
+        "blood": $('#addPatientBlood').val(),
+        "rhesus": $('input[name="addPatientRhesus"]:checked').val(),
+        "relation": $('#addPatientRelation').val()
+    }
+    $.ajax({
+        type: "post",
+        url: "http://localhost:9001/api/patient",
+        data: JSON.stringify(patientJSON),
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response);
+            location.reload();
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
+function openEditForm(id) {
+    $.ajax({
+        type: "get",
+        url: "/patient/editForm",
+        contentType: "html",
+        success: function (editForm) {
+            $('#baseModal').modal('show');
+            $('#baseModalTitle').html(`<strong>Edit Pasien</strong>`);
+            $('#baseModalBody').html(editForm);
+            $('#baseModalFooter').html(`
+                <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+                    Batal
+                </button>
+                <button id="editPatientButton" type="button" class="btn btn-primary">Simpan</button>
+            `);
+            $.ajax({
+                type: "get",
+                url: `http://localhost:9001/api/patient/${id}`,
+                contentType: "application/json",
+                success: function (response) {
+                    console.log(response);
+                    let patient = response.data;
+                    let patientBlood = "";
+                    let patientRelation = "";
+                    if (patient.bloodGroupId === 1) {
+                        patientBlood += "A";
+                    } else if (patient.bloodGroupId === 2) {
+                        patientBlood += "B";
+                    } else if (patient.bloodGroupId === 3) {
+                        patientBlood += "O";
+                    } else if (patient.bloodGroupId === 4) {
+                        patientBlood += "AB";
+                    }
+                    if (patient.customerRelationId === 1) {
+                        patientRelation += "Diri Sendiri"
+                    } else if (patient.customerRelationId === 2) {
+                        patientRelation += "Suami"
+                    } else if (patient.customerRelationId === 3) {
+                        patientRelation += "Istri"
+                    } else if (patient.customerRelationId === 4) {
+                        patientRelation += "Anak"
+                    }
+                    $('#editPatientName').val(patient.fullName);
+                    $('#editPatientBirthday').val(patient.dob);
+                    $(`input[name="editPatientGender"][value="${patient.gender}"]`).prop("checked", true);
+                    $('select[name="editPatientBlood"]').val(patientBlood);
+                    $(`input[name="editPatientRhesus"][value="${patient.rhesus}"]`).prop("checked", true);
+                    $('select[name="editPatientRelation"]').val(patientRelation);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+            $('#editPatientButton').on('click', function () {
+                editPatient(id);
+            });
+        }
+    });
+}
+
+function editPatient(id) {
+    let editPatientJSON = {
+        "fullName": $('#editPatientName').val(),
+        "dob": $('#editPatientBirthday').val(),
+        "gender": $('input[name="editPatientGender"]:checked').val(),
+        "blood": $('#editPatientBlood').val(),
+        "rhesus": $('input[name="editPatientRhesus"]:checked').val(),
+        "relation": $('#editPatientRelation').val()
+    }
+    $.ajax({
+        type: "put",
+        url: `http://localhost:9001/api/patient/${id}`,
+        data: JSON.stringify(editPatientJSON),
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response);
+            location.reload();
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    });
+}
+
+function openDeleteModal(id) {
     $.ajax({
         type: "get",
         url: "/patient/deleteModal",
@@ -35,25 +213,39 @@ function openDeleteModal() {
                 </button>
                 <button id="deletePatientButton" type="button" class="btn btn-primary">Hapus</button>
             `);
+            $.ajax({
+                type: "get",
+                url: `http://localhost:9001/api/patient/${id}`,
+                contentType: "application/json",
+                success: function (response) {
+                    console.log(response);
+                    let patientName = response.data.fullName;
+                    $('#deletedPatientList').append(`
+                        <li>${patientName}</li>
+                    `);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+            $('#deletePatientButton').on('click', function () {
+                deletePatient(id);
+            });
         }
     });
 }
 
-function openEditForm() {
+function deletePatient(id) {
     $.ajax({
-        type: "get",
-        url: "/patient/editForm",
-        contentType: "html",
-        success: function (editForm) {
-            $('#baseModal').modal('show');
-            $('#baseModalTitle').html(`<strong>Edit Pasien</strong>`);
-            $('#baseModalBody').html(editForm);
-            $('#baseModalFooter').html(`
-                <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
-                    Batal
-                </button>
-                <button id="editPatientButton" type="button" class="btn btn-primary">Hapus</button>
-            `);
+        type: "patch",
+        url: `http://localhost:9001/api/customer-member/delete/${id}`,
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response);
+            location.reload();
+        },
+        error: function (error) {
+            console.log(error);
         }
     });
 }

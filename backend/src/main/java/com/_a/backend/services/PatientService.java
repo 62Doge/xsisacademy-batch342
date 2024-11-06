@@ -12,6 +12,6 @@ public interface PatientService<PatientRequestDTO, PatientResponseDTO> {
 
     PatientResponseDTO save(Long parentBiodataId, PatientRequestDTO patientRequestDTO);
 
-    PatientResponseDTO update(Long id, PatientRequestDTO patientRequestDTO);
+    PatientResponseDTO update(Long id, Long parentBiodataId, PatientRequestDTO patientRequestDTO);
 
 }

@@ -1,33 +1,33 @@
 <div class="mb-4">
-    <label for="addPatientName" class="form-label">Nama Lengkap</label>
-    <input type="text" class="form-control" id="addPatientName" placeholder="Nama Lengkap">
+    <label for="editPatientName" class="form-label">Nama Lengkap <span style="color: #ff3e1d;">*</span></label>
+    <input type="text" class="form-control" id="editPatientName" placeholder="Nama Lengkap">
 </div>
 <div class="mb-4">
-    <label for="addPatientBirthday" class="form-label">Tanggal Lahir</label>
-    <input type="date" class="form-control" id="addPatientBirthday">
+    <label for="editPatientBirthday" class="form-label">Tanggal Lahir <span style="color: #ff3e1d;">*</span></label>
+    <input type="date" class="form-control" id="editPatientBirthday">
 </div>
 <div class="mb-4">
     <div class="row">
         <div class="col">
-            <label for="addPatientGender" class="form-label">Jenis Kelamin</label>
+            <label for="editPatientGender" class="form-label">Jenis Kelamin <span style="color: #ff3e1d;">*</span></label>
         </div>
         <div class="col d-flex justify-content-evenly">
             <div>
-                <input type="radio" name="addPatientGender" id="addPatientGenderMale">
-                <label for="addPatientGenderMale" class="form-label">Pria</label>
+                <input value="M" type="radio" name="editPatientGender" id="editPatientGenderMale">
+                <label for="editPatientGenderMale" class="form-label">Pria</label>
             </div>
             <div>
-                <input type="radio" name="addPatientGender" id="addPatientGenderFemale">
-                <label for="addPatientGenderFemale" class="form-label">Wanita</label>
+                <input value="F" type="radio" name="editPatientGender" id="editPatientGenderFemale">
+                <label for="editPatientGenderFemale" class="form-label">Wanita</label>
             </div>
         </div>
     </div>
 </div>
 <div class="mb-4">
     <div class="row">
-        <label for="addPatientBlood" class="form-label">Golongan Darah/Rhesus</label>
+        <label for="editPatientBlood" class="form-label">Golongan Darah/Rhesus</label>
         <div class="col">
-            <select class="form-select" name="" id="addPatientBlood">
+            <select class="form-select" name="editPatientBlood" id="editPatientBlood">
                 <option value="">Pilih Golongan Darah</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
@@ -38,21 +38,22 @@
         <div class="col">
             <div class="col d-flex justify-content-evenly align-content-center">
                 <div>
-                    <input type="radio" name="addPatientRhesus" id="addPatientRhesusPlus">
-                    <label for="addPatientRhesusPlus" class="form-label">Rh+</label>
+                    <input value="Rh+" type="radio" name="editPatientRhesus" id="editPatientRhesusPlus">
+                    <label for="editPatientRhesusPlus" class="form-label">Rh+</label>
                 </div>
                 <div>
-                    <input type="radio" name="addPatientRhesus" id="addPatientRhesusMinus">
-                    <label for="addPatientRhesusMinus" class="form-label">Rh-</label>
+                    <input value="Rh-" type="radio" name="editPatientRhesus" id="editPatientRhesusMinus">
+                    <label for="editPatientRhesusMinus" class="form-label">Rh-</label>
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div class="mb-1">
-    <label for="addPatientRelation" class="form-label">Relasi</label>
-    <select class="form-select" name="" id="addPatientRelation">
+    <label for="editPatientRelation" class="form-label">Relasi <span style="color: #ff3e1d;">*</span></label>
+    <select class="form-select" name="editPatientRelation" id="editPatientRelation">
         <option value="">Pilih Relasi</option>
+        <option value="Diri Sendiri">Diri Sendiri</option>
         <option value="Suami">Suami</option>
         <option value="Istri">Istri</option>
         <option value="Anak">Anak</option>

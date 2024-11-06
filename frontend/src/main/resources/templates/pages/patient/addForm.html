@@ -13,11 +13,11 @@
         </div>
         <div class="col d-flex justify-content-evenly">
             <div>
-                <input type="radio" name="addPatientGender" id="addPatientGenderMale">
+                <input value="M" type="radio" name="addPatientGender" id="addPatientGenderMale">
                 <label for="addPatientGenderMale" class="form-label">Pria</label>
             </div>
             <div>
-                <input type="radio" name="addPatientGender" id="addPatientGenderFemale">
+                <input value="F" type="radio" name="addPatientGender" id="addPatientGenderFemale">
                 <label for="addPatientGenderFemale" class="form-label">Wanita</label>
             </div>
         </div>
@@ -27,7 +27,7 @@
     <div class="row">
         <label for="addPatientBlood" class="form-label">Golongan Darah/Rhesus</label>
         <div class="col">
-            <select class="form-select" name="" id="addPatientBlood">
+            <select class="form-select" name="addPatientBlood" id="addPatientBlood">
                 <option value="">Pilih Golongan Darah</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
@@ -38,11 +38,11 @@
         <div class="col">
             <div class="col d-flex justify-content-evenly align-content-center">
                 <div>
-                    <input type="radio" name="addPatientRhesus" id="addPatientRhesusPlus">
+                    <input value="Rh+" type="radio" name="addPatientRhesus" id="addPatientRhesusPlus">
                     <label for="addPatientRhesusPlus" class="form-label">Rh+</label>
                 </div>
                 <div>
-                    <input type="radio" name="addPatientRhesus" id="addPatientRhesusMinus">
+                    <input value="Rh-" type="radio" name="addPatientRhesus" id="addPatientRhesusMinus">
                     <label for="addPatientRhesusMinus" class="form-label">Rh-</label>
                 </div>
             </div>
@@ -51,8 +51,9 @@
 </div>
 <div class="mb-1">
     <label for="addPatientRelation" class="form-label">Relasi <span style="color: #ff3e1d;">*</span></label>
-    <select class="form-select" name="" id="addPatientRelation">
+    <select class="form-select" name="addPatientRelation" id="addPatientRelation">
         <option value="">Pilih Relasi</option>
+        <option value="Diri Sendiri">Diri Sendiri</option>
         <option value="Suami">Suami</option>
         <option value="Istri">Istri</option>
         <option value="Anak">Anak</option>

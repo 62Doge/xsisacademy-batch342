@@ -1,5 +1,6 @@
 package com._a.backend.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import com._a.backend.entities.CustomerMember;
 import com._a.backend.repositories.BiodataRepository;
 import com._a.backend.repositories.CustomerMemberRepository;
 import com._a.backend.repositories.CustomerRepository;
+import com._a.backend.services.AuthService;
 import com._a.backend.services.PatientService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -30,6 +32,9 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
 
     @Autowired
     CustomerMemberRepository customerMemberRepository;
+
+    @Autowired
+    AuthService authService;
 
     @Autowired
     ModelMapper modelMapper;
@@ -54,6 +59,26 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         patientResponseDTO.setRhesus(customer.get().getRhesus_type());
         patientResponseDTO.setCustomerRelationId(customerMember.get().getCustomerRelationId());
         return patientResponseDTO;
+    }
+
+    public List<PatientResponseDTO> findByParentBiodataId(Long parentBiodataId) {
+        List<PatientResponseDTO> patientResponseDTOs = new ArrayList<PatientResponseDTO>();
+        List<CustomerMember> customerMembers = customerMemberRepository.findAllByParentBiodataIdAndIsDeleteFalse(parentBiodataId);
+        for (CustomerMember customerMember : customerMembers) {
+            Optional<Customer> customer = customerRepository.findById(customerMember.getCustomerId());
+            Optional<Biodata> biodata = biodataRepository.findById(customer.get().getBiodataId());
+            PatientResponseDTO patientResponseDTO = new PatientResponseDTO();
+            patientResponseDTO.setId(customerMember.getId());
+            patientResponseDTO.setParentBiodataId(customerMember.getParentBiodataId());
+            patientResponseDTO.setFullName(biodata.get().getFullname());
+            patientResponseDTO.setDob(customer.get().getDob());
+            patientResponseDTO.setGender(customer.get().getGender());
+            patientResponseDTO.setBloodGroupId(customer.get().getBloodGroupId());
+            patientResponseDTO.setRhesus(customer.get().getRhesus_type());
+            patientResponseDTO.setCustomerRelationId(customerMember.getCustomerRelationId());
+            patientResponseDTOs.add(patientResponseDTO);
+        }
+        return patientResponseDTOs;
     }
 
     // @Override
@@ -175,7 +200,7 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
     // }
 
     @Override
-    public PatientResponseDTO update(Long id, PatientRequestDTO patientRequestDTO) {
+    public PatientResponseDTO update(Long id, Long parentBiodataId, PatientRequestDTO patientRequestDTO) {
         CustomerMember existingCustomerMember = customerMemberRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("CustomerMember not found with ID " + id));
         Customer existingCustomer = customerRepository.findById(existingCustomerMember.getCustomerId())
@@ -201,7 +226,7 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
             existingCustomer.setBloodGroupId(4L);
         }
 
-        existingCustomerMember.setParentBiodataId(patientRequestDTO.getParentBiodataId());
+        existingCustomerMember.setParentBiodataId(parentBiodataId);
         String patientRelation = patientRequestDTO.getRelation();
         if ("Diri Sendiri".equals(patientRelation)) {
             existingCustomerMember.setCustomerRelationId(1L);

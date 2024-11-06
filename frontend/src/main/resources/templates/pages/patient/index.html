@@ -18,15 +18,15 @@
     <div layout:fragment="profileSidebar">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                <a href="javascript:void(0);">Beranda</a>
-              </li>
-              <li class="breadcrumb-item">
-                <a href="javascript:void(0);">Profil</a>
-              </li>
-              <li class="breadcrumb-item active">Pasien</li>
+                <li class="breadcrumb-item">
+                    <a href="javascript:void(0);">Beranda</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="javascript:void(0);">Profil</a>
+                </li>
+                <li class="breadcrumb-item active">Pasien</li>
             </ol>
-          </nav>
+        </nav>
         <div class="container-fluid align-content-center p-4">
             <div class="profile-top">
                 <div class="w-100 text-end">
@@ -75,13 +75,14 @@
                 <div class="d-flex mb-2">
                     <!-- search box -->
                     <div class="me-2">
-                        <input id="searchPatientInput" type="text" class="form-control"
-                            placeholder="Cari Nama Pasien" />
+                        <div class="input-group">
+                            <input id="searchPatientInput" type="text" class="form-control"
+                                placeholder="Cari Nama Pasien">
+                            <span class="input-group-text"><i class="bx bx-search"></i></span>
+                        </div>
                     </div>
+
                     <!-- buttons beside the search box -->
-                    <button type="button" class="btn btn-icon btn-primary me-1">
-                        <i class='bx bx-search'></i>
-                    </button>
                     <div class="btn-group me-1">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
                             aria-expanded="false" data-bs-auto-close="outside">
@@ -197,7 +198,7 @@
                                 </tr>
                             </thead>
                             <tbody id="patientTable" class="table-border-bottom-0">
-                                <tr>
+                                <!-- <tr>
                                     <td>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" value="">
@@ -216,67 +217,7 @@
                                             <span class="tf-icons bx bxs-trash"></span>
                                         </button>
                                     </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <strong>Elga</strong><br>
-                                        Anak, 5 tahun<br>
-                                        9 Chat Online, 5 Janji Online
-                                    </td>
-                                    <td>
-                                        <button onclick="openEditForm()" type="button" class="btn btn-icon btn-outline-warning">
-                                            <span class="tf-icons bx bxs-edit"></span>
-                                        </button>
-                                        <button onclick="openDeleteModal()" type="button" class="btn btn-icon btn-outline-danger">
-                                            <span class="tf-icons bx bxs-trash"></span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <strong>Elga</strong><br>
-                                        Anak, 5 tahun<br>
-                                        9 Chat Online, 5 Janji Online
-                                    </td>
-                                    <td>
-                                        <button onclick="openEditForm()" type="button" class="btn btn-icon btn-outline-warning">
-                                            <span class="tf-icons bx bxs-edit"></span>
-                                        </button>
-                                        <button onclick="openDeleteModal()" type="button" class="btn btn-icon btn-outline-danger">
-                                            <span class="tf-icons bx bxs-trash"></span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <strong>Elga</strong><br>
-                                        Anak, 5 tahun<br>
-                                        9 Chat Online, 5 Janji Online
-                                    </td>
-                                    <td>
-                                        <button onclick="openEditForm()" type="button" class="btn btn-icon btn-outline-warning">
-                                            <span class="tf-icons bx bxs-edit"></span>
-                                        </button>
-                                        <button onclick="openDeleteModal()" type="button" class="btn btn-icon btn-outline-danger">
-                                            <span class="tf-icons bx bxs-trash"></span>
-                                        </button>
-                                    </td>
-                                </tr>
+                                </tr> -->
                             </tbody>
                         </table>
                     </div>
@@ -305,9 +246,12 @@
     </th:block>
 
     <th:block layout:fragment="pageBottom">
+        <script>
+            IS_USER_LOGGED = true;
+        </script>
         <script src="js/patient.js"></script>
     </th:block>
-    
+
 </body>
 
 </html>
