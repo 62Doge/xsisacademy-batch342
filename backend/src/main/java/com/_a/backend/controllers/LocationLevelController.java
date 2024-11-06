@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -108,17 +108,15 @@ public class LocationLevelController {
 
     @PostMapping("")
     public ResponseEntity<?> saveLocationLevel(@Valid @RequestBody LocationLevelRequestDTO locationLevelRequestDTO) {
-        if (locationLevelRepository.existsByName(locationLevelRequestDTO.getName())) {
-            ApiResponse<LocationLevelResponseDTO> alreadyExistResponse =
-                    new ApiResponse<>(HttpStatus.CONFLICT.value(), "Location Level name already exists", null);
-            return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
-        }
-
         try {
             LocationLevelResponseDTO locationLevelResponseDTOSaved = locationLevelService.save(locationLevelRequestDTO);
             ApiResponse<LocationLevelResponseDTO> successResponse =
                     new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), locationLevelResponseDTOSaved);
             return ResponseEntity.ok(successResponse);
+        } catch (IllegalArgumentException e) {
+            ApiResponse<LocationLevelResponseDTO> alreadyExistResponse =
+                    new ApiResponse<>(HttpStatus.CONFLICT.value(), e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
         } catch (Exception e) {
             ApiResponse<LocationLevelResponseDTO> errorResponse =
                     new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to save Location Level", null);

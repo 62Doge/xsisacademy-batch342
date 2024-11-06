@@ -6,6 +6,6 @@ import jakarta.mail.MessagingException;
 
 public interface EmailService {
   void sendOtp(User user) throws MessagingException;
-
+//  void sendOtpRegistration(String email, String otp) throws MessagingException;
   void sendHtmlEmail(String from, String to, String subject, String htmlContent) throws MessagingException;
 }

@@ -37,4 +37,5 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
         )
       """)
   boolean existsExpiredTokenByEmailAndToken(String email, String token, LocalDateTime now);
+  boolean existsByEmail(String email);
 }
