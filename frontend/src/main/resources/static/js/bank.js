@@ -10,6 +10,7 @@ $(document).ready(function () {
     $('#searchBankInput').on('input', function () {
         let searchQuery = $(this).val();
         currentSearchQuery = searchQuery;
+        currentPage = 1;
         if (searchQuery) {
             searchBank(searchQuery);
         } else {
