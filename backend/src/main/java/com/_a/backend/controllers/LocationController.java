@@ -144,6 +144,31 @@ public class LocationController {
         }
     }
 
+    @GetMapping("/level/{locationLevelId}/name/{name}")
+    public ResponseEntity<ApiResponse<PaginatedResponseDTO<LocationResponseDTO>>> getLocationByLevelAndName(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "5") int pageSize,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @PathVariable Long locationLevelId,
+            @PathVariable String name) {
+        try {
+            Page<LocationResponseDTO> locationResponseDTOS = locationService.getByLocationLevelAndName(
+                    pageNo, pageSize, sortBy, sortDirection, locationLevelId, name);
+
+            PaginatedResponseDTO<LocationResponseDTO> paginatedResponse = new PaginatedResponseDTO<>(
+                    locationResponseDTOS);
+
+            ApiResponse<PaginatedResponseDTO<LocationResponseDTO>> successResponse = new ApiResponse<>(
+                    HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), paginatedResponse);
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        } catch (Exception e) {
+            ApiResponse<PaginatedResponseDTO<LocationResponseDTO>> errorResponse = new ApiResponse<>(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+
     @PostMapping("")
     public ResponseEntity<?> saveLocation(@Valid @RequestBody LocationRequestDTO locationRequestDTO) {
         if (locationRepository.existsByNameAndParentId(locationRequestDTO.getName(),

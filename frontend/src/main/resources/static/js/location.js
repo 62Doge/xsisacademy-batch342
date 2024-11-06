@@ -18,8 +18,12 @@ $(document).ready(function () {
 
   $("#searchLocation").on("input", function () {
     currentSearchQuery = $(this).val();
-    if (currentSearchQuery) {
+    if (currentLocationLevelId && currentSearchQuery) {
+      searchWithLevel(currentSearchQuery, currentLocationLevelId);
+    } else if (currentSearchQuery) {
       searchLocation(currentSearchQuery);
+    } else if (currentLocationLevelId) {
+      getLocationByLevel(currentLocationLevelId);
     } else {
       $("#location-table").empty();
       loadData();
@@ -63,9 +67,9 @@ function searchLocation(query) {
 
       $("#location-table").html(tableData);
       pageButtons();
-      if (currentPage > totalPages) {
-        if (totalPages !== 0) moveToPage(totalPages);
-      }
+      // if (currentPage > totalPages) {
+      //   if (totalPages !== 0) moveToPage(totalPages);
+      // }
     },
     error: function (error) {
       alert("Failed to search location!");
@@ -74,7 +78,113 @@ function searchLocation(query) {
   });
 }
 
+function getLocationByLevel(locationLevelId) {
+  currentLocationLevelId = locationLevelId;
+  $.ajax({
+    type: "GET",
+    url: `http://localhost:9001/api/admin/location/level/${locationLevelId}?pageNo=${
+      currentPage - 1
+    }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
+    contentType: "application/json",
+    success: function (response) {
+      let locationData = response.data.content;
+      totalPages = response.data.metadata.totalPages;
+
+      let tableData = ``;
+      locationData.forEach((location) => {
+        let locLevelOne = "";
+        if (location.parent !== null) {
+          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
+        }
+        tableData += `
+                  <tr>
+                    <td>${location.name}</td>
+                    <td>${location.locationLevel.name}</td>
+                    <td>${locLevelOne}</td>
+                    <td>
+                        <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
+                            <span class="tf-icons bx bxs-edit"></span>
+                        </button>
+                        <button onclick="openDeleteModal(${location.id})" type="button" class="btn btn-icon btn-outline-danger">
+                            <span class="tf-icons bx bxs-trash"></span>
+                        </button>
+                    </td>
+                  </tr>
+                `;
+      });
+
+      $("#location-table").html(tableData);
+      pageButtons();
+      // if (currentPage > totalPages) {
+      //   if (totalPages !== 0) moveToPage(totalPages);
+      // }
+    },
+    error: function (error) {
+      alert("Failed to load locations by location level!");
+      console.error("Error loading locations by location level:", error);
+    },
+  });
+}
+
+function searchWithLevel(query, locationLevelId) {
+  currentLocationLevelId = locationLevelId;
+  $.ajax({
+    type: "GET",
+    url: `http://localhost:9001/api/admin/location/level/${locationLevelId}/name/${query}?pageNo=${
+      currentPage - 1
+    }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
+    contentType: "application/json",
+    success: function (response) {
+      let locationData = response.data.content;
+      totalPages = response.data.metadata.totalPages;
+
+      let tableData = ``;
+      locationData.forEach((location) => {
+        let locLevelOne = "";
+        if (location.parent !== null) {
+          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
+        }
+        tableData += `
+                  <tr>
+                    <td>${location.name}</td>
+                    <td>${location.locationLevel.name}</td>
+                    <td>${locLevelOne}</td>
+                    <td>
+                        <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
+                            <span class="tf-icons bx bxs-edit"></span>
+                        </button>
+                        <button onclick="openDeleteModal(${location.id})" type="button" class="btn btn-icon btn-outline-danger">
+                            <span class="tf-icons bx bxs-trash"></span>
+                        </button>
+                    </td>
+                  </tr>
+                `;
+      });
+
+      $("#location-table").html(tableData);
+      pageButtons();
+      // if (currentPage > totalPages) {
+      //   if (totalPages !== 0) moveToPage(totalPages);
+      // }
+    },
+    error: function (error) {
+      alert("Failed to load locations by location level!");
+      console.error("Error loading locations by location level:", error);
+    },
+  });
+}
+
 function pageButtons() {
+  console.log(`${totalPages} : curr ${currentPage}`);
+  if (currentPage > totalPages) {
+    if (totalPages > 0) {
+      moveToPage(totalPages);
+      return;
+    } else {
+      currentPage = 1;
+    }
+  }
+  console.log("ts");
   // Show pages
   $("#pageList").empty();
 
@@ -183,7 +293,9 @@ function goToPage() {
 
 function moveToPage(pageNumber) {
   currentPage = pageNumber;
-  if (currentSearchQuery) {
+  if (currentLocationLevelId && currentSearchQuery) {
+    searchWithLevel(currentSearchQuery, currentLocationLevelId);
+  } else if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
   } else if (currentLocationLevelId) {
     getLocationByLevel(currentLocationLevelId);
@@ -196,8 +308,12 @@ function nextPage() {
   if (currentPage + 1 <= totalPages) {
     currentPage++;
   }
-  if (currentSearchQuery) {
+  if (currentLocationLevelId && currentSearchQuery) {
+    searchWithLevel(currentSearchQuery, currentLocationLevelId);
+  } else if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+    if (currentLocationLevelId)
+      searchWithLevel(currentSearchQuery, currentLocationLevelId);
   } else if (currentLocationLevelId) {
     getLocationByLevel(currentLocationLevelId);
   } else {
@@ -209,8 +325,12 @@ function previousPage() {
   if (currentPage - 1 > 0) {
     currentPage--;
   }
-  if (currentSearchQuery) {
+  if (currentLocationLevelId && currentSearchQuery) {
+    searchWithLevel(currentSearchQuery, currentLocationLevelId);
+  } else if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+    if (currentLocationLevelId)
+      searchWithLevel(currentSearchQuery, currentLocationLevelId);
   } else if (currentLocationLevelId) {
     getLocationByLevel(currentLocationLevelId);
   } else {
@@ -220,8 +340,12 @@ function previousPage() {
 
 function setPageSize(query) {
   pageSize = query;
-  if (currentSearchQuery) {
+  if (currentLocationLevelId && currentSearchQuery) {
+    searchWithLevel(currentSearchQuery, currentLocationLevelId);
+  } else if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+    if (currentLocationLevelId)
+      searchWithLevel(currentSearchQuery, currentLocationLevelId);
   } else if (currentLocationLevelId) {
     getLocationByLevel(currentLocationLevelId);
   } else {
@@ -232,8 +356,12 @@ function setPageSize(query) {
 function setPageOrder() {
   sortBy = $('input[name="orderColumnRadio"]:checked').val();
   sortDir = $('input[name="orderTypeRadio"]:checked').val();
-  if (currentSearchQuery) {
+  if (currentLocationLevelId && currentSearchQuery) {
+    searchWithLevel(currentSearchQuery, currentLocationLevelId);
+  } else if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+    if (currentLocationLevelId)
+      searchWithLevel(currentSearchQuery, currentLocationLevelId);
   } else if (currentLocationLevelId) {
     getLocationByLevel(currentLocationLevelId);
   } else {
@@ -244,61 +372,17 @@ function setPageOrder() {
 function customPageSize() {
   let query = $("#pageSizeInput").val();
   pageSize = query;
-  if (currentSearchQuery) {
+  if (currentLocationLevelId && currentSearchQuery) {
+    searchWithLevel(currentSearchQuery, currentLocationLevelId);
+  } else if (currentSearchQuery) {
     searchLocation(currentSearchQuery);
+    if (currentLocationLevelId)
+      searchWithLevel(currentSearchQuery, currentLocationLevelId);
   } else if (currentLocationLevelId) {
     getLocationByLevel(currentLocationLevelId);
   } else {
     loadData();
   }
-}
-
-function getLocationByLevel(locationLevelId) {
-  currentLocationLevelId = locationLevelId;
-  $.ajax({
-    type: "GET",
-    url: `http://localhost:9001/api/admin/location/level/${locationLevelId}?pageNo=${
-      currentPage - 1
-    }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
-    contentType: "application/json",
-    success: function (response) {
-      let locationData = response.data.content;
-      totalPages = response.data.metadata.totalPages;
-
-      let tableData = ``;
-      locationData.forEach((location) => {
-        let locLevelOne = "";
-        if (location.parent !== null) {
-          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
-        }
-        tableData += `
-                  <tr>
-                    <td>${location.name}</td>
-                    <td>${location.locationLevel.name}</td>
-                    <td>${locLevelOne}</td>
-                    <td>
-                        <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
-                            <span class="tf-icons bx bxs-edit"></span>
-                        </button>
-                        <button onclick="openDeleteModal(${location.id})" type="button" class="btn btn-icon btn-outline-danger">
-                            <span class="tf-icons bx bxs-trash"></span>
-                        </button>
-                    </td>
-                  </tr>
-                `;
-      });
-
-      $("#location-table").html(tableData);
-      pageButtons();
-      if (currentPage > totalPages) {
-        if (totalPages !== 0) moveToPage(totalPages);
-      }
-    },
-    error: function (error) {
-      alert("Failed to load locations by location level!");
-      console.error("Error loading locations by location level:", error);
-    },
-  });
 }
 
 function loadLocationLevel() {
@@ -362,9 +446,6 @@ function loadData() {
 
       $("#location-table").html(tableData);
       pageButtons();
-      if (currentPage > totalPages) {
-        if (totalPages !== 0) moveToPage(totalPages);
-      }
     },
     error: function (xhr, status, error) {
       alert("Failed to load location!");
@@ -447,7 +528,9 @@ function populateLocationLevelDropdown() {
   noneRadio.type = "radio";
   noneRadio.name = "locationLevel";
   noneRadio.value = "none";
-  noneRadio.onclick = function() { loadData(); }; // Reset function on click
+  noneRadio.onclick = function () {
+    loadData();
+  }; // Reset function on click
   noneRadio.className = "me-2";
 
   noneLabel.appendChild(noneRadio);
@@ -465,7 +548,9 @@ function populateLocationLevelDropdown() {
     radio.type = "radio";
     radio.name = "locationLevel";
     radio.value = level.id;
-    radio.onclick = function() { getLocationByLevel(level.id); };
+    radio.onclick = function () {
+      getLocationByLevel(level.id);
+    };
     radio.className = "me-2"; // Adds some margin to the right
 
     label.appendChild(radio);
@@ -476,7 +561,6 @@ function populateLocationLevelDropdown() {
 
   dropdown.appendChild(form);
 }
-
 
 function openAddForm() {
   $.ajax({
@@ -504,6 +588,10 @@ function openAddForm() {
             form.reportValidity();
           }
         });
+      $("#locationForm").submit(function (e) {
+        e.preventDefault();
+        saveLocation();
+      });
       populateLocationLevelSelect(locationLevelData);
     },
   });
@@ -575,6 +663,10 @@ function openEditForm(id) {
                 form.reportValidity();
               }
             });
+          $("#locationForm").submit(function (e) {
+            e.preventDefault();
+            updateLocation(id);
+          });
           populateLocationLevelSelect(
             locationLevelData,
             location.locationLevelId

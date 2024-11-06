@@ -84,17 +84,29 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
         return locationResponseDTOS;
     }
 
-    public Page<LocationResponseDTO> getByLocationLevel(int pageNo, int pageSize, String sortBy, String sortDirection, Long locationLevelId) {
+    public Page<LocationResponseDTO> getByLocationLevel(int pageNo, int pageSize, String sortBy, String sortDirection,
+            Long locationLevelId) {
         Sort sort = Sort.by(sortBy);
         sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-        
+
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Location> locations = locationRepository.findByLocationLevelIdAndIsDeleteFalse(pageable, locationLevelId);
         Page<LocationResponseDTO> locationResponseDTOS = locations
                 .map(location -> modelMapper.map(location, LocationResponseDTO.class));
         return locationResponseDTOS;
     }
-    
+
+    public Page<LocationResponseDTO> getByLocationLevelAndName(int pageNo, int pageSize, String sortBy,
+            String sortDirection, Long locationLevelId, String name) {
+        Sort sort = Sort.by(sortBy);
+        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Location> locations = locationRepository.findByLocationLevelIdAndNameContainingIgnoreCaseAndIsDeleteFalse(pageable, locationLevelId, name);
+        Page<LocationResponseDTO> locationResponseDTOS = locations
+                .map(location -> modelMapper.map(location, LocationResponseDTO.class));
+        return locationResponseDTOS;
+    }
 
     @Override
     public LocationResponseDTO save(LocationRequestDTO locationRequestDTO) {

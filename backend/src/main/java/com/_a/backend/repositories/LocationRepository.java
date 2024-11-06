@@ -19,5 +19,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     Page<Location> findAllByIsDeleteFalse(Pageable pageable);
 
+    Page<Location> findByLocationLevelIdAndNameContainingIgnoreCaseAndIsDeleteFalse(
+            Pageable pageable, Long locationLevelId, String name);
+
     List<Location> findAllByIsDeleteFalse();
 }
