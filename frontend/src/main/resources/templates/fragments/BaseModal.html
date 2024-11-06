@@ -3,6 +3,9 @@
   class="modal modal-top fade"
   id="baseModal"
   tabindex="-1"
+  th:attr="data-bs-backdrop=${modalBackdrop},
+  data-bs-keyboard=${modalKeyboard}
+  "
 >
   <div class="modal-dialog modal-dialog-centered" th:classappend="${class}">
     <form class="modal-content">
