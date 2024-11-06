@@ -55,6 +55,16 @@ public class EmailServiceImpl implements EmailService {
     sendHtmlEmail(FROM_NOREPLY, user.getEmail(), "Permintaan Reset Password", htmlContent);
   }
 
+  public void sendOtpRegistration(String email, String otp) throws MessagingException {
+    Context context = new Context();
+    context.setVariable("otp", otp);
+    context.setVariable("email", email);
+
+    String htmlContent = templateEngine.process("emails/registrationOtp", context);
+
+    sendHtmlEmail(FROM_NOREPLY, email, "Account Registration OTP", htmlContent);
+  }
+
   @Override
   public void sendHtmlEmail(String from, String to, String subject, String htmlContent) throws MessagingException {
     MimeMessage message = mailSender.createMimeMessage();

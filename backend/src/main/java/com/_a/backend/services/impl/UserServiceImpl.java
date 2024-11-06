@@ -40,10 +40,7 @@ public class UserServiceImpl implements Services<UserRequestDTO, UserResponseDTO
         return userResponseDTOS;
     }
 
-    @Override
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
-    }
+
 
     @Override
     public List<UserResponseDTO> findAll() {
@@ -75,6 +72,11 @@ public class UserServiceImpl implements Services<UserRequestDTO, UserResponseDTO
         User updatedUser = userRepository.save(user);
 
         return modelMapper.map(updatedUser, UserResponseDTO.class);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
     }
 
 }

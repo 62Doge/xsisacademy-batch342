@@ -73,6 +73,10 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
 
     @Override
     public LocationLevelResponseDTO save(LocationLevelRequestDTO locationLevelRequestDTO) {
+       if (locationLevelRepository.existsByName(locationLevelRequestDTO.getName())){
+           throw new IllegalArgumentException("Name already exists");
+        }
+
         LocationLevel locationLevel = locationLevelRepository.save(modelMapper.map(locationLevelRequestDTO, LocationLevel.class));
         LocationLevelResponseDTO locationLevelResponseDTO = modelMapper.map(locationLevel, LocationLevelResponseDTO.class);
         return locationLevelResponseDTO;
@@ -81,7 +85,10 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
     @Override
     public LocationLevelResponseDTO update(LocationLevelRequestDTO locationLevelRequestDTO, Long id) {
         Optional<LocationLevel> optionalLocationLevel = locationLevelRepository.findById(id);
-        if (optionalLocationLevel.isPresent()) {
+        if (locationLevelRepository.existsByName(locationLevelRequestDTO.getName())) {
+            throw new IllegalArgumentException("Name already exists");
+
+        } else if (optionalLocationLevel.isPresent()) {
             LocationLevel locationLevel = optionalLocationLevel.get();
 
             modelMapper.map(locationLevelRequestDTO, locationLevel);
