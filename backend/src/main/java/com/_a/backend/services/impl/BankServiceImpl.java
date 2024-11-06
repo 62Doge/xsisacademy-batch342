@@ -34,9 +34,9 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Bank> banks = bankRepository.findAllByIsDeleteFalse(pageable);
-        Page<BankResponseDTO> bankResponseDTOS = banks
+        Page<BankResponseDTO> bankResponseDTOs = banks
                 .map(bank -> modelMapper.map(bank, BankResponseDTO.class));
-        return bankResponseDTOS;
+        return bankResponseDTOs;
     }
 
     public Page<Bank> findActiveBankPages(int page, int size, String sortBy, String sortDir) {

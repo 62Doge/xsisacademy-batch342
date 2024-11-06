@@ -180,7 +180,7 @@ public class BankController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
             }
             bankService.softDeleteById(id);
-            ApiResponse<BankResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Bank deleted", null);
+            ApiResponse<BankResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Bank deleted successfully", null);
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
             ApiResponse<BankResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to delete Bank", null);
