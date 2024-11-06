@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.DoctorRequestDTO;
@@ -64,6 +65,12 @@ public class DoctorServiceImpl implements Services<DoctorRequestDTO, DoctorRespo
   @Override
   public void deleteById(Long id) {
     doctorRepository.deleteById(id);
+  }
+
+  @Override
+  public Page<DoctorResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getAll'");
   }
   
 }

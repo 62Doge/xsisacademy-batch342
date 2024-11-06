@@ -1,10 +1,12 @@
 package com._a.backend.services.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.CurrentDoctorSpecializationRequestDTO;
@@ -55,13 +57,14 @@ public class CurrentDoctorSpecializationServiceImpl implements Services<CurrentD
       currentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
     return currentDoctorSpecializationResponseDTO;
   }
-
+  
   @Override
   public CurrentDoctorSpecializationResponseDTO update(CurrentDoctorSpecializationRequestDTO currentDoctorSpecializationRequestDTO, Long id) {
     Optional<CurrentDoctorSpecialization> optionalCurrentDoctorSpecialization = currentDoctorSpecializationRepository.findById(id);
     if(optionalCurrentDoctorSpecialization.isPresent()){
       CurrentDoctorSpecialization currentDoctorSpecialization = optionalCurrentDoctorSpecialization.get();
       modelMapper.map(currentDoctorSpecializationRequestDTO, currentDoctorSpecialization);
+      currentDoctorSpecialization.setModifiedOn(LocalDateTime.now());
       CurrentDoctorSpecialization updatedCurrentDoctorSpecialization = currentDoctorSpecializationRepository.save(currentDoctorSpecialization);
       return modelMapper.map(updatedCurrentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
     }
@@ -71,6 +74,13 @@ public class CurrentDoctorSpecializationServiceImpl implements Services<CurrentD
   @Override
   public void deleteById(Long id) {
     currentDoctorSpecializationRepository.deleteById(id);
+  }
+
+  @Override
+  public Page<CurrentDoctorSpecializationResponseDTO> getAll(int pageNo, int pageSize, String sortBy,
+      String sortDirection) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getAll'");
   }
   
 }

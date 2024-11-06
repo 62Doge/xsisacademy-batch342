@@ -81,8 +81,98 @@ function getCurrentDoctorSpecialization(id) {
     url: `http://localhost:9001/api/doctor/current-doctor-specialization/${id}`,
     contentType: "application/json",
     success: function (currentDoctorSpecializationResponse) {
+      // to show specialization on side menu
       let dataSpecialization = currentDoctorSpecializationResponse.data[0];
       $('#doctor-specialization').html(dataSpecialization.specialization.name);
+      
+      // to show specialization on menu bar
+      $('#spesialisasi').html(`
+      <h2>${dataSpecialization.specialization.name}</h2>
+      <button class="btn btn-icon btn-outline-warning" type="button" onclick="editSpecialization(${id})"><span class="tf-icons bx bxs-edit"></span></button>
+      `);
+    },
+    error: function (error) {
+      if(error.status === 404) {
+        $('#spesialisasi').html(`
+          <h2>Anda belum menambahkan spesialisasi</h2>
+          <button class="btn btn-primary" onclick="openAddForm()"><i class="bx bx-add-to-queue"></i>Tambah Spesialisasi</button>
+          `);
+      }else{
+        console.error("Error fetching specialization:", error.statusText);
+      }
+    }
+  });
+}
+
+function openAddForm(){
+  $.ajax({
+    type: "get",
+    url: "/doctor-profile/addForm",
+    contentType: "html",
+    success: function (addForm) {
+      $('#baseModal').modal('show');
+      $('#baseModalTitle').html(`<strong>Pilih Spesialisasi Anda</strong>`);
+      $('#baseModalBody').html(addForm);
+
+      $.ajax({
+        type: "get",
+        url: "http://localhost:9001/api/doctor/specialization",
+        contentType: "application/json",
+        success: function (specializationResponse) {
+          let dataSpecialization = specializationResponse.data;
+          let options = ``;
+          options += `<option selected="true" disabled="true" value="">Select Spesialisasi</option>`
+          dataSpecialization.forEach(value => {
+            options += `<option value="${value.id}">${value.name}</option>`
+          });
+          $('#addSpecialization').append(options);
+        }
+      });
+      
+      $('#baseModalFooter').html(`
+        <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+          Batal
+        </button>
+        <button disabled id="saveSpecializationButton" type="button" class="btn btn-primary">Simpan</button>
+      `);
+      $('#addSpecialization').on('change', function() {
+        if ($(this).val() !== '') {
+          $('#saveSpecializationButton').prop('disabled', false);
+        } else {
+          $('#saveSpecializationButton').prop('disabled', true);
+        }
+      });
+      $('#saveSpecializationButton').on('click', function() {
+        addSpecialization();
+      })
+    },
+    error: function(error) {
+      console.log(error);
+    }
+  });
+}
+
+function editSpecialization() {
+
+}
+
+
+function addSpecialization() {
+  let spcializationDataJSON = {
+    doctorId: id,
+    specializationId: $('#addSpecialization').val()
+  }
+  $.ajax({
+    type: "POST",
+    url: "http://localhost:9001/api/doctor/current-doctor-specialization",
+    data: JSON.stringify(spcializationDataJSON),
+    contentType: "application/json",
+    success: function (response) {
+      console.log(response);
+      location.reload();
+    },
+    error: function (error) {
+      console.log(error);
     }
   });
 }
@@ -95,9 +185,10 @@ function getDoctor(id){
     success: function (doctorResponse) {
       let biodataDoctor = doctorResponse.data;
       console.log(biodataDoctor);
-      $('#doctor-name').html(biodataDoctor.biodata.fullname);
+      $('#doctor-name').html(`<h4>${biodataDoctor.biodata.fullname}</h4>`);
       $('#doctor-image').html(`<img alt="Profile picture of ${biodataDoctor.biodata.fullname}" height="100" src="${biodataDoctor.biodata.imagePath}" width="100" style="width: 100px; height: 100px; border-radius: 50%;">`);
-      
+      $('#doctor-name-nav').text(biodataDoctor.biodata.fullname);
+      $('.doctor-avatar-nav').html(`<img src="${biodataDoctor.biodata.imagePath}" alt="Profile picture of ${biodataDoctor.biodata.fullname}" height="100" class="w-px-40 h-auto rounded-circle"/>`)
     }
   });
 }
@@ -141,4 +232,5 @@ function showPengaturan(event,element) {
   $(".tab-pane").removeClass("active");
   $("#pengaturan").addClass("active");
 }
+
 
