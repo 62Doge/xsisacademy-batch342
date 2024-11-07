@@ -95,6 +95,7 @@ function loadData() {
         url: `http://localhost:9001/api/admin/bank/active?page=${currentPage-1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
+            console.log(response);
             let bankData = response.data.content;
             totalPages = response.data.totalPages;
 

@@ -1,17 +1,125 @@
 let selectedPatient = [];
+let currentPage = 1;
+let pageSize = 5;
+let sortBy = 'fullname';
+let sortDir = 'ASC';
+let totalPages;
+let currentSearchQuery;
 
 $(document).ready(function () {
     loadData();
+    $('#searchPatientInput').on('input', function () {
+        let searchQuery = $(this).val();
+        currentSearchQuery = searchQuery;
+        currentPage = 1;
+        if (searchQuery) {
+            searchPatient(searchQuery);
+        } else {
+            $('#patientTable').empty();
+            loadData();
+        }
+    });
 })
+
+function searchPatient(query) {
+    $.ajax({
+        type: "get",
+        url: `http://localhost:9001/api/patient/name/${query}`,
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response);
+            let patientData = response.data.content;
+            totalPages = response.data.totalPages;
+
+            let tableData = ``;
+            patientData.forEach(patient => {
+                let patientRelation = "";
+                if (patient.customerRelationId === 1) {
+                    patientRelation += "Diri Sendiri";
+                } else if (patient.customerRelationId === 2) {
+                    patientRelation += "Suami";
+                } else if (patient.customerRelationId === 3) {
+                    patientRelation += "Ibu";
+                } else if (patient.customerRelationId === 4) {
+                    patientRelation += "Anak";
+                }
+                let patientAge = calculateAge(patient.dob);
+                tableData += `
+                    <tr>
+                        <td>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>${patient.fullName}</strong><br>
+                            ${patientRelation}, ${patientAge} tahun<br>
+                            <span class="text-muted">9 Chat Online, 5 Janji Online</span>
+                        </td>
+                        <td>
+                            <button onclick="openEditForm(${patient.id})" type="button" class="btn btn-icon btn-outline-warning">
+                                <span class="tf-icons bx bxs-edit"></span>
+                            </button>
+                            <button onclick="openDeleteModal(${patient.id})" type="button" class="btn btn-icon btn-outline-danger">
+                                <span class="tf-icons bx bxs-trash"></span>
+                            </button>
+                        </td>
+                    </tr>
+                `
+            });
+            $('#patientTable').html(tableData);
+
+            $('#pageList').empty();
+            $('#pageList').append(`
+                <li class="page-item prev" id="previousPageControl">
+                    <a class="page-link" href="javascript:previousPage();"><i class='bx bx-chevron-left'></i></a>
+                </li>
+            `);
+
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (pageNum == currentPage) {
+                    $('#pageList').append(`
+                        <li class="page-item active">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                } else {
+                    $('#pageList').append(`
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                }
+            }
+            
+            $('#pageList').append(`
+                <li class="page-item next" id="nextPageControl">
+                    <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
+                </li>
+            `);
+            
+            // dropdown button default value
+            $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
+            $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
+        },
+        error: function (error) {
+            console.log("Error searching patient: ", error);
+        }
+    });
+}
 
 function loadData() {
     $.ajax({
         type: "get",
-        url: "http://localhost:9001/api/patient",
+        url: `http://localhost:9001/api/patient/active?page=${currentPage-1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
             console.log(response);
-            let patientData = response.data;
+            let patientData = response.data.content;
+            totalPages = response.data.totalPages;
+
+            $('#patientTable').empty();
+
             patientData.forEach(patient => {
                 let patientRelation = "";
                 if (patient.customerRelationId === 1) {
@@ -47,11 +155,103 @@ function loadData() {
                     </tr>
                 `);
             });
+
+            $('#pageList').empty();
+            $('#pageList').append(`
+                <li class="page-item prev" id="previousPageControl">
+                    <a class="page-link" href="javascript:previousPage();"><i class='bx bx-chevron-left'></i></a>
+                </li>
+            `);
+
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                if (pageNum == currentPage) {
+                    $('#pageList').append(`
+                        <li class="page-item active">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                } else {
+                    $('#pageList').append(`
+                        <li class="page-item">
+                            <a class="page-link" href="javascript:moveToPage(${pageNum});">${pageNum}</a>
+                        </li>
+                    `);
+                }
+            }
+
+            $('#pageList').append(`
+                <li class="page-item next" id="nextPageControl">
+                    <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
+                </li>
+            `);
+
+            $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
+            $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
         },
         error:  function (error) {
             console.log(error);
         }
     });
+}
+
+function moveToPage(pageNumber) {
+    currentPage = pageNumber;
+    if (currentSearchQuery) {
+        searchPatient(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function nextPage() {
+    if (currentPage + 1 <= totalPages) {
+        currentPage++;
+    }
+    if (currentSearchQuery) {
+        searchPatient(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function previousPage() {
+    if (currentPage - 1 >= 0) {
+        currentPage--;
+    }
+    if (currentSearchQuery) {
+        searchPatient(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function setPageSize(query) {
+    pageSize = query;
+    if (currentSearchQuery) {
+        searchPatient(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function setPageOrder() {
+    sortBy = $('input[name="orderColumnRadio"]:checked').val();
+    sortDir = $('input[name="orderTypeRadio"]:checked').val();
+    if (currentSearchQuery) {
+        searchPatient(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function customPageSize() {
+    let query = $('#pageSizeInput').val();
+    pageSize = query;
+    if (currentSearchQuery) {
+        searchPatient(currentSearchQuery);
+    } else {
+        loadData();
+    }
 }
 
 function calculateAge(birthdate) {
