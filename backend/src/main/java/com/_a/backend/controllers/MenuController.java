@@ -62,7 +62,7 @@ public class MenuController {
                     "Menu name already exists", null);
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
         }
-
+        menuRequestDTO.setCreatedBy(0L);
         MenuResponseDTO menuResponseDTOSaved = menuService.save(menuRequestDTO);
         return ResponseEntity
                 .ok(ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), menuResponseDTOSaved));
@@ -76,7 +76,7 @@ public class MenuController {
                     "Menu not found", null);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
         }
-
+        menuRequestDTO.setModifiedBy(0L);
         MenuResponseDTO menuResponseDTOSaved = menuService.update(menuRequestDTO, id);
         return ResponseEntity
                 .ok(ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), menuResponseDTOSaved));

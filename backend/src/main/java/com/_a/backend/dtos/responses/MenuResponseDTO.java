@@ -1,18 +1,34 @@
 package com._a.backend.dtos.responses;
 
-import com._a.backend.entities.Menu;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class MenuResponseDTO {
+    private Long roleId;
     private Long id;
     private String name;
     private String url;
-    private Long parentId;
-    private Menu parent;
     private String bigIcon;
     private String smallIcon;
+    private Long parentId;
+    private MenuChildResponseDTO parent;
+    
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<MenuChildResponseDTO> childs;
+
+    @JsonProperty("childIds") // This makes it appear in JSON as "childIds"
+    public List<Long> getChildIds() {
+        return childs.stream().map(MenuChildResponseDTO::getId).collect(Collectors.toList());
+    }
 }

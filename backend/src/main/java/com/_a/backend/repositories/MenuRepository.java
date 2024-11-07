@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com._a.backend.dtos.responses.MenuResponseDTO;
 import com._a.backend.entities.Menu;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
@@ -23,7 +24,7 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
             "LEFT JOIN MenuRole mr ON m.id = mr.menuId " +
             "WHERE mr.roleId = :roleId " +
             "AND m.isDelete = false AND mr.isDelete = false " +
-            "ORDER BY mr.roleId")
+            "ORDER BY m.parentId DESC")
     List<Menu> findMenusByRole(@Param("roleId") Long roleId);
 
     @Query("SELECT m FROM Menu m " +
@@ -32,5 +33,12 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
             "AND m.isDelete = false AND (mr.isDelete = false OR mr.roleId = -1) " +
             "ORDER BY mr.roleId")
     List<Menu> findMenusByUniversalAccess();
+
+    @Query("SELECT m FROM Menu m " +
+            "LEFT JOIN MenuRole mr ON m.id = mr.menuId " +
+            "WHERE (mr.roleId = :roleId OR mr.roleId = -1) " +
+            "AND m.isDelete = false AND (mr.isDelete = false OR mr.roleId = -1) " +
+            "ORDER BY mr.roleId")
+    List<MenuResponseDTO> findMenusByRoleOrUniversalAccess(@Param("roleId") Long roleId);
 
 }
