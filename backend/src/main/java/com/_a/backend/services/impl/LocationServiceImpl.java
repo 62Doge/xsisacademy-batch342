@@ -133,7 +133,7 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
         return modelMapper.map(updatedLocation, LocationResponseDTO.class);
     }
 
-    public void softDeleteLocation(Long id) {
+    public void softDeleteLocation(Long id, Long userId) {
         Location location = locationRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Location not found"));
 
@@ -151,7 +151,7 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
         }
 
         location.setIsDelete(true);
-        // location.setDeletedBy(userId);
+        location.setDeletedBy(userId);
         location.setDeletedOn(LocalDateTime.now());
         locationRepository.save(location);
     }

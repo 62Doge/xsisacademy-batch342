@@ -6,4 +6,7 @@ import lombok.Data;
 public class MenuRoleRequestDTO {
     private Long menuId;
     private Long roleId;
+    private Long createdBy;
+    private Long modifiedBy;
+    private Long deletedBy;
 }

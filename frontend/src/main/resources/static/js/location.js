@@ -7,6 +7,7 @@ let sortDir = "asc";
 let totalPages;
 let currentSearchQuery;
 let currentLocationLevelId;
+let ADMIN_LOGGED_ID = 0;
 
 document.addEventListener("DOMContentLoaded", (event) => {
   loadParent();
@@ -59,7 +60,6 @@ function loadLocations() {
                   </tr>
                 `;
       });
-
       $("#location-table").html(tableData);
       pageButtons();
     },
@@ -422,6 +422,7 @@ function saveLocation() {
     contentType: "application/json",
     success: function (response) {
       $("#baseModal").modal("hide");
+      loadParent();
       loadLocations();
     },
     error: function (error) {
@@ -487,8 +488,9 @@ function updateLocation(id) {
   let name = $("#locationName").val();
   let locationLevelId = $("#levelLocationId").val();
   let parentId = $("#parentId").val();
+  let modifiedBy = ADMIN_LOGGED_ID;
 
-  let jsonData = { name, locationLevelId, parentId };
+  let jsonData = { name, locationLevelId, parentId, modifiedBy };
   $.ajax({
     type: "PUT",
     url: `http://localhost:9001/api/admin/location/update/${id}`,
@@ -496,6 +498,7 @@ function updateLocation(id) {
     contentType: "application/json",
     success: function (response) {
       $("#baseModal").modal("hide");
+      loadParent();
       loadLocations();
     },
     error: function (error) {
@@ -525,7 +528,7 @@ function openDeleteModal(id) {
                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
                     Tidak
                 </button>
-                <button onclick="deleteLocation(${id})" type="button" class="btn btn-danger">
+                <button onclick="deleteLocation(${id},'${location.name}')" type="button" class="btn btn-danger">
                     Ya
                 </button>
             `);
@@ -537,22 +540,28 @@ function openDeleteModal(id) {
   });
 }
 
-function deleteLocation(id) {
+function deleteLocation(id, locationName = null) {
+  let jsonData = {
+    deletedBy : ADMIN_LOGGED_ID
+  };
   $.ajax({
     type: "PATCH",
     url: `http://localhost:9001/api/admin/location/soft-delete/${id}`,
+    data: JSON.stringify(jsonData),
+    contentType: "application/json",
     success: function (response) {
       $("#baseModal").modal("hide");
+      loadParent();
       loadLocations();
     },
     error: function (error) {
       if (error.status === 409) {
-        alert("Failed to delete: Location is used!");
+        // alert("Failed to delete: Location is used!");
         $("#baseModal").modal("show");
         $("#baseModalTitle").html(`<strong>Hapus Lokasi</strong>`);
         $("#baseModalBody").html(`
                   <div style="text-align: center;">
-                      Tidak dapat menghapus Lokasi '<span id="locationName">Pasar Minggu</span>'
+                      Tidak dapat menghapus Lokasi '<span id="locationName">${locationName}</span>'
                       <br>
                       Lokasi tersebut masih digunakan
                   </div>

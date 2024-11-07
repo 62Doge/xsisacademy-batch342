@@ -7,4 +7,6 @@ public class RoleRequestDTO {
     private String name;
     private String code;
     private Long createdBy;
+    private Long modifiedBy;
+    private Long deletedBy;
 }

@@ -216,10 +216,9 @@ public class LocationController {
     }
 
     @PatchMapping("/soft-delete/{id}")
-    public ResponseEntity<?> softDeleteLocation(@PathVariable Long id) {
+    public ResponseEntity<?> softDeleteLocation(@PathVariable Long id, @RequestBody LocationRequestDTO LocationRequestDTO) {
         try {
-            locationService.softDeleteLocation(id);
-
+            locationService.softDeleteLocation(id, LocationRequestDTO.getDeletedBy());
             ApiResponse<LocationResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
                     "Location  soft deleted", null);
             return ResponseEntity.ok(successResponse);

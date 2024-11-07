@@ -1,1 +1,3 @@
 let IS_USER_LOGGED = false;
+let USER_LOGGED_ID = -1;
+let ADMIN_LOGGED_ID = 0;

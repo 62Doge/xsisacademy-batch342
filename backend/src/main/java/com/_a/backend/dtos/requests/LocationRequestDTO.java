@@ -10,4 +10,6 @@ public class LocationRequestDTO {
     private Long parentId;
     private Long locationLevelId;
     private Long createdBy;
+    private Long modifiedBy;
+    private Long deletedBy;
 }
