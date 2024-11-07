@@ -160,7 +160,7 @@
         Promise.all([customNominalRequest, defaultNominalRequest]).then(() => {
           $(".nominal-list").append(`
               <button
-                class="btn btn-outline-primary flex-fill"
+                class="btn btn-outline-primary flex-fill nominal-item-custom"
                 id="addCustomNominal"
               >
                 Nominal Lain
@@ -343,6 +343,8 @@
             $(".withdraw-btn").removeClass("disabled");
             $("#baseModal").modal("show");
             $("#continueWithdraw").addClass("disabled");
+            $(".nominal-item").addClass("disabled");
+            $(".nominal-item-custom").addClass("disabled");
           },
           error(response) {
             setModal("Autentikasi", response.responseJSON.message);
@@ -401,6 +403,8 @@
           $("#withdraw-info").hide();
           $(".withdraw-btn").addClass("disabled");
           $("#continueWithdraw").removeClass("disabled");
+          $(".nominal-item").removeClass("disabled");
+          $(".nominal-item-custom").removeClass("disabled");
           setTimeout(() => {
             $(".withdraw-btn").removeClass("disabled");
           }, 1000);
