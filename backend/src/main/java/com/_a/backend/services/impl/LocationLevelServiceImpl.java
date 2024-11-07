@@ -73,7 +73,7 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
 
     @Override
     public LocationLevelResponseDTO save(LocationLevelRequestDTO locationLevelRequestDTO) {
-       if (locationLevelRepository.existsByName(locationLevelRequestDTO.getName())){
+       if (locationLevelRepository.existsByNameContainingIgnoreCaseAndIsDeleteFalse(locationLevelRequestDTO.getName())){
            throw new IllegalArgumentException("Name already exists");
         }
 
@@ -85,7 +85,7 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
     @Override
     public LocationLevelResponseDTO update(LocationLevelRequestDTO locationLevelRequestDTO, Long id) {
         Optional<LocationLevel> optionalLocationLevel = locationLevelRepository.findById(id);
-        if (locationLevelRepository.existsByName(locationLevelRequestDTO.getName())) {
+        if (locationLevelRepository.existsByNameContainingIgnoreCaseAndIsDeleteFalseAndIdNot(locationLevelRequestDTO.getName(), id)) {
             throw new IllegalArgumentException("Name already exists");
 
         } else if (optionalLocationLevel.isPresent()) {
@@ -120,5 +120,9 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
     @Override
     public void deleteById(Long id) {
         locationLevelRepository.deleteById(id);
+    }
+
+    public boolean existsByNameIsDeleteFalseAndIdNot(String name, Long id) {
+       return locationLevelRepository.existsByNameContainingIgnoreCaseAndIsDeleteFalseAndIdNot(name, id);
     }
 }
