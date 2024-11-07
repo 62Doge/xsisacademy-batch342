@@ -251,8 +251,7 @@
         }
       });
 
-      $(document).on("click", "#continueWithdraw", function (e) {
-        e.preventDefault();
+      function showInputPinModal() {
         const modalTitle = `<h3 class="fs-4">Masukkan PIN</h3>`;
         const modalBody = `
         <div class="row">
@@ -264,6 +263,9 @@
                 <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin5" />
                 <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin6" />
             </div>
+            <p id="inputPinError" class="text-danger fst-italic invisible">
+              PIN terdiri dari 6 angka!
+            </p>
         </div>
     `;
         const modalFooter = `
@@ -273,6 +275,11 @@
     `;
         setModal(modalTitle, modalBody, modalFooter);
         $("#baseModal").modal("show");
+      }
+
+      $(document).on("click", "#continueWithdraw", function (e) {
+        e.preventDefault();
+        showInputPinModal();
       });
 
       $(document).on("input", "#inputPin .pin-input", function () {
@@ -306,13 +313,24 @@
 
       $(document).on("click", "#submitPin", function (e) {
         e.preventDefault();
+        const button = $(this);
+        const inputPinError = $("#inputPinError");
         let pin = "";
 
         $(".pin-input").each(function () {
           pin += $(this).val();
         });
 
+        if (pin.length < 6) {
+          inputPinError.removeClass("invisible");
+          setTimeout(() => {
+            inputPinError.addClass("invisible");
+          }, 4000);
+          return;
+        }
+
         const pinData = { pin };
+        button.addClass("disabled");
 
         $.ajax({
           type: "post",
@@ -328,8 +346,12 @@
           },
           error(response) {
             setModal("Autentikasi", response.responseJSON.message);
-
+            button.removeClass("disabled");
             $("#baseModal").modal("show");
+            $("#baseModal").on("hidden.bs.modal", function () {
+              showInputPinModal();
+              $(this).off("hidden.bs.modal");
+            });
           },
         });
       });
@@ -337,6 +359,8 @@
       $("#processWithdraw button").click(function (e) {
         e.preventDefault();
         const button = $(this);
+        $(".withdraw-btn").addClass("disabled");
+
         if (button.hasClass("continue-process")) {
           const reqJson = JSON.stringify(requestData);
 
@@ -363,6 +387,7 @@
               resetRequestData();
               $("#withdraw-info").hide();
               $(".withdraw-btn").addClass("disabled");
+              $("#continueWithdraw").removeClass("disabled");
             },
             error(response) {
               setModal("Autentikasi", response.responseJSON.message);
@@ -376,6 +401,9 @@
           $("#withdraw-info").hide();
           $(".withdraw-btn").addClass("disabled");
           $("#continueWithdraw").removeClass("disabled");
+          setTimeout(() => {
+            $(".withdraw-btn").removeClass("disabled");
+          }, 1000);
         }
       });
 

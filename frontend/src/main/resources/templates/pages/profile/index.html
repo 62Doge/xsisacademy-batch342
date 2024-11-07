@@ -73,7 +73,7 @@
     <th:block layout:fragment="pageAbove">
       <th:block th:replace="~{pages/profile/tabWithdraw::style}"></th:block>
       <th:block
-        th:replace="~{fragments/BaseModal::modal(class='modal-sm')}"
+        th:replace="~{fragments/BaseModal::modal(class='modal-sm', modalBackdrop='static', modalKeyboard='false')}"
       ></th:block>
 
       <th:block
