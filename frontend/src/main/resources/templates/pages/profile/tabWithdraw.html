@@ -42,7 +42,7 @@
           <button
             class="btn btn-danger me-2 disabled withdraw-btn cancel-process"
           >
-            Cancel
+            Batal
           </button>
           <button
             class="btn btn-primary disabled withdraw-btn continue-process"
@@ -190,7 +190,7 @@
           <div class="col">
             <label for="inputCustomNominal" class="form-label">Isi nominal lain</label>
             <input type="text" class="form-control" placeholder="Masukkan nominal" id="inputCustomNominal" />
-            <p id='customNominalError' class='text-danger mb-1' style="display: none">Nominal lebih besar dari saldo!</p>
+            <p id='customNominalError' class='text-danger mb-1' style="display: none"></p>
           </div>
         </div>
         `;
@@ -214,14 +214,14 @@
       // custom nominal
       $(document).on("click", "#customNominalButton button", function (e) {
         e.preventDefault();
-
         let button = $(this);
+        const customNominalVal = $("#inputCustomNominal").val();
+
         if (button.hasClass("btn-ok")) {
-          let customNominal = $("#inputCustomNominal").val();
           resetRequestData();
-          requestData.nominal.amount = customNominal;
+          requestData.nominal.amount = customNominalVal;
           requestData.nominal.type = "custom";
-          $("#amount").text(`Rp ${formatRupiah(customNominal)}`);
+          $("#amount").text(`Rp ${formatRupiah(customNominalVal)}`);
           $("#withdraw-info").show();
         }
         $("#inputCustomNominal").val(null);
@@ -236,8 +236,13 @@
         if (isNaN(value)) {
           $input.val(value.slice(0, value.length).replace(/\D/g, ""));
         } else {
-          if (parseInt(value) > customerBalance) {
+          if (parseFloat(value) > customerBalance) {
             $("#customNominalButton .btn-ok").addClass("disabled");
+            $("#customNominalError").text("Nominal lebih besar dari saldo!");
+            $("#customNominalError").show();
+          } else if (parseFloat(value) <= 0) {
+            $("#customNominalButton .btn-ok").addClass("disabled");
+            $("#customNominalError").text("Nominal harus lebih dari 0!");
             $("#customNominalError").show();
           } else {
             $("#customNominalError").hide();
@@ -319,6 +324,7 @@
             setModal("Autentikasi", response.message);
             $(".withdraw-btn").removeClass("disabled");
             $("#baseModal").modal("show");
+            $("#continueWithdraw").addClass("disabled");
           },
           error(response) {
             setModal("Autentikasi", response.responseJSON.message);
@@ -352,8 +358,6 @@
               setModal(title, body);
               renderBalance();
               renderNominalWithdraw();
-              console.log("withdraw");
-
               $("#baseModal").modal("show");
               $("#amount").text("");
               resetRequestData();
@@ -371,6 +375,7 @@
           resetRequestData();
           $("#withdraw-info").hide();
           $(".withdraw-btn").addClass("disabled");
+          $("#continueWithdraw").removeClass("disabled");
         }
       });
 
