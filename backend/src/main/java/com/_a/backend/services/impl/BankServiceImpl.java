@@ -39,7 +39,7 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         return bankResponseDTOs;
     }
 
-    public Page<Bank> findActiveBankPages(int page, int size, String sortBy, String sortDir) {
+    public Page<Bank> findActivePages(int page, int size, String sortBy, String sortDir) {
         Sort.Direction direction = Sort.Direction.fromString(sortDir);
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         return bankRepository.findAllByIsDeleteFalse(pageable);

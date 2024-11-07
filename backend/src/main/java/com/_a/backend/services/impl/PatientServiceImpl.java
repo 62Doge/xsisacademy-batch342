@@ -6,8 +6,11 @@ import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com._a.backend.dtos.projections.PatientProjectionDto;
 import com._a.backend.dtos.requests.PatientRequestDTO;
 import com._a.backend.dtos.responses.PatientResponseDTO;
 import com._a.backend.entities.Biodata;
@@ -44,26 +47,38 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
-    @Override
-    public PatientResponseDTO findById(Long id) {
-        PatientResponseDTO patientResponseDTO = new PatientResponseDTO();
-        Optional<CustomerMember> customerMember = customerMemberRepository.findById(id);
-        Optional<Customer> customer = customerRepository.findById(customerMember.get().getCustomerId());
-        Optional<Biodata> biodata = biodataRepository.findById(customer.get().getBiodataId());
-        patientResponseDTO.setId(id);
-        patientResponseDTO.setParentBiodataId(customerMember.get().getParentBiodataId());
-        patientResponseDTO.setFullName(biodata.get().getFullname());
-        patientResponseDTO.setDob(customer.get().getDob());
-        patientResponseDTO.setGender(customer.get().getGender());
-        patientResponseDTO.setBloodGroupId(customer.get().getBloodGroupId());
-        patientResponseDTO.setRhesus(customer.get().getRhesus_type());
-        patientResponseDTO.setCustomerRelationId(customerMember.get().getCustomerRelationId());
-        return patientResponseDTO;
+    public Page<PatientResponseDTO> findActivePages(Long parentBiodataId, Pageable pageable) {
+        Page<PatientProjectionDto> projections = customerMemberRepository.findPatient(parentBiodataId, pageable);
+        return projections.map(projection -> new PatientResponseDTO(
+            projection.getId(),
+            projection.getParentBiodataId(),
+            projection.getFullName(),
+            projection.getDob(),
+            projection.getGender(),
+            projection.getBloodGroupId(),
+            projection.getRhesus(),
+            projection.getCustomerRelationId()
+        ));
+    }
+
+    public Page<PatientResponseDTO> findActivePagesByName(String name, Long parentBiodataId, Pageable pageable) {
+        Page<PatientProjectionDto> projections = customerMemberRepository.findPatientByName(name, parentBiodataId, pageable);
+        return projections.map(projection -> new PatientResponseDTO(
+            projection.getId(),
+            projection.getParentBiodataId(),
+            projection.getFullName(),
+            projection.getDob(),
+            projection.getGender(),
+            projection.getBloodGroupId(),
+            projection.getRhesus(),
+            projection.getCustomerRelationId()
+        ));
     }
 
     public List<PatientResponseDTO> findByParentBiodataId(Long parentBiodataId) {
         List<PatientResponseDTO> patientResponseDTOs = new ArrayList<PatientResponseDTO>();
-        List<CustomerMember> customerMembers = customerMemberRepository.findAllByParentBiodataIdAndIsDeleteFalse(parentBiodataId);
+        List<CustomerMember> customerMembers = customerMemberRepository
+                .findAllByParentBiodataIdAndIsDeleteFalse(parentBiodataId);
         for (CustomerMember customerMember : customerMembers) {
             Optional<Customer> customer = customerRepository.findById(customerMember.getCustomerId());
             Optional<Biodata> biodata = biodataRepository.findById(customer.get().getBiodataId());
@@ -81,28 +96,22 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         return patientResponseDTOs;
     }
 
-    // @Override
-    // public Optional<PatientResponseDTO> findById(Long id) {
-    // Optional<CustomerMember> customerMember =
-    // customerMemberRepository.findById(id);
-    // if (customerMember.isPresent()) {
-    // Optional<PatientResponseDTO> patientResponseDTO;
-    // Optional<Customer> customer =
-    // customerRepository.findById(customerMember.get().getCustomerId());
-    // Optional<Biodata> biodata =
-    // biodataRepository.findById(customer.get().getBiodataId());
-    // patientResponseDTO.setId(id);
-    // patientResponseDTO.setParentBiodataId(customerMember.get().getParentBiodataId());
-    // patientResponseDTO.setFullName(biodata.get().getFullname());
-    // patientResponseDTO.setDob(customer.get().getDob());
-    // patientResponseDTO.setGender(customer.get().getGender());
-    // patientResponseDTO.setBloodGroupId(customer.get().getBloodGroupId());
-    // patientResponseDTO.setRhesus(customer.get().getRhesus_type());
-    // patientResponseDTO.setCustomerRelationId(customerMember.get().getCustomerRelationId());
-    // return patientResponseDTO;
-    // }
-    // return Optional.empty();
-    // }
+    @Override
+    public PatientResponseDTO findById(Long id) {
+        PatientResponseDTO patientResponseDTO = new PatientResponseDTO();
+        Optional<CustomerMember> customerMember = customerMemberRepository.findById(id);
+        Optional<Customer> customer = customerRepository.findById(customerMember.get().getCustomerId());
+        Optional<Biodata> biodata = biodataRepository.findById(customer.get().getBiodataId());
+        patientResponseDTO.setId(id);
+        patientResponseDTO.setParentBiodataId(customerMember.get().getParentBiodataId());
+        patientResponseDTO.setFullName(biodata.get().getFullname());
+        patientResponseDTO.setDob(customer.get().getDob());
+        patientResponseDTO.setGender(customer.get().getGender());
+        patientResponseDTO.setBloodGroupId(customer.get().getBloodGroupId());
+        patientResponseDTO.setRhesus(customer.get().getRhesus_type());
+        patientResponseDTO.setCustomerRelationId(customerMember.get().getCustomerRelationId());
+        return patientResponseDTO;
+    }
 
     @Override
     public PatientResponseDTO save(Long parentBiodataId, PatientRequestDTO patientRequestDTO) {
@@ -155,49 +164,6 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         patientResponseDTO.setCustomerRelationId(savedCustomerMember.getCustomerRelationId());
         return patientResponseDTO;
     }
-
-    // @Override
-    // public PatientResponseDTO update(Long id, PatientRequestDTO
-    // patientRequestDTO) {
-    // Optional<CustomerMember> customerMember =
-    // customerMemberRepository.findById(id);
-    // if (customerMember.isPresent()) {
-    // Optional<Customer> customer =
-    // customerRepository.findById(customerMember.get().getCustomerId());
-    // Optional<Biodata> biodata =
-    // biodataRepository.findById(customer.get().getBiodataId());
-
-    // biodata.get().setFullname(patientRequestDTO.getFullName());
-    // Biodata updatedBiodata = biodataRepository.save(biodata);
-
-    // customer.get().setDob(patientRequestDTO.getDob());
-    // String patientBlood = patientRequestDTO.getBlood();
-    // if ("A".equals(patientBlood)) {
-    // customer.get().setBloodGroupId(1L);
-    // } else if ("B".equals(patientBlood)) {
-    // customer.get().setBloodGroupId(2L);
-    // } else if ("O".equals(patientBlood)) {
-    // customer.get().setBloodGroupId(3L);
-    // } else if ("AB".equals(patientBlood)) {
-    // customer.get().setBloodGroupId(4L);
-    // }
-    // customer.get().setRhesus_type(patientRequestDTO.getRhesus());
-    // Customer updatedCustomer = customerRepository.save(customer);
-
-    // String patientRelation = patientRequestDTO.getRelation();
-    // if ("Diri Sendiri".equals(patientRelation)) {
-    // customerMember.get().setCustomerRelationId(1L);
-    // } else if ("Suami".equals(patientRelation)) {
-    // customerMember.get().setCustomerRelationId(2L);
-    // } else if ("Istri".equals(patientRelation)) {
-    // customerMember.get().setCustomerRelationId(3L);
-    // } else if ("Anak".equals(patientRelation)) {
-    // customerMember.get().setCustomerRelationId(4L);
-    // }
-    // CustomerMember updatedCustomerMember =
-    // customerMemberRepository.save(customerMember);
-    // }
-    // }
 
     @Override
     public PatientResponseDTO update(Long id, Long parentBiodataId, PatientRequestDTO patientRequestDTO) {

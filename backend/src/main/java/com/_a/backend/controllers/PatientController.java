@@ -12,6 +12,10 @@ import com._a.backend.services.impl.PatientServiceImpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/patient")
@@ -32,19 +37,88 @@ public class PatientController {
     @Autowired
     DumpAuthServiceImpl dumpAuthServiceImpl;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getPatientByID(@PathVariable Long id) {
+    @GetMapping("/active")
+    public ResponseEntity<?> getActivePatientPages(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "fullname") String sortBy,
+            @RequestParam(defaultValue = "ASC") String sortDir) {
         try {
-            PatientResponseDTO patient = patientService.findById(id);
-            ApiResponse<PatientResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), patient);
-            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+            Long parentBiodataId = dumpAuthServiceImpl.getDetails().getBiodataId();
+            Pageable pageable = PageRequest.of(page, size);
+            if (sortBy.equalsIgnoreCase("fullname")) {
+                if (sortDir.equalsIgnoreCase("ASC")) {
+                    pageable = PageRequest.of(page, size, Sort.by("b.fullname").ascending());
+                } else if (sortDir.equalsIgnoreCase("DESC")) {
+                    pageable = PageRequest.of(page, size, Sort.by("b.fullname").descending());
+                }
+            } else if (sortBy.equalsIgnoreCase("age")) {
+                if (sortDir.equalsIgnoreCase("ASC")) {
+                    pageable = PageRequest.of(page, size, Sort.by("c.dob").descending());
+                } else if (sortDir.equalsIgnoreCase("DESC")) {
+                    pageable = PageRequest.of(page, size, Sort.by("c.dob").ascending());
+                }
+            }
+            Page<PatientResponseDTO> patient = patientService.findActivePages(parentBiodataId, pageable);
+            ApiResponse<Page<PatientResponseDTO>> successResponse = new ApiResponse<Page<PatientResponseDTO>>(
+                    HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), patient);
+            return new ResponseEntity<>(successResponse, HttpStatus.OK);
         } catch (Exception e) {
-            ApiResponse<PatientResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Patient not found", null);
+            ApiResponse<PatientResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Patient not found", null);
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    // need to get active data only
+    @GetMapping("/name/{name}")
+    public ResponseEntity<?> getPatientByQuery(
+        @PathVariable String name,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "fullname") String sortBy,
+        @RequestParam(defaultValue = "ASC") String sortDir) {
+        try {
+            Long parentBiodataId = dumpAuthServiceImpl.getDetails().getBiodataId();
+            Pageable pageable = PageRequest.of(page, size);
+            if (sortBy.equalsIgnoreCase("fullname")) {
+                if (sortDir.equalsIgnoreCase("ASC")) {
+                    pageable = PageRequest.of(page, size, Sort.by("b.fullname").ascending());
+                } else if (sortDir.equalsIgnoreCase("DESC")) {
+                    pageable = PageRequest.of(page, size, Sort.by("b.fullname").descending());
+                }
+            } else if (sortBy.equalsIgnoreCase("age")) {
+                if (sortDir.equalsIgnoreCase("ASC")) {
+                    pageable = PageRequest.of(page, size, Sort.by("c.dob").descending());
+                } else if (sortDir.equalsIgnoreCase("DESC")) {
+                    pageable = PageRequest.of(page, size, Sort.by("c.dob").ascending());
+                }
+            }
+            Page<PatientResponseDTO> patient = patientService.findActivePagesByName(name, parentBiodataId, pageable);
+            ApiResponse<Page<PatientResponseDTO>> successResponse = new ApiResponse<Page<PatientResponseDTO>>(
+                    HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), patient);
+            return new ResponseEntity<>(successResponse, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ApiResponse<PatientResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Patient not found", null);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPatientByID(@PathVariable Long id) {
+        try {
+            PatientResponseDTO patient = patientService.findById(id);
+            ApiResponse<PatientResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(), patient);
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        } catch (Exception e) {
+            ApiResponse<PatientResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Patient not found", null);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("")
     public ResponseEntity<?> getPatientsByParentBiodataId() {
         try {

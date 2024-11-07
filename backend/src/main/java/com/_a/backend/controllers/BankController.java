@@ -54,22 +54,21 @@ public class BankController {
     }
     
     @GetMapping("/active")
-    public ResponseEntity<?> getActiveBanksPage(
+    public ResponseEntity<?> getActiveBankPages(
         @RequestParam(defaultValue = "0") int page, 
         @RequestParam(defaultValue = "5") int size,
         @RequestParam(defaultValue = "name") String sortBy,
         @RequestParam(defaultValue = "ASC") String sortDir
         ) {
         try {
-            Page<Bank> bank = bankService.findActiveBankPages(page, size, sortBy, sortDir);
-            ApiResponse<Page<Bank>> successResponse = new ApiResponse<Page<Bank>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bank);
+            Page<Bank> banks = bankService.findActivePages(page, size, sortBy, sortDir);
+            ApiResponse<Page<Bank>> successResponse = new ApiResponse<Page<Bank>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), banks);
             return new ResponseEntity<>(successResponse, HttpStatus.OK);
         } catch (Exception e) {
             ApiResponse<List<BankResponseDTO>> errorResponse = new ApiResponse<List<BankResponseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     @GetMapping("/active/data")
     public ResponseEntity<?> getAllActiveBanks() {
         try {
