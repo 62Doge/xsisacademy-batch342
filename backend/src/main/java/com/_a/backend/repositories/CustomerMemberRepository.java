@@ -29,7 +29,7 @@ public interface CustomerMemberRepository extends JpaRepository<CustomerMember, 
                         "cm.parent_biodata_id = :parent_biodata_id", nativeQuery = true)
         Page<PatientProjectionDto> findPatient(@Param("parent_biodata_id") Long parentBiodataId, Pageable pageable);
 
-        @Query(value = "SELECT cm.id, cm.parent_biodata_id, b.fullname, c.dob, c.gender, c.blood_group_id, c.rhesus_type as rhesus, cm.customer_relation_id "
+        @Query(value = "SELECT cm.id, cm.parent_biodata_id, b.fullname, c.dob, c.gender, c.height, c.weight, c.blood_group_id, c.rhesus_type as rhesus, cm.customer_relation_id "
                         +
                         "FROM m_customer_member cm " +
                         "JOIN m_customer c on c.id = cm.customer_id " +

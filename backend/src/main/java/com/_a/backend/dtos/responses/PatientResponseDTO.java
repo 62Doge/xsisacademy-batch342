@@ -12,7 +12,7 @@ public class PatientResponseDTO {
         
     }
 
-    public PatientResponseDTO(Long id, Long parentBiodataId, String fullName, LocalDate dob, String gender, Long bloodGroupId, String rhesus, Long customerRelationId) {
+    public PatientResponseDTO(Long id, Long parentBiodataId, String fullName, LocalDate dob, String gender, Long bloodGroupId, String rhesus, Double height, Double weight, Long customerRelationId) {
         this.id = id;
         this.parentBiodataId = parentBiodataId;
         this.fullName = fullName;
@@ -20,6 +20,8 @@ public class PatientResponseDTO {
         this.gender = gender;
         this.bloodGroupId = bloodGroupId;
         this.rhesus = rhesus;
+        this.height = height;
+        this.weight = weight;
         this.customerRelationId = customerRelationId;
     }
 
@@ -40,6 +42,10 @@ public class PatientResponseDTO {
     
     @Column(name = "rhesus_type")
     private String rhesus;
+
+    private Double height;
+
+    private Double weight;
     
     @Column(name = "customer_relation_id")
     private Long customerRelationId;

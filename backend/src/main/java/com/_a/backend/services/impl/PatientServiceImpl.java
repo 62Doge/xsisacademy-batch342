@@ -57,6 +57,8 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
             projection.getGender(),
             projection.getBloodGroupId(),
             projection.getRhesus(),
+            projection.getHeight(),
+            projection.getWeight(),
             projection.getCustomerRelationId()
         ));
     }
@@ -71,6 +73,8 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
             projection.getGender(),
             projection.getBloodGroupId(),
             projection.getRhesus(),
+            projection.getHeight(),
+            projection.getWeight(),
             projection.getCustomerRelationId()
         ));
     }
@@ -90,6 +94,8 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
             patientResponseDTO.setGender(customer.get().getGender());
             patientResponseDTO.setBloodGroupId(customer.get().getBloodGroupId());
             patientResponseDTO.setRhesus(customer.get().getRhesus_type());
+            patientResponseDTO.setHeight(customer.get().getHeight());
+            patientResponseDTO.setWeight(customer.get().getWeight());
             patientResponseDTO.setCustomerRelationId(customerMember.getCustomerRelationId());
             patientResponseDTOs.add(patientResponseDTO);
         }
@@ -109,6 +115,8 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         patientResponseDTO.setGender(customer.get().getGender());
         patientResponseDTO.setBloodGroupId(customer.get().getBloodGroupId());
         patientResponseDTO.setRhesus(customer.get().getRhesus_type());
+        patientResponseDTO.setHeight(customer.get().getHeight());
+        patientResponseDTO.setWeight(customer.get().getWeight());
         patientResponseDTO.setCustomerRelationId(customerMember.get().getCustomerRelationId());
         return patientResponseDTO;
     }
@@ -124,6 +132,8 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         customer.setDob(patientRequestDTO.getDob());
         customer.setGender(patientRequestDTO.getGender());
         customer.setRhesus_type(patientRequestDTO.getRhesus());
+        customer.setHeight(patientRequestDTO.getHeight());
+        customer.setWeight(patientRequestDTO.getWeight());
         String patientBlood = patientRequestDTO.getBlood();
         if ("A".equals(patientBlood)) {
             customer.setBloodGroupId(1L);
@@ -161,6 +171,8 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         patientResponseDTO.setGender(savedCustomer.getGender());
         patientResponseDTO.setBloodGroupId(savedCustomer.getBloodGroupId());
         patientResponseDTO.setRhesus(savedCustomer.getRhesus_type());
+        patientResponseDTO.setHeight(savedCustomer.getHeight());
+        patientResponseDTO.setWeight(savedCustomer.getWeight());
         patientResponseDTO.setCustomerRelationId(savedCustomerMember.getCustomerRelationId());
         return patientResponseDTO;
     }
@@ -180,6 +192,8 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         existingCustomer.setDob(patientRequestDTO.getDob());
         existingCustomer.setGender(patientRequestDTO.getGender());
         existingCustomer.setRhesus_type(patientRequestDTO.getRhesus());
+        existingCustomer.setHeight(patientRequestDTO.getHeight());
+        existingCustomer.setWeight(patientRequestDTO.getWeight());
 
         String patientBlood = patientRequestDTO.getBlood();
         if ("A".equals(patientBlood)) {
@@ -216,6 +230,8 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         patientResponseDTO.setGender(existingCustomer.getGender());
         patientResponseDTO.setBloodGroupId(existingCustomer.getBloodGroupId());
         patientResponseDTO.setRhesus(existingCustomer.getRhesus_type());
+        patientResponseDTO.setHeight(existingCustomer.getHeight());
+        patientResponseDTO.setWeight(existingCustomer.getWeight());
         patientResponseDTO.setCustomerRelationId(updatedCustomerMember.getCustomerRelationId());
 
         return patientResponseDTO;

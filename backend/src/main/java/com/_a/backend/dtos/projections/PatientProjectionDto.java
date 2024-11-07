@@ -10,5 +10,7 @@ public interface PatientProjectionDto {
     String getGender();
     Long getBloodGroupId();
     String getRhesus();
+    Double getHeight();
+    Double getWeight();
     Long getCustomerRelationId();
 }

@@ -14,6 +14,8 @@ public class PatientRequestDTO {
     private String gender;
     private String blood;
     private String rhesus;
+    private Double height;
+    private Double weight;
     private String relation;
 
 }

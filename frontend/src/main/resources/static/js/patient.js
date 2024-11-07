@@ -297,6 +297,8 @@ function addPatient() {
         "gender": $('input[name="addPatientGender"]:checked').val(),
         "blood": $('#addPatientBlood').val(),
         "rhesus": $('input[name="addPatientRhesus"]:checked').val(),
+        "height": $('#addPatientHeight').val(),
+        "weight": $('#addPatientWeight').val(),
         "relation": $('#addPatientRelation').val()
     }
     $.ajax({
@@ -361,6 +363,8 @@ function openEditForm(id) {
                     $(`input[name="editPatientGender"][value="${patient.gender}"]`).prop("checked", true);
                     $('select[name="editPatientBlood"]').val(patientBlood);
                     $(`input[name="editPatientRhesus"][value="${patient.rhesus}"]`).prop("checked", true);
+                    $('#editPatientHeight').val(patient.height);
+                    $('#editPatientWeight').val(patient.weight);
                     $('select[name="editPatientRelation"]').val(patientRelation);
                 },
                 error: function (error) {
@@ -381,6 +385,8 @@ function editPatient(id) {
         "gender": $('input[name="editPatientGender"]:checked').val(),
         "blood": $('#editPatientBlood').val(),
         "rhesus": $('input[name="editPatientRhesus"]:checked').val(),
+        "height": $('#editPatientHeight').val(),
+        "weight": $('#editPatientWeight').val(),
         "relation": $('#editPatientRelation').val()
     }
     $.ajax({
