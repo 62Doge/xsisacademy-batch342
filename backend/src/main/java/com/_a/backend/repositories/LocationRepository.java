@@ -5,13 +5,17 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com._a.backend.entities.Location;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
-    Boolean existsByName(String name);
+    @Query("SELECT CASE WHEN COUNT(l) > 0 THEN true ELSE false END FROM Location l WHERE l.name = :name AND l.isDelete = false")
+    Boolean existsByName(@Param("name") String name);
 
-    Boolean existsByNameAndParentId(String name, Long parentId);
+    @Query("SELECT CASE WHEN COUNT(l) > 0 THEN true ELSE false END FROM Location l WHERE l.name = :name AND l.parentId = :parentId AND l.isDelete = false")
+    Boolean existsByNameAndParentId(@Param("name") String name, @Param("parentId") Long parentId);
 
     Page<Location> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
 

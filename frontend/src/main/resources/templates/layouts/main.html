@@ -110,9 +110,11 @@
         if (IS_USER_LOGGED) {
           $(".user-not-logged").addClass("d-none");
           $(".user-logged").removeClass("d-none");
+          $("#layout-menu").removeClass("d-none");
         } else {
           $(".user-not-logged").removeClass("d-none");
           $(".user-logged").addClass("d-none");
+          $("#layout-menu").addClass("d-none");
         }
       });
     </script>

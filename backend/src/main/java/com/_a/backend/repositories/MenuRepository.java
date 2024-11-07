@@ -21,8 +21,16 @@ public interface MenuRepository extends JpaRepository<Menu, Long> {
 
     @Query("SELECT m FROM Menu m " +
             "LEFT JOIN MenuRole mr ON m.id = mr.menuId " +
-            "WHERE (mr.roleId = :roleId OR mr.roleId = -1) " +
-            "AND m.isDelete = false AND (mr.isDelete = false OR mr.roleId = -1)")
-    List<Menu> findMenusByRoleOrUniversalAccess(@Param("roleId") Long roleId);
+            "WHERE mr.roleId = :roleId " +
+            "AND m.isDelete = false AND mr.isDelete = false " +
+            "ORDER BY mr.roleId")
+    List<Menu> findMenusByRole(@Param("roleId") Long roleId);
+
+    @Query("SELECT m FROM Menu m " +
+            "LEFT JOIN MenuRole mr ON m.id = mr.menuId " +
+            "WHERE mr.roleId = -1 " +
+            "AND m.isDelete = false AND (mr.isDelete = false OR mr.roleId = -1) " +
+            "ORDER BY mr.roleId")
+    List<Menu> findMenusByUniversalAccess();
 
 }

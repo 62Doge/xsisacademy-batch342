@@ -105,4 +105,10 @@ public class MenuController {
         return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),menuResponseDTOs));
     }
 
+    @GetMapping("/role/no-role")
+    public ResponseEntity<?> getMenuByUniversalAccess() {
+        List<MenuResponseDTO> menuResponseDTOs = menuService.getMenuByUniversalAccess();
+        return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),menuResponseDTOs));
+    }
+
 }

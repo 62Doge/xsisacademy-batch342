@@ -14,27 +14,22 @@ document.addEventListener("DOMContentLoaded", (event) => {
 });
 
 $(document).ready(function () {
-  loadData();
+  loadLocations();
 
   $("#searchLocation").on("input", function () {
     currentSearchQuery = $(this).val();
-    if (currentLocationLevelId && currentSearchQuery) {
-      searchWithLevel(currentSearchQuery, currentLocationLevelId);
-    } else if (currentSearchQuery) {
-      searchLocation(currentSearchQuery);
-    } else if (currentLocationLevelId) {
-      getLocationByLevel(currentLocationLevelId);
-    } else {
-      $("#location-table").empty();
-      loadData();
-    }
+    $("#location-table").empty();
+    loadLocations();
   });
 });
 
-function searchLocation(query) {
+function loadLocations() {
+  let url = "";
+  if (currentLocationLevelId) url += `/level/${currentLocationLevelId}`;
+  if (currentSearchQuery) url += `/name/${currentSearchQuery}`;
   $.ajax({
     type: "GET",
-    url: `http://localhost:9001/api/admin/location/name/${query}?pageNo=${
+    url: `http://localhost:9001/api/admin/location${url}?pageNo=${
       currentPage - 1
     }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
     contentType: "application/json",
@@ -67,105 +62,6 @@ function searchLocation(query) {
 
       $("#location-table").html(tableData);
       pageButtons();
-      // if (currentPage > totalPages) {
-      //   if (totalPages !== 0) moveToPage(totalPages);
-      // }
-    },
-    error: function (error) {
-      alert("Failed to search location!");
-      console.error("Error searching locations:", error);
-    },
-  });
-}
-
-function getLocationByLevel(locationLevelId) {
-  currentLocationLevelId = locationLevelId;
-  $.ajax({
-    type: "GET",
-    url: `http://localhost:9001/api/admin/location/level/${locationLevelId}?pageNo=${
-      currentPage - 1
-    }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
-    contentType: "application/json",
-    success: function (response) {
-      let locationData = response.data.content;
-      totalPages = response.data.metadata.totalPages;
-
-      let tableData = ``;
-      locationData.forEach((location) => {
-        let locLevelOne = "";
-        if (location.parent !== null) {
-          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
-        }
-        tableData += `
-                  <tr>
-                    <td>${location.name}</td>
-                    <td>${location.locationLevel.name}</td>
-                    <td>${locLevelOne}</td>
-                    <td>
-                        <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
-                            <span class="tf-icons bx bxs-edit"></span>
-                        </button>
-                        <button onclick="openDeleteModal(${location.id})" type="button" class="btn btn-icon btn-outline-danger">
-                            <span class="tf-icons bx bxs-trash"></span>
-                        </button>
-                    </td>
-                  </tr>
-                `;
-      });
-
-      $("#location-table").html(tableData);
-      pageButtons();
-      // if (currentPage > totalPages) {
-      //   if (totalPages !== 0) moveToPage(totalPages);
-      // }
-    },
-    error: function (error) {
-      alert("Failed to load locations by location level!");
-      console.error("Error loading locations by location level:", error);
-    },
-  });
-}
-
-function searchWithLevel(query, locationLevelId) {
-  currentLocationLevelId = locationLevelId;
-  $.ajax({
-    type: "GET",
-    url: `http://localhost:9001/api/admin/location/level/${locationLevelId}/name/${query}?pageNo=${
-      currentPage - 1
-    }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
-    contentType: "application/json",
-    success: function (response) {
-      let locationData = response.data.content;
-      totalPages = response.data.metadata.totalPages;
-
-      let tableData = ``;
-      locationData.forEach((location) => {
-        let locLevelOne = "";
-        if (location.parent !== null) {
-          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
-        }
-        tableData += `
-                  <tr>
-                    <td>${location.name}</td>
-                    <td>${location.locationLevel.name}</td>
-                    <td>${locLevelOne}</td>
-                    <td>
-                        <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
-                            <span class="tf-icons bx bxs-edit"></span>
-                        </button>
-                        <button onclick="openDeleteModal(${location.id})" type="button" class="btn btn-icon btn-outline-danger">
-                            <span class="tf-icons bx bxs-trash"></span>
-                        </button>
-                    </td>
-                  </tr>
-                `;
-      });
-
-      $("#location-table").html(tableData);
-      pageButtons();
-      // if (currentPage > totalPages) {
-      //   if (totalPages !== 0) moveToPage(totalPages);
-      // }
     },
     error: function (error) {
       alert("Failed to load locations by location level!");
@@ -175,7 +71,7 @@ function searchWithLevel(query, locationLevelId) {
 }
 
 function pageButtons() {
-  console.log(`${totalPages} : curr ${currentPage}`);
+  // console.log(`${totalPages} : curr ${currentPage}`);
   if (currentPage > totalPages) {
     if (totalPages > 0) {
       moveToPage(totalPages);
@@ -184,7 +80,6 @@ function pageButtons() {
       currentPage = 1;
     }
   }
-  console.log("ts");
   // Show pages
   $("#pageList").empty();
 
@@ -293,96 +188,21 @@ function goToPage() {
 
 function moveToPage(pageNumber) {
   currentPage = pageNumber;
-  if (currentLocationLevelId && currentSearchQuery) {
-    searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentSearchQuery) {
-    searchLocation(currentSearchQuery);
-  } else if (currentLocationLevelId) {
-    getLocationByLevel(currentLocationLevelId);
-  } else {
-    loadData();
-  }
+  loadLocations();
 }
 
 function nextPage() {
   if (currentPage + 1 <= totalPages) {
     currentPage++;
   }
-  if (currentLocationLevelId && currentSearchQuery) {
-    searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentSearchQuery) {
-    searchLocation(currentSearchQuery);
-    if (currentLocationLevelId)
-      searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentLocationLevelId) {
-    getLocationByLevel(currentLocationLevelId);
-  } else {
-    loadData();
-  }
+  loadLocations();
 }
 
 function previousPage() {
   if (currentPage - 1 > 0) {
     currentPage--;
   }
-  if (currentLocationLevelId && currentSearchQuery) {
-    searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentSearchQuery) {
-    searchLocation(currentSearchQuery);
-    if (currentLocationLevelId)
-      searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentLocationLevelId) {
-    getLocationByLevel(currentLocationLevelId);
-  } else {
-    loadData();
-  }
-}
-
-function setPageSize(query) {
-  pageSize = query;
-  if (currentLocationLevelId && currentSearchQuery) {
-    searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentSearchQuery) {
-    searchLocation(currentSearchQuery);
-    if (currentLocationLevelId)
-      searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentLocationLevelId) {
-    getLocationByLevel(currentLocationLevelId);
-  } else {
-    loadData();
-  }
-}
-
-function setPageOrder() {
-  sortBy = $('input[name="orderColumnRadio"]:checked').val();
-  sortDir = $('input[name="orderTypeRadio"]:checked').val();
-  if (currentLocationLevelId && currentSearchQuery) {
-    searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentSearchQuery) {
-    searchLocation(currentSearchQuery);
-    if (currentLocationLevelId)
-      searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentLocationLevelId) {
-    getLocationByLevel(currentLocationLevelId);
-  } else {
-    loadData();
-  }
-}
-
-function customPageSize() {
-  let query = $("#pageSizeInput").val();
-  pageSize = query;
-  if (currentLocationLevelId && currentSearchQuery) {
-    searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentSearchQuery) {
-    searchLocation(currentSearchQuery);
-    if (currentLocationLevelId)
-      searchWithLevel(currentSearchQuery, currentLocationLevelId);
-  } else if (currentLocationLevelId) {
-    getLocationByLevel(currentLocationLevelId);
-  } else {
-    loadData();
-  }
+  loadLocations();
 }
 
 function loadLocationLevel() {
@@ -406,52 +226,6 @@ function loadParent() {
       locationData = locationResponse.data.content;
     },
   }).responseText;
-}
-
-function loadData() {
-  currentLocationLevelId = null;
-  let tableData = ``;
-  $.ajax({
-    type: "get",
-    url: `http://localhost:9001/api/admin/location?pageNo=${
-      currentPage - 1
-    }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
-    contentType: "application/json",
-    success: function (response) {
-      // fixed routing to get content in Paging
-      let locationData = response.data.content;
-      totalPages = response.data.metadata.totalPages;
-
-      locationData.forEach((location, index) => {
-        let locLevelOne = "";
-        if (location.parent !== null) {
-          locLevelOne = `${location.parent.locationLevel.abbreviation} ${location.parent.name}`;
-        }
-        tableData += `
-                  <tr>
-                    <td>${location.name}</td>
-                    <td>${location.locationLevel.name}</td>
-                    <td>${locLevelOne}</td>
-                    <td>
-                        <button onclick="openEditForm(${location.id})" type="button" class="btn btn-icon btn-outline-warning">
-                            <span class="tf-icons bx bxs-edit"></span>
-                        </button>
-                        <button onclick="openDeleteModal(${location.id})" type="button" class="btn btn-icon btn-outline-danger">
-                            <span class="tf-icons bx bxs-trash"></span>
-                        </button>
-                    </td>
-                  </tr>
-                `;
-      });
-
-      $("#location-table").html(tableData);
-      pageButtons();
-    },
-    error: function (xhr, status, error) {
-      alert("Failed to load location!");
-      console.error("Error loading data:", error);
-    },
-  });
 }
 
 function populateParentByLevel(selectId = null) {
@@ -512,7 +286,7 @@ function populateLocationLevelSelect(locationLevelContent, selectId = null) {
 
 // Function to populate the dropdown menu
 function populateLocationLevelDropdown() {
-  console.log(locationLevelData);
+  // console.log(locationLevelData);
   const dropdown = document.getElementById("location-level-dropdown");
   dropdown.innerHTML = ""; // Clear any existing content
 
@@ -529,7 +303,8 @@ function populateLocationLevelDropdown() {
   noneRadio.name = "locationLevel";
   noneRadio.value = "none";
   noneRadio.onclick = function () {
-    loadData();
+    currentLocationLevelId = null;
+    loadLocations();
   }; // Reset function on click
   noneRadio.className = "me-2";
 
@@ -549,7 +324,8 @@ function populateLocationLevelDropdown() {
     radio.name = "locationLevel";
     radio.value = level.id;
     radio.onclick = function () {
-      getLocationByLevel(level.id);
+      currentLocationLevelId = level.id;
+      loadLocations();
     };
     radio.className = "me-2"; // Adds some margin to the right
 
@@ -560,6 +336,47 @@ function populateLocationLevelDropdown() {
   });
 
   dropdown.appendChild(form);
+}
+
+function validateAddForm(event, updateId = null) {
+  event.preventDefault();
+  let isValid = true;
+
+  // Check each required field
+  const levelLocationId = document.getElementById("levelLocationId");
+  const levelLocationIdError = document.getElementById("levelLocationIdError");
+  const locationName = document.getElementById("locationName");
+  const locationNameError = document.getElementById("locationNameError");
+
+  // Clear previous errors
+  locationNameError.textContent = "";
+  levelLocationIdError.textContent = "";
+
+  // Check Level Location ID
+  if (!levelLocationId.value) {
+    levelLocationId.classList.add("is-invalid");
+    levelLocationIdError.textContent = "Level Lokasi is required";
+    isValid = false;
+  } else {
+    levelLocationId.classList.remove("is-invalid");
+  }
+  // Check Location Name
+  if (!locationName.value.trim()) {
+    locationName.classList.add("is-invalid");
+    locationNameError.textContent = "Nama Lokasi is required";
+    isValid = false;
+  } else {
+    locationName.classList.remove("is-invalid");
+  }
+  if (isValid) {
+    // If all fields are valid, submit the form
+    // event.target.submit();
+    if (updateId) {
+      updateLocation(updateId);
+    } else {
+      saveLocation();
+    }
+  }
 }
 
 function openAddForm() {
@@ -580,17 +397,11 @@ function openAddForm() {
             `);
       document
         .getElementById("saveLocationBtn")
-        .addEventListener("click", function () {
-          const form = document.getElementById("locationForm");
-          if (form.checkValidity()) {
-            saveLocation();
-          } else {
-            form.reportValidity();
-          }
+        .addEventListener("click", function (event) {
+          validateAddForm(event);
         });
-      $("#locationForm").submit(function (e) {
-        e.preventDefault();
-        saveLocation();
+      $("#locationForm").submit(function (event) {
+        validateAddForm(event);
       });
       populateLocationLevelSelect(locationLevelData);
     },
@@ -603,11 +414,6 @@ function saveLocation() {
   let parentId = parseInt($("#parentId").val());
   let createdBy = 0; //If user logged in works, use session user logged in info
 
-  if (!name.trim()) {
-    alert("Nama Lokasi harus diisi");
-    return;
-  }
-
   let jsonData = { name, locationLevelId, parentId, createdBy };
   $.ajax({
     type: "POST",
@@ -615,11 +421,12 @@ function saveLocation() {
     data: JSON.stringify(jsonData),
     contentType: "application/json",
     success: function (response) {
-      location.reload();
+      $("#baseModal").modal("hide");
+      loadLocations();
     },
     error: function (error) {
-      if (error.status === 409)
-        alert("Failed to save location: location conflict / already exist");
+      // if (error.status === 409)
+      alert("Failed to save location: location conflict / already exist");
       console.error("Failed to save location: ", error);
     },
   });
@@ -655,17 +462,11 @@ function openEditForm(id) {
                     `);
           document
             .getElementById("updateLocationBtn")
-            .addEventListener("click", function () {
-              const form = document.getElementById("locationForm");
-              if (form.checkValidity()) {
-                updateLocation(id);
-              } else {
-                form.reportValidity();
-              }
+            .addEventListener("click", function (event) {
+              validateAddForm(event, id);
             });
-          $("#locationForm").submit(function (e) {
-            e.preventDefault();
-            updateLocation(id);
+          $("#locationForm").submit(function (event) {
+            validateAddForm(event, id);
           });
           populateLocationLevelSelect(
             locationLevelData,
@@ -687,11 +488,6 @@ function updateLocation(id) {
   let locationLevelId = $("#levelLocationId").val();
   let parentId = $("#parentId").val();
 
-  if (!name.trim()) {
-    alert("Nama Lokasi harus diisi");
-    return;
-  }
-
   let jsonData = { name, locationLevelId, parentId };
   $.ajax({
     type: "PUT",
@@ -700,7 +496,7 @@ function updateLocation(id) {
     contentType: "application/json",
     success: function (response) {
       $("#baseModal").modal("hide");
-      loadData();
+      loadLocations();
     },
     error: function (error) {
       alert("Failed to update location: location conflict / already exist");
@@ -747,7 +543,7 @@ function deleteLocation(id) {
     url: `http://localhost:9001/api/admin/location/soft-delete/${id}`,
     success: function (response) {
       $("#baseModal").modal("hide");
-      loadData();
+      loadLocations();
     },
     error: function (error) {
       if (error.status === 409) {
