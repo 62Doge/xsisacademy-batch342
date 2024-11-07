@@ -12,10 +12,9 @@ import com._a.backend.entities.LocationLevel;
 @Repository
 public interface LocationLevelRepository extends JpaRepository<LocationLevel, Long> {
     Boolean existsByName(String name);
-
+    Boolean existsByNameContainingIgnoreCaseAndIsDeleteFalse(String name);
+    Boolean existsByNameContainingIgnoreCaseAndIsDeleteFalseAndIdNot(String name, long id);
     Page<LocationLevel> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
-
     Page<LocationLevel> findAllByIsDeleteFalse(Pageable pageable);
-
     List<LocationLevel> findAllByIsDeleteFalse();
 }
