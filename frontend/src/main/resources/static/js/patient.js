@@ -39,7 +39,7 @@ function searchPatient(query) {
                 } else if (patient.customerRelationId === 2) {
                     patientRelation += "Suami";
                 } else if (patient.customerRelationId === 3) {
-                    patientRelation += "Ibu";
+                    patientRelation += "Istri";
                 } else if (patient.customerRelationId === 4) {
                     patientRelation += "Anak";
                 }
@@ -127,7 +127,7 @@ function loadData() {
                 } else if (patient.customerRelationId === 2) {
                     patientRelation += "Suami";
                 } else if (patient.customerRelationId === 3) {
-                    patientRelation += "Ibu";
+                    patientRelation += "Istri";
                 } else if (patient.customerRelationId === 4) {
                     patientRelation += "Anak";
                 }
