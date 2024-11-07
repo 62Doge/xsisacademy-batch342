@@ -3,10 +3,10 @@ package com._a.backend.entities;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
@@ -26,7 +26,6 @@ public class BaseEntity {
     @Column(name = "modified_by", updatable = true, nullable = true)
     private Long modifiedBy;
 
-    
     @Column(name = "modified_on", updatable = true, nullable = true)
     private LocalDateTime modifiedOn;
 
@@ -40,4 +39,12 @@ public class BaseEntity {
     @Column(name = "is_delete", columnDefinition = "boolean default false")
     private Boolean isDelete = false;
 
+    @PreUpdate
+    public void preUpdate() {
+        if (isDelete == true) {
+            this.deletedOn = LocalDateTime.now();
+        } else {
+            this.modifiedOn = LocalDateTime.now();
+        }
+    }
 }
