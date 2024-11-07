@@ -77,4 +77,8 @@ public class MedicalFacility extends BaseEntity {
   @OneToMany(mappedBy = "medicalFacility", cascade = CascadeType.ALL)
   @JsonBackReference
   private List<DoctorOffice> doctorOffices;
+
+  @OneToMany(mappedBy = "medicalFacility", cascade = CascadeType.ALL)
+  @JsonBackReference
+  private List<MedicalFacilitySchedule> medicalFacilitySchedules;
 }

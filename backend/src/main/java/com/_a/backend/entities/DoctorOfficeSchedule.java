@@ -1,6 +1,5 @@
 package com._a.backend.entities;
 
-import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -22,24 +21,18 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
-@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@Table(name = "t_doctor_office")
-public class DoctorOffice extends BaseEntity{
+@EqualsAndHashCode(callSuper = true)
+@Table(name = "t_doctor_office_schedule")
+public class DoctorOfficeSchedule extends BaseEntity {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
   private Long id;
 
-  @Column(name = "specialization", length = 100, nullable = false)
-  private String specialization;
-
-  @Column(name = "start_date", nullable = false)
-  private Date startDate;
-
-  @Column(name = "end_date")
-  private Date endDate;
+  @Column(name = "slot")
+  private Integer slot;
 
   @ManyToOne
   @JoinColumn(name = "doctor_id", insertable = false, updatable = false)
@@ -50,26 +43,14 @@ public class DoctorOffice extends BaseEntity{
   private Long doctorId;
 
   @ManyToOne
-  @JoinColumn(name="medical_facility_id", insertable = false, updatable = false)
+  @JoinColumn(name = "medical_facility_schedule_id",  insertable = false, updatable = false)
   @JsonManagedReference
-  private MedicalFacility medicalFacility;
+  private MedicalFacilitySchedule medicalFacilitySchedule;
 
-  @Column(name = "medical_facility_id")
-  private Long medicalFacilityId;
+  @Column(name = "medical_facility_schedule_id")
+  private Long medicalFacilityScheduleId;
 
-  @ManyToOne
-  @JoinColumn(name = "service_unit_id", insertable = false, updatable = false)
-  @JsonManagedReference
-  private ServiceUnit serviceUnit;
-
-  @Column(name = "service_unit_id")
-  private Long serviceUnitId;
-
-  @OneToMany(mappedBy = "doctorOffice", cascade = CascadeType.ALL)
-  @JsonBackReference
-  private List<DoctorOfficeTreatment> doctorOfficeTreatments;
-
-  @OneToMany(mappedBy = "doctorOffice", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "doctorOfficeSchedule", cascade = CascadeType.ALL)
   @JsonBackReference
   private List<Appointment> appointments;
 }
