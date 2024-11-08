@@ -19,10 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.RoleRequestDTO;
+import com._a.backend.dtos.requests.SearchRoleRequestDTO;
 import com._a.backend.dtos.responses.PaginatedResponseDTO;
 import com._a.backend.dtos.responses.RoleResponseDTO;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.repositories.RoleRepository;
+import com._a.backend.services.impl.PaginationWithSortRequestDTO;
 import com._a.backend.services.impl.RoleServiceImpl;
 
 import jakarta.validation.Valid;
@@ -36,42 +38,33 @@ public class RoleController {
     @Autowired
     private RoleRepository roleRepository;
 
-
     @GetMapping("")
     public ResponseEntity<ApiResponse<PaginatedResponseDTO<RoleResponseDTO>>> getRoles(
-            @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "3") int pageSize,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection) {
-        try {
-            Page<RoleResponseDTO> roleResponseDTOS =
-                        roleService.getAll(pageNo, pageSize, sortBy, sortDirection);
-            PaginatedResponseDTO<RoleResponseDTO> paginatedResponse = new PaginatedResponseDTO<>(roleResponseDTOS);
+            SearchRoleRequestDTO searchRoleRequestDTO,
+            PaginationWithSortRequestDTO paginateRequestDTO) {
+        Page<RoleResponseDTO> roles = roleService.getAllWithSearch(searchRoleRequestDTO, paginateRequestDTO);
+        PaginatedResponseDTO<RoleResponseDTO> responseDTO = new PaginatedResponseDTO<>(roles);
+        ApiResponse<PaginatedResponseDTO<RoleResponseDTO>> apiResponse = ApiResponse.success(200, responseDTO);
 
-            ApiResponse<PaginatedResponseDTO<RoleResponseDTO>> successResponse =
-                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), paginatedResponse);
-            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
-        }catch (Exception e){
-            ApiResponse<PaginatedResponseDTO<RoleResponseDTO>> errorResponse =
-                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
-//    using paging above
-//    @GetMapping("")
-//    public ResponseEntity<?> findAllRoles() {
-//        try {
-//            List<RoleResponseDTO> roleResponseDTOS = roleService.findAll();
-//
-//            ApiResponse<List<RoleResponseDTO>> successResponse =
-//                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), roleResponseDTOS);
-//            return new ResponseEntity<>(successResponse, HttpStatus.OK);
-//        }catch (Exception e) {
-//            ApiResponse<List<RoleResponseDTO>> errorResponse =
-//                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
-//            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+    // using paging above
+    // @GetMapping("")
+    // public ResponseEntity<?> findAllRoles() {
+    // try {
+    // List<RoleResponseDTO> roleResponseDTOS = roleService.findAll();
+    //
+    // ApiResponse<List<RoleResponseDTO>> successResponse =
+    // new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
+    // roleResponseDTOS);
+    // return new ResponseEntity<>(successResponse, HttpStatus.OK);
+    // }catch (Exception e) {
+    // ApiResponse<List<RoleResponseDTO>> errorResponse =
+    // new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+    // HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+    // return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+    // }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getRoleById(@PathVariable("id") Long id) {
@@ -79,17 +72,17 @@ public class RoleController {
             Optional<RoleResponseDTO> role = roleService.findById(id);
 
             if (role.isPresent()) {
-                ApiResponse<RoleResponseDTO> successResponse =
-                        new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), role.get());
+                ApiResponse<RoleResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
+                        HttpStatus.OK.getReasonPhrase(), role.get());
                 return ResponseEntity.status(HttpStatus.OK).body(successResponse);
             } else {
-                ApiResponse<RoleResponseDTO> notFoundResponse =
-                        new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Role not found", null);
+                ApiResponse<RoleResponseDTO> notFoundResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(),
+                        "Role not found", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
             }
-        }catch (Exception e) {
-            ApiResponse<RoleResponseDTO> errorResponse =
-                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+        } catch (Exception e) {
+            ApiResponse<RoleResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
@@ -102,17 +95,17 @@ public class RoleController {
             @RequestParam(defaultValue = "asc") String sortDirection,
             @PathVariable String name) {
         try {
-            Page<RoleResponseDTO> roleResponseDTOS =
-                    roleService.getByName(pageNo, pageSize, sortBy, sortDirection, name);
+            Page<RoleResponseDTO> roleResponseDTOS = roleService.getByName(pageNo, pageSize, sortBy, sortDirection,
+                    name);
 
             PaginatedResponseDTO<RoleResponseDTO> paginatedResponse = new PaginatedResponseDTO<>(roleResponseDTOS);
 
-            ApiResponse<PaginatedResponseDTO<RoleResponseDTO>> successResponse =
-                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), paginatedResponse);
+            ApiResponse<PaginatedResponseDTO<RoleResponseDTO>> successResponse = new ApiResponse<>(
+                    HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), paginatedResponse);
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
-        }catch (Exception e) {
-            ApiResponse<PaginatedResponseDTO<RoleResponseDTO>> errorResponse =
-                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+        } catch (Exception e) {
+            ApiResponse<PaginatedResponseDTO<RoleResponseDTO>> errorResponse = new ApiResponse<>(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
@@ -120,19 +113,19 @@ public class RoleController {
     @PostMapping("")
     public ResponseEntity<?> saveRole(@Valid @RequestBody RoleRequestDTO roleRequestDTO) {
         if (roleRepository.existsByName(roleRequestDTO.getName())) {
-            ApiResponse<RoleResponseDTO> alreadyExistResponse =
-                    new ApiResponse<>(HttpStatus.CONFLICT.value(), "Role name already exists", null);
+            ApiResponse<RoleResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(),
+                    "Role name already exists", null);
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
         }
 
         try {
             RoleResponseDTO roleResponseDTOSaved = roleService.save(roleRequestDTO);
-            ApiResponse<RoleResponseDTO> successResponse =
-                    new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), roleResponseDTOSaved);
+            ApiResponse<RoleResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(), roleResponseDTOSaved);
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
-            ApiResponse<RoleResponseDTO> errorResponse =
-                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to save Role", null);
+            ApiResponse<RoleResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Failed to save Role", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
         }
     }
@@ -141,15 +134,16 @@ public class RoleController {
     public ResponseEntity<?> updateRole(@Valid @RequestBody RoleRequestDTO roleRequestDTO, @PathVariable Long id) {
         try {
             RoleResponseDTO roleResponseDTOSaved = roleService.update(roleRequestDTO, id);
-            ApiResponse<RoleResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), roleResponseDTOSaved);
+            ApiResponse<RoleResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(), roleResponseDTOSaved);
             return ResponseEntity.ok(successResponse);
         } catch (IllegalArgumentException e) {
-            ApiResponse<RoleResponseDTO> badRequestResponse =
-                    new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+            ApiResponse<RoleResponseDTO> badRequestResponse = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(badRequestResponse);
         } catch (Exception e) {
-            ApiResponse<RoleResponseDTO> errorResponse =
-                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to update Role", null);
+            ApiResponse<RoleResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Failed to update Role", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
         }
     }
@@ -159,40 +153,42 @@ public class RoleController {
         try {
             roleService.softDeleteRole(id);
 
-            ApiResponse<RoleResponseDTO> successResponse =
-                    new ApiResponse<>(HttpStatus.OK.value(), "Role soft deleted", null);
+            ApiResponse<RoleResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Role soft deleted",
+                    null);
             return ResponseEntity.ok(successResponse);
-        }catch (IllegalArgumentException e) {
-            ApiResponse<RoleResponseDTO> badRequestResponse =
-                    new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage(), null);
+        } catch (IllegalArgumentException e) {
+            ApiResponse<RoleResponseDTO> badRequestResponse = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(badRequestResponse);
-        } catch (IllegalStateException e){
-            ApiResponse<RoleResponseDTO> conflictResponse =
-                    new ApiResponse<>(HttpStatus.CONFLICT.value(), e.getMessage(), null);
+        } catch (IllegalStateException e) {
+            ApiResponse<RoleResponseDTO> conflictResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(),
+                    e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.CONFLICT).body(conflictResponse);
         } catch (Exception e) {
-            ApiResponse<RoleResponseDTO> errorResponse =
-                    new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to soft delete Role", null);
+            ApiResponse<RoleResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Failed to soft delete Role", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
         }
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> hardDeleteRole(@PathVariable Long id) {
-        try{
+        try {
             Optional<RoleResponseDTO> roleResponseDTO = roleService.findById(id);
 
             if (roleResponseDTO.isEmpty()) {
-                ApiResponse<RoleResponseDTO> notFoundResponse =
-                        new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Role not found", null);
+                ApiResponse<RoleResponseDTO> notFoundResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(),
+                        "Role not found", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
             }
 
             roleService.deleteById(id);
-            ApiResponse<RoleResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Role deleted", null);
+            ApiResponse<RoleResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Role deleted",
+                    null);
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
-            ApiResponse<RoleResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to delete Role", null);
+            ApiResponse<RoleResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Failed to delete Role", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
         }
     }

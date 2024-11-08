@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.RoleRequestDTO;
+import com._a.backend.dtos.requests.SearchRoleRequestDTO;
 import com._a.backend.dtos.responses.RoleResponseDTO;
 import com._a.backend.entities.Role;
 import com._a.backend.repositories.RoleRepository;
@@ -28,6 +29,22 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
     RoleRepository roleRepository;
     @Autowired
     ModelMapper modelMapper;
+
+    public Page<RoleResponseDTO> getAllWithSearch(SearchRoleRequestDTO requestDTO,
+            PaginationWithSortRequestDTO paginate) {
+        int pageNo = paginate.getPageNo();
+        int pageSize = paginate.getPageSize();
+        String sortBy = paginate.getSortBy();
+        String sortDirection = paginate.getSortDirection();
+
+        Sort sort = Sort.by(Sort.Direction.fromString(sortDirection), sortBy);
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        return roleRepository.findAllWithSearch(
+                requestDTO.getName(),
+                requestDTO.getCode(), pageable)
+                .map(role -> new RoleResponseDTO(role));
+    }
 
     @Override
     public Page<RoleResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
