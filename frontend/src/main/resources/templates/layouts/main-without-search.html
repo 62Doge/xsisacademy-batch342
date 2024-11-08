@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -36,6 +36,9 @@
       rel="stylesheet"
       href="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"
     />
+    <!-- simulation for user logged status -->
+    <script src="/js/dumpUserAuth.js"></script>
+    <!-- simulation for user logged status -->
 
     <!-- page css/js at head-->
     <script src="/js/config.js"></script>
@@ -68,7 +71,7 @@
           <!-- Content wrapper -->
           <div class="content-wrapper">
             <!-- Content -->
-            <div class="container-xxl flex-grow-1">
+            <div class="container-xxl flex-grow-1 container-p-y">
               <th:block layout:fragment="content"></th:block>
             </div>
             <!-- / Content -->
@@ -100,6 +103,40 @@
 
     <!-- page script at end body -->
     <th:block layout:fragment="pageBottom"></th:block>
+
+    <!-- script to hide/show user dropdown for logged/unlogged status -->
+    <script>
+      $(document).ready(function () {
+        if (IS_USER_LOGGED) {
+          $(".user-not-logged").addClass("d-none");
+          $(".user-logged").removeClass("d-none");
+          $("#layout-menu").removeClass("d-none");
+        } else {
+          $(".user-not-logged").removeClass("d-none");
+          $(".user-logged").addClass("d-none");
+          $("#layout-menu").addClass("d-none");
+        }
+      });
+    </script>
+    <!-- script to hide/show user dropdown for logged/unlogged status -->
+
+    <!-- activate menu base on url -->
+    <script>
+      $(document).ready(function () {
+        var currentUrl = window.location.pathname;
+
+        $(".menu-item > a").each(function () {
+          var linkUrl = $(this).attr("href");
+
+          if (linkUrl === currentUrl) {
+            $(this).closest(".menu-item").addClass("active");
+
+            $(this).parents(".menu-sub").closest(".menu-item").addClass("open");
+          }
+        });
+      });
+    </script>
+    <!-- activate menu base on url -->
 
     <!-- Main JS -->
     <script src="/assets/js/main.js"></script>

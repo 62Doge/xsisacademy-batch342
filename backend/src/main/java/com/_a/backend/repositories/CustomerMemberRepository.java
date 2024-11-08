@@ -25,7 +25,7 @@ public interface CustomerMemberRepository extends JpaRepository<CustomerMember, 
                         "JOIN m_customer c on c.id = cm.customer_id " +
                         "JOIN m_biodata b on b.id = c.biodata_id " +
                         "WHERE " +
-                        "cm.is_delete = false and " +
+                        "cm.is_delete = false AND " +
                         "cm.parent_biodata_id = :parent_biodata_id", nativeQuery = true)
         Page<PatientProjectionDto> findPatient(@Param("parent_biodata_id") Long parentBiodataId, Pageable pageable);
 
@@ -35,8 +35,8 @@ public interface CustomerMemberRepository extends JpaRepository<CustomerMember, 
                         "JOIN m_customer c on c.id = cm.customer_id " +
                         "JOIN m_biodata b on b.id = c.biodata_id " +
                         "WHERE " +
-                        "cm.is_delete = false and " +
-                        "cm.parent_biodata_id = :parent_biodata_id and " +
+                        "cm.is_delete = false AND " +
+                        "cm.parent_biodata_id = :parent_biodata_id AND " +
                         "b.fullname ILIKE CONCAT('%', :name, '%')", nativeQuery = true)
         Page<PatientProjectionDto> findPatientByName(@Param("name") String name, @Param("parent_biodata_id") Long parentBiodataId, Pageable pageable);
         
