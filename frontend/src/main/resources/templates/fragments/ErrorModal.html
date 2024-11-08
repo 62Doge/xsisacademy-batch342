@@ -1,21 +1,13 @@
 <!-- Error Modal -->
 <div class="modal fade" id="errorModal" th:fragment="modal" tabindex="-1">
-  <div
-    class="modal-dialog modal-dialog-centered rounded-1"
-    th:classappend="${class}"
-  >
+  <div class="modal-dialog modal-dialog-centered rounded-1" th:classappend="${class}">
     <div class="modal-content">
       <div class="modal-header bg-danger text-white">
         <h5 class="modal-title text-white" id="errorModalTitle">Error</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="errorModalBody">
-        <p>An unexpected error has occurred. Please try again later.</p>
+        <p>Terjadi kesalahan yang tidak terduga. Silakan coba lagi nanti.</p>
       </div>
       <div class="modal-footer" id="errorModaFooter"></div>
     </div>
