@@ -3,9 +3,7 @@ package com._a.backend.services.impl;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +16,7 @@ import com._a.backend.dtos.requests.SearchRoleRequestDTO;
 import com._a.backend.dtos.responses.RoleResponseDTO;
 import com._a.backend.entities.Role;
 import com._a.backend.repositories.RoleRepository;
+import com._a.backend.services.AuthService;
 import com._a.backend.services.Services;
 
 import jakarta.transaction.Transactional;
@@ -28,7 +27,7 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
     @Autowired
     RoleRepository roleRepository;
     @Autowired
-    ModelMapper modelMapper;
+    AuthService authService;
 
     public Page<RoleResponseDTO> getAllWithSearch(SearchRoleRequestDTO requestDTO,
             PaginationWithSortRequestDTO paginate) {
@@ -48,14 +47,7 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
 
     @Override
     public Page<RoleResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
-        Sort sort = Sort.by(sortBy);
-        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Role> roles = roleRepository.findAllByIsDeleteFalse(pageable);
-        Page<RoleResponseDTO> roleResponseDTOS = roles
-                .map(role -> modelMapper.map(role, RoleResponseDTO.class));
-        return roleResponseDTOS;
+        throw new UnsupportedOperationException("Unimplemented method 'getAll'");
     }
 
     @Override
@@ -65,47 +57,31 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
 
     @Override
     public List<RoleResponseDTO> findAll() {
-        // using less optimal approach, but easier to understand
-        return roleRepository.findAll().stream()
-                .map(role -> modelMapper.map(role, RoleResponseDTO.class))
-                .collect(Collectors.toList());
+        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
     }
 
     @Override
     public Optional<RoleResponseDTO> findById(Long id) {
-        return roleRepository.findById(id)
-                .map(role -> modelMapper.map(role, RoleResponseDTO.class));
+        throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }
 
     @Override
     public RoleResponseDTO save(RoleRequestDTO roleRequestDTO) {
-        Role role = roleRepository.save(modelMapper.map(roleRequestDTO, Role.class));
-        return modelMapper.map(role, RoleResponseDTO.class);
+        Long userId = authService.getDetails().getId();
+
+        Role role = new Role();
+        role.setName(roleRequestDTO.getName());
+        role.setCode(roleRequestDTO.getCode());
+        role.setCreatedBy(userId);
+
+        role = roleRepository.save(role);
+        return new RoleResponseDTO(role);
     }
 
     @Transactional
     @Override
     public RoleResponseDTO update(RoleRequestDTO roleRequestDTO, Long id) {
-        Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found"));
-
-        modelMapper.map(roleRequestDTO, role);
-        Role updatedRole = roleRepository.save(role);
-
-        return modelMapper.map(updatedRole, RoleResponseDTO.class);
-    }
-
-    public Page<RoleResponseDTO> getByName(int pageNo, int pageSize, String sortBy, String sortDirection,
-            String name) {
-        Sort sort = Sort.by(sortBy);
-        sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Role> roles = roleRepository
-                .findByNameContainingIgnoreCaseAndIsDeleteFalse(pageable, name);
-        Page<RoleResponseDTO> roleResponseDTOS = roles
-                .map(role -> modelMapper.map(role, RoleResponseDTO.class));
-        return roleResponseDTOS;
+        throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
     public void softDeleteRole(Long id) {
