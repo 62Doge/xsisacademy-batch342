@@ -15,6 +15,7 @@ import com._a.backend.dtos.requests.RoleRequestDTO;
 import com._a.backend.dtos.requests.SearchRoleRequestDTO;
 import com._a.backend.dtos.responses.RoleResponseDTO;
 import com._a.backend.entities.Role;
+import com._a.backend.exceptions.IdNotFoundException;
 import com._a.backend.repositories.RoleRepository;
 import com._a.backend.services.AuthService;
 import com._a.backend.services.Services;
@@ -52,7 +53,7 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
 
     @Override
     public void deleteById(Long id) {
-        roleRepository.deleteById(id);
+        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
     }
 
     @Override
@@ -81,7 +82,16 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
     @Transactional
     @Override
     public RoleResponseDTO update(RoleRequestDTO roleRequestDTO, Long id) {
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new IdNotFoundException("Role with id: " + id + " not found"));
+        Long userId = authService.getDetails().getId();
+
+        role.setName(roleRequestDTO.getName());
+        role.setCode(roleRequestDTO.getCode());
+        role.setModifiedBy(userId);
+
+        role = roleRepository.save(role);
+        return new RoleResponseDTO(role);
     }
 
     public void softDeleteRole(Long id) {

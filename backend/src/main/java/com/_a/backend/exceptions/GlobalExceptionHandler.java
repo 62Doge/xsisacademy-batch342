@@ -94,4 +94,11 @@ public class GlobalExceptionHandler {
                 ex.getMessage());
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response);
     }
+
+    @ExceptionHandler(IdNotFoundException.class)
+    public ResponseEntity<ApiResponse<String>> handleIdNotFoundException(IdNotFoundException ex) {
+        ApiResponse<String> response = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Id not found",
+                ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 }

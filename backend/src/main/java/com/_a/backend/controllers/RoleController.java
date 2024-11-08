@@ -16,11 +16,12 @@ import com._a.backend.dtos.requests.SearchRoleRequestDTO;
 import com._a.backend.dtos.responses.PaginatedResponseDTO;
 import com._a.backend.dtos.responses.RoleResponseDTO;
 import com._a.backend.payloads.ApiResponse;
-import com._a.backend.repositories.RoleRepository;
 import com._a.backend.services.impl.PaginationWithSortRequestDTO;
 import com._a.backend.services.impl.RoleServiceImpl;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/admin/role")
@@ -28,8 +29,6 @@ import jakarta.validation.Valid;
 public class RoleController {
     @Autowired
     private RoleServiceImpl roleService;
-    @Autowired
-    private RoleRepository roleRepository;
 
     @GetMapping({ "", "/" })
     public ResponseEntity<ApiResponse<PaginatedResponseDTO<RoleResponseDTO>>> getRolesWithSearchAndPagination(
@@ -43,9 +42,18 @@ public class RoleController {
     }
 
     @PostMapping({ "", "/" })
-    public ResponseEntity<?> createRole(@RequestBody RoleRequestDTO roleRequestDTO) {
+    public ResponseEntity<?> createRole(@RequestBody @Valid RoleRequestDTO roleRequestDTO) {
         RoleResponseDTO responseDTO = roleService.save(roleRequestDTO);
         ApiResponse<RoleResponseDTO> apiResponse = new ApiResponse<>(201, "Created Role successfully!", responseDTO);
         return new ResponseEntity<>(apiResponse, HttpStatus.CREATED);
+    }
+
+    @PutMapping({ "{id}", "{id}/" })
+    public ResponseEntity<ApiResponse<RoleResponseDTO>> updateRole(@PathVariable Long id,
+            @RequestBody @Valid RoleRequestDTO roleRequestDTO) {
+        RoleResponseDTO role = roleService.update(roleRequestDTO, id);
+        ApiResponse<RoleResponseDTO> apiResponse = new ApiResponse<RoleResponseDTO>(200, "Update Role successfully!",
+                role);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 }
