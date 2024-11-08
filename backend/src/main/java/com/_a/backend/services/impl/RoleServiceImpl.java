@@ -12,7 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.requests.RoleRequestDTO;
-import com._a.backend.dtos.requests.SearchRoleRequestDTO;
+import com._a.backend.dtos.requests.SearchTextRequestDTO;
 import com._a.backend.dtos.responses.RoleResponseDTO;
 import com._a.backend.entities.Role;
 import com._a.backend.exceptions.IdNotFoundException;
@@ -30,7 +30,7 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
     @Autowired
     AuthService authService;
 
-    public Page<RoleResponseDTO> getAllWithSearch(SearchRoleRequestDTO requestDTO,
+    public Page<RoleResponseDTO> getAllWithSearch(SearchTextRequestDTO requestDTO,
             PaginationWithSortRequestDTO paginate) {
         int pageNo = paginate.getPageNo();
         int pageSize = paginate.getPageSize();
@@ -41,8 +41,7 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         return roleRepository.findAllWithSearch(
-                requestDTO.getName(),
-                requestDTO.getCode(), pageable)
+                requestDTO.getSearchText(), pageable)
                 .map(role -> new RoleResponseDTO(role));
     }
 

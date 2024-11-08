@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.RoleRequestDTO;
-import com._a.backend.dtos.requests.SearchRoleRequestDTO;
+import com._a.backend.dtos.requests.SearchTextRequestDTO;
 import com._a.backend.dtos.responses.PaginatedResponseDTO;
 import com._a.backend.dtos.responses.RoleResponseDTO;
 import com._a.backend.payloads.ApiResponse;
@@ -33,9 +33,9 @@ public class RoleController {
 
     @GetMapping({ "", "/" })
     public ResponseEntity<ApiResponse<PaginatedResponseDTO<RoleResponseDTO>>> getRolesWithSearchAndPagination(
-            SearchRoleRequestDTO searchRoleRequestDTO,
+            SearchTextRequestDTO searchTextRequestDTO,
             PaginationWithSortRequestDTO paginateRequestDTO) {
-        Page<RoleResponseDTO> roles = roleService.getAllWithSearch(searchRoleRequestDTO, paginateRequestDTO);
+        Page<RoleResponseDTO> roles = roleService.getAllWithSearch(searchTextRequestDTO, paginateRequestDTO);
         PaginatedResponseDTO<RoleResponseDTO> responseDTO = new PaginatedResponseDTO<>(roles);
         ApiResponse<PaginatedResponseDTO<RoleResponseDTO>> apiResponse = ApiResponse.success(200, responseDTO);
 

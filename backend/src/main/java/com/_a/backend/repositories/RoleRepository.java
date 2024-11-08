@@ -24,17 +24,16 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
             from Role r
             where
             (
-                :name is null
-                or lower(r.name) like %:name%
+                :searchText is null
+                or lower(r.name) like %:searchText%
             )
             and (
-                :code is null
-                or lower(r.code) like %:code%
+                :searchText is null
+                or lower(r.code) like %:searchText%
             )
             and r.isDelete=false
             """)
     Page<Role> findAllWithSearch(
-            @Param("name") String name,
-            @Param("code") String code,
+            @Param("searchText") String searchText,
             Pageable pageable);
 }

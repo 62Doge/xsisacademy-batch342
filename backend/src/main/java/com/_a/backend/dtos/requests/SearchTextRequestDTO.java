@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class SearchRoleRequestDTO {
-  private String name;
-  private String code;
+public class SearchTextRequestDTO {
+  private String searchText;
 }
