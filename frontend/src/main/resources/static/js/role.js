@@ -1,240 +1,316 @@
-$(document).ready(function() {
-    loadData();
+$(document).ready(function () {
+  loadSearchResult(0, 1);
 
-    $('#searchRoleAccess').on('input', function() {
-        const searchQuery = $(this).val();
-        if (searchQuery) {
-            searchRoleAccess(searchQuery);
-        } else {
-            loadData();
-        }
-    });
-
+  // make checbox checked when input focus
+  $("#customRowPerPageInputNumber").on("focus", () => {
+    $("#customRowPerPageCheckbox").prop("checked", true);
+  });
 });
 
-function searchRoleAccess(name) {
-    $.ajax({
-        type: "GET",
-        url: `http://localhost:9001/api/admin/role/name/${name}`,
-        contentType: "application/json",
-        success: function(response) {
-            console.log(response);
-            let roleAccessData = response.data.content;
-            let tableData = ``;
+const ROLE_URL = BE_BASE_URL + "/admin/role";
 
-            roleAccessData.forEach(roleAccess => {
-                tableData += `
-                  <tr>
-                    <td>${roleAccess.name}</td>
-                    <td>${roleAccess.code}</td>
-                    <td>
-                        <button onclick="openEditForm(${roleAccess.id})" type="button" class="btn btn-icon btn-outline-warning">
-                            <span class="tf-icons bx bxs-edit"></span>
-                        </button>
-                        <button onclick="openDeleteModal(${roleAccess.id})" type="button" class="btn btn-icon btn-outline-danger">
-                            <span class="tf-icons bx bxs-trash"></span>
-                        </button>
-                    </td>
-                  </tr>
-                `;
-            });
+function renderTableData(dataObj) {
+  const tableContainer = $("#role-table");
+  tableContainer.html("");
 
-            $('#role-access-table').html(tableData);
-        },
-        error: function(error) {
-            console.error("Error searching roles:", error);
-        }
-    });
+  dataObj.forEach((role) => {
+    tableContainer.append(`
+            <tr data-id="${role.id}">
+                <td>${role.name}</td>
+                <td>${role.code}</td>
+                <td>
+                    <button type="button" class="btn btn-icon btn-outline-warning editButton">
+                        <span class="tf-icons bx bxs-edit"></span>
+                    </button>
+                    <button type="button" class="btn btn-icon btn-outline-danger deleteButton">
+                        <span class="tf-icons bx bxs-trash"></span>
+                    </button>
+                </td>
+            </tr>
+                `);
+  });
 }
 
-
-function loadData() {
-    let tableData = ``;
-    $.ajax({
-        type: "get",
-        url: "http://localhost:9001/api/admin/role?pageNo=0",
-        contentType: "application/json",
-        success: function (roleAccessResponse) {
-            console.log(roleAccessResponse);
-            // fixed routing to get content in Paging
-            let roleAccessData = roleAccessResponse.data.content;
-
-            roleAccessData.forEach((roleAccess, index) => {
-                tableData += `
-                  <tr>
-                    <td>${roleAccess.name}</td>
-                    <td>${roleAccess.code}</td>
-                    <td>
-                        <button onclick="openEditForm(${roleAccess.id})" type="button" class="btn btn-icon btn-outline-warning">
-                            <span class="tf-icons bx bxs-edit"></span>
-                        </button>
-                        <button onclick="openDeleteModal(${roleAccess.id})" type="button" class="btn btn-icon btn-outline-danger">
-                            <span class="tf-icons bx bxs-trash"></span>
-                        </button>
-                    </td>
-                  </tr>
-                `;
-            });
-
-            $('#role-access-table').html(tableData);
-        },
-        error: function (xhr, status, error) {
-            console.error("Error loading data:", error);
-        }
-    });
+function renderPlaceholder() {
+  $("#role-table").html(`
+    <tr class="placeholder-glow">
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+    </tr>
+    <tr class="placeholder-glow">
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+    </tr>
+    <tr class="placeholder-glow">
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+    </tr>
+    <tr class="placeholder-glow">
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+    </tr>
+        `);
 }
 
-function openAddForm() {
-    $.ajax({
-        type: "get",
-        url: "/role/addForm",
-        contentType: "html",
-        success: function (addForm) {
-            $('#baseModal').modal('show');
-            $('#baseModalTitle').html(`<strong>Tambah Role</strong>`);
-            $('#baseModalBody').html(addForm);
-            $('#baseModalFooter').html(`
-                <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
-                    Batal
-                </button>
-                <button onclick="saveRoleAccess()" id="saveRoleBtn" type="button" class="btn btn-primary">Simpan</button>
-            `);
-        }
-    });
+function renderPagination(pageInfo) {
+  $("#paginationContainer").html("");
+
+  if (pageInfo.totalPages >= 3) {
+    $("#paginationContainer").append(`
+    <li class="page-item prev ${0 === pageInfo.page ? "disabled" : ""}">
+        <button class="page-link nav-btn" data-page="${0}"><i
+         class="tf-icon bx bx-chevrons-left"></i></button>
+    </li>
+        `);
+  }
+
+  for (let i = 0; i < pageInfo.totalPages; i++) {
+    $("#paginationContainer").append(`
+        <li class="page-item ${i === pageInfo.page ? "active disabled" : ""}">
+            <button class="page-link nav-btn">
+              ${"<span>" + (i + 1) + "</span>"}
+            </button>
+        </li>
+        `);
+  }
+
+  if (pageInfo.totalPages >= 3) {
+    $("#paginationContainer").append(`
+    <li class="page-item prev ${
+      pageInfo.totalPages - 1 === pageInfo.page ? "disabled" : ""
+    }">
+        <button class="page-link nav-btn" data-page="${
+          pageInfo.totalPages - 1
+        }"><i
+         class="tf-icon bx bx-chevrons-right"></i></button>
+    </li>
+        `);
+  }
 }
 
-function saveRoleAccess() {
-    let name = $('#roleAccessName').val();
-    let code = $('#roleAccessCode').val();
-    let createdBy = 0;
+function loadSearchResult(
+  pageNo = 0,
+  pageSize = 5,
+  sortBy = "name",
+  sortDirection = "asc",
+  searchText = ""
+) {
+  renderPlaceholder();
 
-    if (!name.trim()) {
-        alert("Nama Role harus diisi");
-        return;
-    }
-
-    let jsonData = { name, code, createdBy };
-    $.ajax({
-        type: "POST",
-        url: "http://localhost:9001/api/admin/role",
-        data: JSON.stringify(jsonData),
-        contentType: "application/json",
-        success: function (response) {
-            location.reload();
-        },
-        error: function (error) {
-            console.error(error);
-        }
-    });
+  $.ajax({
+    type: "get",
+    url: ROLE_URL,
+    data: {
+      pageNo,
+      pageSize,
+      sortBy,
+      sortDirection,
+      searchText,
+    },
+    dataType: "json",
+    success(response) {
+      renderPagination(response.data.metadata);
+      setTimeout(() => {
+        renderTableData(response.data.content);
+      }, 1500);
+    },
+    error() {
+      $("#errorModal").modal("show");
+    },
+  });
 }
 
-function openEditForm(id) {
-    $.ajax({
-        type: "GET",
-        url: `http://localhost:9001/api/admin/role/${id}`,
-        contentType: "application/json",
-        success: function (response) {
-            let roleAccess = response.data;
+$(document).on("click", ".page-link.nav-btn", function () {
+  loadSearchResult($(this).data("page"), 1);
+});
 
-            // load modal
-            $.ajax({
-                type: "get",
-                url: "/role/editForm",
-                contentType: "html",
-                success: function (editForm) {
-                    $('#baseModal').modal('show');
-                    $('#baseModalTitle').html(`<strong>Edit Role</strong>`);
-                    $('#baseModalBody').html(editForm);
+// function searchRoleAccess(name) {
+//     $.ajax({
+//         type: "GET",
+//         url: `http://localhost:9001/api/admin/role/name/${name}`,
+//         contentType: "application/json",
+//         success: function(response) {
+//             console.log(response);
+//             let roleAccessData = response.data.content;
+//             let tableData = ``;
 
-                    $('#roleAccessName').val(roleAccess.name);
-                    $('#roleAccessCode').val(roleAccess.code);
+//             roleAccessData.forEach(roleAccess => {
+//                 tableData += `
+//                   <tr>
+//                     <td>${roleAccess.name}</td>
+//                     <td>${roleAccess.code}</td>
+//                     <td>
+//                         <button onclick="openEditForm(${roleAccess.id})" type="button" class="btn btn-icon btn-outline-warning">
+//                             <span class="tf-icons bx bxs-edit"></span>
+//                         </button>
+//                         <button onclick="openDeleteModal(${roleAccess.id})" type="button" class="btn btn-icon btn-outline-danger">
+//                             <span class="tf-icons bx bxs-trash"></span>
+//                         </button>
+//                     </td>
+//                   </tr>
+//                 `;
+//             });
 
-                    $('#baseModalFooter').html(`
-                        <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
-                            Batal
-                        </button>
-                        <button onclick="updateRoleAccess(${id})" type="button" class="btn btn-primary">
-                            Simpan
-                        </button>
-                    `);
-                }
-            });
-        },
-        error: function (error) {
-            console.error("Failed to load role data:", error);
-        }
-    });
-}
+//             $('#role-access-table').html(tableData);
+//         },
+//         error: function(error) {
+//             console.error("Error searching roles:", error);
+//         }
+//     });
+// }
 
-function updateRoleAccess(id) {
-    let name = $('#roleAccessName').val();
-    let code = $('#roleAccessCode').val();
+// function openAddForm() {
+//     $.ajax({
+//         type: "get",
+//         url: "/role/addForm",
+//         contentType: "html",
+//         success: function (addForm) {
+//             $('#baseModal').modal('show');
+//             $('#baseModalTitle').html(`<strong>Tambah Role</strong>`);
+//             $('#baseModalBody').html(addForm);
+//             $('#baseModalFooter').html(`
+//                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+//                     Batal
+//                 </button>
+//                 <button onclick="saveRoleAccess()" id="saveRoleBtn" type="button" class="btn btn-primary">Simpan</button>
+//             `);
+//         }
+//     });
+// }
 
-    if (!name.trim()) {
-        alert("Nama Role harus diisi");
-        return;
-    }
+// function saveRoleAccess() {
+//     let name = $('#roleAccessName').val();
+//     let code = $('#roleAccessCode').val();
+//     let createdBy = 0;
 
-    let jsonData = { name, code };
-    $.ajax({
-        type: "PUT",
-        url: `http://localhost:9001/api/admin/role/update/${id}`,
-        data: JSON.stringify(jsonData),
-        contentType: "application/json",
-        success: function (response) {
-            $('#baseModal').modal('hide');
-            loadData();
-        },
-        error: function (error) {
-            console.error("Failed to update role:", error);
-        }
-    });
-}
+//     if (!name.trim()) {
+//         alert("Nama Role harus diisi");
+//         return;
+//     }
 
-function openDeleteModal(id) {
-    $.ajax({
-        type: "GET",
-        url: `http://localhost:9001/api/admin/role/${id}`,
-        contentType: "application/json",
-        success: function (response) {
-            let roleAccess = response.data;
+//     let jsonData = { name, code, createdBy };
+//     $.ajax({
+//         type: "POST",
+//         url: "http://localhost:9001/api/admin/role",
+//         data: JSON.stringify(jsonData),
+//         contentType: "application/json",
+//         success: function (response) {
+//             location.reload();
+//         },
+//         error: function (error) {
+//             console.error(error);
+//         }
+//     });
+// }
 
-            $('#baseModal').modal('show');
-            $('#baseModalTitle').html(`<strong>Hapus Role</strong>`);
-            $('#baseModalBody').html(`
-                <div>
-                    Anda akan menghapus <span id="roleAccessName">${roleAccess.name}</span>?
-                </div>
-            `);
+// function openEditForm(id) {
+//     $.ajax({
+//         type: "GET",
+//         url: `http://localhost:9001/api/admin/role/${id}`,
+//         contentType: "application/json",
+//         success: function (response) {
+//             let roleAccess = response.data;
 
-            $('#baseModalFooter').html(`
-                <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
-                    Tidak
-                </button>
-                <button onclick="deleteRoleAccess(${id})" type="button" class="btn btn-danger">
-                    Ya
-                </button>
-            `);
-        },
-        error: function (error) {
-            console.error("Failed to load role data for deletion:", error);
-        }
-    });
-}
+//             // load modal
+//             $.ajax({
+//                 type: "get",
+//                 url: "/role/editForm",
+//                 contentType: "html",
+//                 success: function (editForm) {
+//                     $('#baseModal').modal('show');
+//                     $('#baseModalTitle').html(`<strong>Edit Role</strong>`);
+//                     $('#baseModalBody').html(editForm);
 
-function deleteRoleAccess(id) {
-    $.ajax({
-        type: "PATCH",
-        url: `http://localhost:9001/api/admin/role/soft-delete/${id}`,
-        success: function (response) {
-            $('#baseModal').modal('hide');
-            loadData();
-        },
-        error: function (error) {
-            console.error("Failed to delete role:", error);
-        }
-    });
-}
+//                     $('#roleAccessName').val(roleAccess.name);
+//                     $('#roleAccessCode').val(roleAccess.code);
 
+//                     $('#baseModalFooter').html(`
+//                         <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
+//                             Batal
+//                         </button>
+//                         <button onclick="updateRoleAccess(${id})" type="button" class="btn btn-primary">
+//                             Simpan
+//                         </button>
+//                     `);
+//                 }
+//             });
+//         },
+//         error: function (error) {
+//             console.error("Failed to load role data:", error);
+//         }
+//     });
+// }
 
+// function updateRoleAccess(id) {
+//     let name = $('#roleAccessName').val();
+//     let code = $('#roleAccessCode').val();
 
+//     if (!name.trim()) {
+//         alert("Nama Role harus diisi");
+//         return;
+//     }
+
+//     let jsonData = { name, code };
+//     $.ajax({
+//         type: "PUT",
+//         url: `http://localhost:9001/api/admin/role/update/${id}`,
+//         data: JSON.stringify(jsonData),
+//         contentType: "application/json",
+//         success: function (response) {
+//             $('#baseModal').modal('hide');
+//             loadData();
+//         },
+//         error: function (error) {
+//             console.error("Failed to update role:", error);
+//         }
+//     });
+// }
+
+// function openDeleteModal(id) {
+//     $.ajax({
+//         type: "GET",
+//         url: `http://localhost:9001/api/admin/role/${id}`,
+//         contentType: "application/json",
+//         success: function (response) {
+//             let roleAccess = response.data;
+
+//             $('#baseModal').modal('show');
+//             $('#baseModalTitle').html(`<strong>Hapus Role</strong>`);
+//             $('#baseModalBody').html(`
+//                 <div>
+//                     Anda akan menghapus <span id="roleAccessName">${roleAccess.name}</span>?
+//                 </div>
+//             `);
+
+//             $('#baseModalFooter').html(`
+//                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
+//                     Tidak
+//                 </button>
+//                 <button onclick="deleteRoleAccess(${id})" type="button" class="btn btn-danger">
+//                     Ya
+//                 </button>
+//             `);
+//         },
+//         error: function (error) {
+//             console.error("Failed to load role data for deletion:", error);
+//         }
+//     });
+// }
+
+// function deleteRoleAccess(id) {
+//     $.ajax({
+//         type: "PATCH",
+//         url: `http://localhost:9001/api/admin/role/soft-delete/${id}`,
+//         success: function (response) {
+//             $('#baseModal').modal('hide');
+//             loadData();
+//         },
+//         error: function (error) {
+//             console.error("Failed to delete role:", error);
+//         }
+//     });
+// }
