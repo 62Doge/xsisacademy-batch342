@@ -94,22 +94,14 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
         return new RoleResponseDTO(role);
     }
 
-    public void softDeleteRole(Long id) {
+    public void softDelete(Long id) {
         Role role = roleRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
+                .orElseThrow(() -> new IdNotFoundException("Role with id: " + id + " not found"));
 
-        boolean hasActiveUsers = role.getUsers().stream()
-                .anyMatch(location -> !location.getIsDelete());
-
-        boolean hasActiveMenuRoles = role.getMenuRoles().stream()
-                .anyMatch(location -> !location.getIsDelete());
-
-        if (hasActiveUsers || hasActiveMenuRoles) {
-            throw new IllegalStateException("Cannot delete role: active role found.");
-        }
+        Long userId = authService.getDetails().getId();
 
         role.setIsDelete(true);
-        // role.setDeletedBy(userId);
+        role.setDeletedBy(userId);
         role.setDeletedOn(LocalDateTime.now());
         roleRepository.save(role);
     }
