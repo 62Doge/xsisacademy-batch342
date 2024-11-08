@@ -1,11 +1,6 @@
-let currentUserRoleId = 1;
+let currentUserRoleId = USER_LOGGED_ID;
 
 document.addEventListener("DOMContentLoaded", (event) => {
-  if (currentUserRoleId !== -1 && currentUserRoleId !== null) {
-    IS_USER_LOGGED = true;
-  } else {
-    IS_USER_LOGGED = false;
-  }
   loadMenuCards("no-role").then(() => {
     if (IS_USER_LOGGED) {
       loadMenuCards(currentUserRoleId);
