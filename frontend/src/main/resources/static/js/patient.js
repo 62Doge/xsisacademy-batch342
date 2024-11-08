@@ -136,7 +136,7 @@ function loadData() {
                     <tr>
                         <td>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="">
+                                <input class="form-check-input" type="checkbox" name="selectedPatient" value="${patient.id}">
                             </div>
                         </td>
                         <td>
@@ -452,6 +452,55 @@ function deletePatient(id) {
         },
         error: function (error) {
             console.log(error);
+        }
+    });
+}
+
+function openBatchDeleteModal() {
+    let selectedPatients = [];
+
+    $("input:checkbox[name='selectedPatient']:checked").each(function(){
+        selectedPatients.push($(this).val());
+    });
+
+    $.ajax({
+        type: "get",
+        url: "/patient/deleteModal",
+        contentType: "html",
+        success: function (deleteModal) {
+            $('#baseModal').modal('show');
+            $('#baseModalTitle').html(`<strong>Hapus Pasien</strong>`);
+            $('#baseModalBody').html(deleteModal);
+            $('#baseModalFooter').html(`
+                <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+                    Batal
+                </button>
+                <button id="batchDeletePatientButton" type="button" class="btn btn-primary">Hapus</button>
+            `);
+
+            selectedPatients.forEach(id => {
+                $.ajax({
+                    type: "get",
+                    url: `http://localhost:9001/api/patient/${id}`,
+                    contentType: "application/json",
+                    success: function (response) {
+                        console.log(response);
+                        let patientName = response.data.fullName;
+                        $('#deletedPatientList').append(`
+                            <li>${patientName}</li>
+                        `);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+            });
+            
+            $('#batchDeletePatientButton').on('click', function () {
+                selectedPatients.forEach(id => {
+                    deletePatient(id);
+                });
+            });
         }
     });
 }
