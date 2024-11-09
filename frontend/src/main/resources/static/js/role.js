@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  loadSearchResult(0, 1, sortDirection);
+  loadSearchResult(0, rowPerPage, sortDirection);
 
   // make checbox checked when input focus
   $("#customRowPerPageInputNumber").on("focus", () => {
@@ -9,6 +9,8 @@ $(document).ready(function () {
 
 const ROLE_URL = BE_BASE_URL + "/admin/role";
 let sortDirection = "asc";
+let rowPerPage = 5;
+let currentPage = 0;
 
 function renderTableData(dataObj) {
   const tableContainer = $("#role-table");
@@ -127,9 +129,8 @@ function loadSearchResult(
 
 $(document).on("click", ".page-link.nav-btn", function () {
   const page = $(this).data("page");
-  console.log("page: " + page);
-
-  loadSearchResult(page, 1, sortDirection);
+  currentPage = page;
+  loadSearchResult(page, rowPerPage, sortDirection);
 });
 
 $("#applySorting").click(function (e) {
@@ -137,7 +138,28 @@ $("#applySorting").click(function (e) {
   const selectedSort = $('input[name="orderTypeRadio"]:checked').data("sort");
   if (selectedSort != sortDirection) {
     sortDirection = selectedSort;
-    loadSearchResult(0, 1, selectedSort);
+    loadSearchResult(0, rowPerPage, sortDirection);
+  }
+});
+
+$("#customRowPerPageInputNumber").on("input", function (e) {
+  e.preventDefault();
+  let inputValue = parseInt($(this).val());
+  if (inputValue < 1) {
+    $(this).val(1);
+  }
+  $("#customRowPerPageCheckbox").data("page", inputValue);
+});
+
+$("#applyRowPerPage").click(function (e) {
+  e.preventDefault();
+  const selectedPerPageVal = $('input[name="row-per-page"]:checked').data(
+    "page"
+  );
+
+  if (selectedPerPageVal != rowPerPage) {
+    rowPerPage = selectedPerPageVal;
+    loadSearchResult(0, rowPerPage, sortDirection);
   }
 });
 
