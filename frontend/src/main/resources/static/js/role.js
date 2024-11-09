@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  loadSearchResult(0, 1);
+  loadSearchResult(0, 1, sortDirection);
 
   // make checbox checked when input focus
   $("#customRowPerPageInputNumber").on("focus", () => {
@@ -8,6 +8,7 @@ $(document).ready(function () {
 });
 
 const ROLE_URL = BE_BASE_URL + "/admin/role";
+let sortDirection = "asc";
 
 function renderTableData(dataObj) {
   const tableContainer = $("#role-table");
@@ -95,11 +96,11 @@ function renderPagination(pageInfo) {
 function loadSearchResult(
   pageNo = 0,
   pageSize = 5,
-  sortBy = "name",
   sortDirection = "asc",
   searchText = ""
 ) {
   renderPlaceholder();
+  const sortBy = "name";
 
   $.ajax({
     type: "get",
@@ -125,7 +126,16 @@ function loadSearchResult(
 }
 
 $(document).on("click", ".page-link.nav-btn", function () {
-  loadSearchResult($(this).data("page"), 1);
+  loadSearchResult($(this).data("page"), 1, sortDirection);
+});
+
+$("#applySorting").click(function (e) {
+  e.preventDefault();
+  const selectedSort = $('input[name="orderTypeRadio"]:checked').data("sort");
+  if (selectedSort != sortDirection) {
+    sortDirection = selectedSort;
+    loadSearchResult(0, 1, selectedSort);
+  }
 });
 
 // function searchRoleAccess(name) {

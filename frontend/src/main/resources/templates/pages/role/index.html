@@ -11,7 +11,7 @@
       <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
           <div class="row g-2 mb-2">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-lg-4">
               <input
                 type="text"
                 id="searchRoleAccess"
@@ -19,7 +19,7 @@
                 placeholder="Cari Role"
               />
             </div>
-            <div class="col-12 col-md">
+            <div class="col-12 col-lg">
               <button
                 id="addRoleButton"
                 type="button"
@@ -29,7 +29,7 @@
                 <span class="tf-icons bx bx-add-to-queue"></span> Tambah Role
               </button>
             </div>
-            <div class="col-12 col-md">
+            <div class="col-12 col-lg">
               <div class="btn-group w-100">
                 <button
                   type="button"
@@ -43,13 +43,14 @@
                 <ul class="dropdown-menu w-100">
                   <li>
                     <a class="dropdown-item" href="javascript:void(0);">
-                      <div class="form-check">
+                      <div class="form-check sort-data">
                         <input
                           type="radio"
                           checked
                           class="form-check-input"
                           name="orderTypeRadio"
                           id="AZOrderCheckbox"
+                          data-sort="asc"
                         />
                         <label
                           class="form-check-label w-100"
@@ -62,12 +63,13 @@
                   </li>
                   <li>
                     <a class="dropdown-item" href="javascript:void(0);">
-                      <div class="form-check">
+                      <div class="form-check sort-data">
                         <input
                           type="radio"
                           class="form-check-input"
                           name="orderTypeRadio"
                           id="ZAOrderCheckbox"
+                          data-sort="desc"
                         />
                         <label
                           class="form-check-label w-100"
@@ -81,7 +83,11 @@
 
                   <li>
                     <a class="dropdown-item" href="javascript:void(0);">
-                      <button type="button" class="btn btn-primary w-100">
+                      <button
+                        type="button"
+                        class="btn btn-primary w-100"
+                        id="applySorting"
+                      >
                         Terapkan
                       </button>
                     </a>
@@ -89,7 +95,7 @@
                 </ul>
               </div>
             </div>
-            <div class="col-12 col-md">
+            <div class="col-12 col-lg">
               <div class="btn-group w-100">
                 <button
                   type="button"
@@ -108,13 +114,14 @@
                   </li>
                   <li>
                     <a class="dropdown-item" href="javascript:void(0);">
-                      <div class="form-check">
+                      <div class="form-check row-per-page">
                         <input
                           type="radio"
                           checked
                           name="row-per-page"
-                          class="form-check-input row-per-page"
+                          class="form-check-input"
                           id="rowPerPage5"
+                          data-row="5"
                         />
                         <label class="form-check-label w-100" for="rowPerPage5">
                           5
@@ -124,16 +131,17 @@
                   </li>
                   <li>
                     <a class="dropdown-item" href="javascript:void(0);">
-                      <div class="form-check">
+                      <div class="form-check row-per-page">
                         <input
                           type="radio"
                           name="row-per-page"
-                          class="form-check-input row-per-page"
-                          id="rowPerrPage10"
+                          class="form-check-input"
+                          id="rowPerPage10"
                         />
                         <label
                           class="form-check-label w-100"
-                          for="rowPerrPage10"
+                          for="rowPerPage10"
+                          data-row="10"
                         >
                           10
                         </label>
@@ -142,12 +150,13 @@
                   </li>
                   <li>
                     <a class="dropdown-item" href="javascript:void(0);">
-                      <div class="form-check">
+                      <div class="form-check row-per-page">
                         <input
                           type="radio"
                           name="row-per-page"
-                          class="form-check-input row-per-page"
+                          class="form-check-input"
                           id="rowPerPage15"
+                          data-row="15"
                         />
                         <label
                           class="form-check-label w-100"
@@ -164,7 +173,7 @@
                   <li>
                     <a class="dropdown-item" href="javascript:void(0);">
                       <div class="d-flex align-items-center">
-                        <div class="form-check me-2">
+                        <div class="form-check me-2 row-per-page">
                           <input
                             type="radio"
                             name="row-per-page"
@@ -179,6 +188,7 @@
                             class="form-control"
                             id="customRowPerPageInputNumber"
                           />
+                          <p class="error text-danger fst-italic"></p>
                         </div>
                       </div>
                     </a>
@@ -213,17 +223,7 @@
               <ul
                 class="pagination justify-content-end mx-3 mt-2"
                 id="paginationContainer"
-              >
-                <!-- <li class="page-item prev">
-                                <a class="page-link" href="javascript:void(0);"><i
-                                        class="tf-icon bx bx-chevrons-left"></i></a>
-                            </li> -->
-
-                <!-- <li class="page-item next">
-                                <a class="page-link" href="javascript:void(0);"><i
-                                        class="tf-icon bx bx-chevrons-right"></i></a>
-                            </li> -->
-              </ul>
+              ></ul>
             </nav>
           </div>
         </div>
