@@ -83,6 +83,7 @@ public class CustomerWalletServiceImpl implements CustomerWalletService {
         () -> new UserNotFoundException(
             "User with id: " + userId + " don't have wallet. Wallet just for patient role"));
     wallet.setBalance(newBalance);
+    wallet.setModifiedBy(userId);
     walletRepository.save(wallet);
   }
 
