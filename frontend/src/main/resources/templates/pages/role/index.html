@@ -24,7 +24,6 @@
                 id="addRoleButton"
                 type="button"
                 class="btn btn-primary w-100"
-                onclick="openAddForm()"
               >
                 <span class="tf-icons bx bx-add-to-queue"></span> Tambah Role
               </button>
@@ -233,16 +232,20 @@
         </div>
       </div>
       <th:block
-        th:replace="~{fragments/BaseModal::modal(class='modal-dialog-centered')}"
+        th:replace="~{fragments/BaseModal::modal(class='modal-dialog-centered', modalBackdrop='static', modalKeyboard='false')}"
       ></th:block>
     </div>
     <th:block layout:fragment="pageAbove">
       <th:block
         th:replace="~{fragments/ErrorModal::modal(class='modal-sm')}"
       ></th:block>
+      <th:block
+        th:replace="~{fragments/SuccessModal::modal(class='modal-sm')}"
+      ></th:block>
     </th:block>
     <th:block layout:fragment="pageBottom">
       <script th:src="@{/js/role.js}"></script>
+      <script th:replace="~{pages/role/addForm::script}"></script>
     </th:block>
   </body>
 </html>

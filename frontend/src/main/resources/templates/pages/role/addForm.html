@@ -1,12 +1,69 @@
-<form id="roleAccessForm">
-    <div class="mb-3">
-        <label for="roleAccessName" class="form-label">Nama</label>
-        <input type="text" class="form-control" id="roleAccessName" placeholder="Nama Role">
-        <span id="roleAccessNameError" class="text-danger"></span>
-    </div>
-    <div class="mb-1s">
-        <label for="roleAccessCode" class="form-label">Kode</label>
-        <input type="text" class="form-control" id="roleAccessCode" placeholder="Kode Role">
-        <span id="roleAccessCodeError" class="text-danger"></span>
-    </div>
-</form>
+<script th:fragment="script">
+  $("#addRoleButton").click(function (e) {
+    e.preventDefault();
+    setBaseModal(
+      "Tambah Role",
+      `
+  <form id="roleForm">
+      <div class="mb-3">
+          <label for="roleName" class="form-label">Nama*</label>
+          <input type="text" class="form-control save-role" id="roleName" placeholder="Nama Role">
+      </div>
+      <div class="mb-1s">
+          <label for="roleCode" class="form-label">Kode*</label>
+          <input type="text" class="form-control save-role" id="roleCode" placeholder="Kode Role">
+      </div>
+  </form>
+  `,
+      `
+  <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+      Batal
+  </button>
+  <button id="saveRoleBtn" type="button" class="btn btn-primary disabled">Simpan</button>
+  `
+    );
+
+    showBaseModal();
+  });
+
+  $(document).on("input", ".save-role", function () {
+    const roleCodeFilled = $("#roleCode").val().trim() !== "";
+    const roleNameFilled = $("#roleName").val().trim() !== "";
+
+    if (roleCodeFilled && roleNameFilled) {
+      $("#saveRoleBtn").removeClass("disabled");
+    } else {
+      $("#saveRoleBtn").addClass("disabled");
+    }
+  });
+
+  $(document).on("click", "#saveRoleBtn", function (e) {
+    e.preventDefault();
+    const button = $(this);
+
+    const roleCode = $("#roleCode");
+    const roleName = $("#roleName");
+    const dataJson = JSON.stringify({
+      name: roleName.val().trim(),
+      code: roleCode.val().trim(),
+    });
+    button.addClass("disabled");
+    $.ajax({
+      type: "post",
+      url: ROLE_URL,
+      data: dataJson,
+      contentType: "application/json",
+      success(response) {
+        roleCode.val("");
+        roleName.val("");
+        loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
+        setAndShowSuccessModal("Berhasil menyimpan data!");
+      },
+      error() {
+        button.removeClass("disabled");
+
+        $("#errorModal").modal("show");
+      },
+    });
+  });
+</script>

@@ -170,47 +170,27 @@ $("#searchRole").on("input", function () {
 
   clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
-    if (query.length > 0) {
+    if (query != searchQuery) {
       searchQuery = query;
-      loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
+      loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
     }
-  }, 300);
+  }, 400);
 });
 
-// function searchRoleAccess(name) {
-//     $.ajax({
-//         type: "GET",
-//         url: `http://localhost:9001/api/admin/role/name/${name}`,
-//         contentType: "application/json",
-//         success: function(response) {
-//             console.log(response);
-//             let roleAccessData = response.data.content;
-//             let tableData = ``;
+function setBaseModal(modaltitle = "", modalBody = "", modalFooter = "") {
+  $("#baseModalTitle").html(modaltitle);
+  $("#baseModalBody").html(modalBody);
+  $("#baseModalFooter").html(modalFooter);
+}
 
-//             roleAccessData.forEach(roleAccess => {
-//                 tableData += `
-//                   <tr>
-//                     <td>${roleAccess.name}</td>
-//                     <td>${roleAccess.code}</td>
-//                     <td>
-//                         <button onclick="openEditForm(${roleAccess.id})" type="button" class="btn btn-icon btn-outline-warning">
-//                             <span class="tf-icons bx bxs-edit"></span>
-//                         </button>
-//                         <button onclick="openDeleteModal(${roleAccess.id})" type="button" class="btn btn-icon btn-outline-danger">
-//                             <span class="tf-icons bx bxs-trash"></span>
-//                         </button>
-//                     </td>
-//                   </tr>
-//                 `;
-//             });
+function showBaseModal() {
+  $("#baseModal").modal("show");
+}
 
-//             $('#role-access-table').html(tableData);
-//         },
-//         error: function(error) {
-//             console.error("Error searching roles:", error);
-//         }
-//     });
-// }
+function setAndShowSuccessModal(modalBody) {
+  $("#successModalBody").html(modalBody);
+  $("#successModal").modal("show");
+}
 
 // function openAddForm() {
 //     $.ajax({
