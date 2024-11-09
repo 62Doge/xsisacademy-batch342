@@ -22,7 +22,7 @@ function renderTableData(dataObj) {
             <tr data-id="${role.id}">
                 <td>${role.name}</td>
                 <td>${role.code}</td>
-                <td>
+                <td class="text-center">
                     <button type="button" class="btn btn-icon btn-outline-warning editRoleButton">
                         <span class="tf-icons bx bxs-edit"></span>
                     </button>
@@ -37,64 +37,82 @@ function renderTableData(dataObj) {
 
 function renderPlaceholder() {
   $("#role-table").html(`
-    <tr class="placeholder-glow">
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-    </tr>
-    <tr class="placeholder-glow">
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-    </tr>
-    <tr class="placeholder-glow">
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-    </tr>
-    <tr class="placeholder-glow">
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-    </tr>
-    <tr class="placeholder-glow">
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-      <td><span class="placeholder col-8"></span></td>
-    </tr>
+<tr class="placeholder-glow">
+  <td><span class="placeholder col-8"></span></td>
+  <td><span class="placeholder col-8"></span></td>
+  <td class="text-center"><span class="placeholder col-8"></span></td>
+</tr>
+<tr class="placeholder-glow">
+  <td><span class="placeholder col-8"></span></td>
+  <td><span class="placeholder col-8"></span></td>
+  <td class="text-center"><span class="placeholder col-8"></span></td>
+</tr>
+<tr class="placeholder-glow">
+  <td><span class="placeholder col-8"></span></td>
+  <td><span class="placeholder col-8"></span></td>
+  <td class="text-center"><span class="placeholder col-8"></span></td>
+</tr>
+<tr class="placeholder-glow">
+  <td><span class="placeholder col-8"></span></td>
+  <td><span class="placeholder col-8"></span></td>
+  <td class="text-center"><span class="placeholder col-8"></span></td>
+</tr>
+<tr class="placeholder-glow">
+  <td><span class="placeholder col-8"></span></td>
+  <td><span class="placeholder col-8"></span></td>
+  <td class="text-center"><span class="placeholder col-8"></span></td>
+</tr>
+
         `);
 }
 
 function renderPagination(pageInfo) {
   $("#paginationContainer").html("");
+  const totalPages = pageInfo.totalPages;
+  const currentPage = pageInfo.page;
 
-  if (pageInfo.totalPages >= 3) {
+  $("#paginationContainer").append(`
+    <li class="page-item disabled d-flex align-items-center justify-content-center" style="margin-right: 10px;">
+      <span class="page-info">
+        Halaman ${currentPage + 1} dari ${totalPages}
+      </span>
+    </li>
+  `);
+
+  if (totalPages > 3) {
     $("#paginationContainer").append(`
-    <li class="page-item prev ${0 === pageInfo.page ? "disabled" : ""}">
+    <li class="page-item prev ${0 === currentPage ? "disabled" : ""}">
         <button class="page-link nav-btn" data-page="0"><i
          class="tf-icon bx bx-chevrons-left"></i></button>
     </li>
         `);
   }
 
-  for (let i = 0; i < pageInfo.totalPages; i++) {
-    $("#paginationContainer").append(`
-        <li class="page-item ${i === pageInfo.page ? "active disabled" : ""}">
-            <button class="page-link nav-btn" data-page="${i}">
-              ${"<span>" + (i + 1) + "</span>"}
-            </button>
-        </li>
-        `);
+  let startPage = Math.max(0, currentPage - 1);
+  let endPage = Math.min(totalPages - 1, currentPage + 1);
+
+  if (currentPage === 0) {
+    endPage = Math.min(totalPages - 1, 2);
+  } else if (currentPage === totalPages - 1) {
+    startPage = Math.max(0, totalPages - 3);
   }
 
-  if (pageInfo.totalPages >= 3) {
+  for (let i = startPage; i <= endPage; i++) {
+    $("#paginationContainer").append(`
+      <li class="page-item ${i === currentPage ? "active disabled" : ""}">
+        <button class="page-link nav-btn" data-page="${i}">
+          ${i + 1}
+        </button>
+      </li>
+    `);
+  }
+
+  if (totalPages > 3) {
     $("#paginationContainer").append(`
     <li class="page-item prev ${
-      pageInfo.totalPages - 1 === pageInfo.page ? "disabled" : ""
+      totalPages - 1 === currentPage ? "disabled" : ""
     }">
-        <button class="page-link nav-btn" data-page="${
-          pageInfo.totalPages - 1
-        }"><i
+        <button class="page-link nav-btn" data-page="${totalPages - 1}"><i
          class="tf-icon bx bx-chevrons-right"></i></button>
     </li>
         `);
