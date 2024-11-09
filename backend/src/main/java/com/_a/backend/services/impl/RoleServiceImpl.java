@@ -62,7 +62,10 @@ public class RoleServiceImpl implements Services<RoleRequestDTO, RoleResponseDTO
 
     @Override
     public Optional<RoleResponseDTO> findById(Long id) {
-        throw new UnsupportedOperationException("Unimplemented method 'findById'");
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new IdNotFoundException("Role with id: " + id + " not found"));
+
+        return Optional.of(new RoleResponseDTO(role));
     }
 
     @Override

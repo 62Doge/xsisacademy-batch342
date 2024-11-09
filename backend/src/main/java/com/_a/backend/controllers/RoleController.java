@@ -42,6 +42,13 @@ public class RoleController {
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
+    @GetMapping({ "{id}", "{id}/" })
+    public ResponseEntity<ApiResponse<RoleResponseDTO>> getById(@PathVariable Long id) {
+        RoleResponseDTO responseDTO = roleService.findById(id).orElse(null);
+
+        return new ResponseEntity<>(ApiResponse.success(200, responseDTO), HttpStatus.OK);
+    }
+
     @PostMapping({ "", "/" })
     public ResponseEntity<?> createRole(@RequestBody @Valid RoleRequestDTO roleRequestDTO) {
         RoleResponseDTO responseDTO = roleService.save(roleRequestDTO);
