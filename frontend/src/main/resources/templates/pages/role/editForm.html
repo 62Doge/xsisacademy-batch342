@@ -1,10 +1,72 @@
-<form id="roleAccessForm">
-  <div class="mb-3">
-    <label for="roleAccessName" class="form-label">Nama</label>
-    <input type="text" class="form-control" id="roleAccessName" placeholder="Nama Role">
-  </div>
-  <div class="mb-1s">
-    <label for="roleAccessCode" class="form-label">Kode</label>
-    <input type="text" class="form-control" id="roleAccessCode" placeholder="Kode Role">
-  </div>
-</form>
+<script th:fragment="script">
+  $(document).on("click", ".editRoleButton", function (e) {
+    e.preventDefault();
+    const button = $(this);
+    const roleId = button.parent().parent().data("id");
+    $.ajax({
+      type: "get",
+      url: ROLE_URL + "/" + roleId,
+      contentType: "application/json",
+      success(response) {
+        const data = response.data;
+        setBaseModal(
+          "Update Role",
+          `
+  <form>
+      <div class="mb-3">
+          <label for="roleName" class="form-label">Nama*</label>
+          <input value="${data.name}" type="text" class="form-control save-role" id="roleName" placeholder="Nama Role">
+      </div>
+      <div class="mb-1s">
+          <label for="roleCode" class="form-label">Kode*</label>
+          <input value="${data.code}" type="text" class="form-control save-role" id="roleCode" placeholder="Kode Role">
+      </div>
+  </form>
+  `,
+          `
+  <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+      Batal
+  </button>
+  <button data-id="${data.id}" id="updateRoleBtn" type="button" class="btn btn-primary disabled">Simpan</button>
+  `
+        );
+
+        showBaseModal();
+      },
+
+      error() {
+        $("#errorModal").modal("show");
+      },
+    });
+  });
+
+  $(document).on("click", "#updateRoleBtn", function (e) {
+    e.preventDefault();
+    const button = $(this);
+    const roleId = button.data("id");
+
+    const roleCode = $("#roleCode");
+    const roleName = $("#roleName");
+    const dataJson = JSON.stringify({
+      name: roleName.val().trim(),
+      code: roleCode.val().trim(),
+    });
+    button.addClass("disabled");
+
+    $.ajax({
+      type: "put",
+      url: ROLE_URL + "/" + roleId,
+      data: dataJson,
+      contentType: "application/json",
+      success(response) {
+        loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
+        setAndShowSuccessModal("Berhasil memperbarui data!");
+      },
+      error() {
+        button.removeClass("disabled");
+
+        $("#errorModal").modal("show");
+      },
+    });
+  });
+</script>

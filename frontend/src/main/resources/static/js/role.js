@@ -23,7 +23,7 @@ function renderTableData(dataObj) {
                 <td>${role.name}</td>
                 <td>${role.code}</td>
                 <td>
-                    <button type="button" class="btn btn-icon btn-outline-warning editButton">
+                    <button type="button" class="btn btn-icon btn-outline-warning editRoleButton">
                         <span class="tf-icons bx bxs-edit"></span>
                     </button>
                     <button type="button" class="btn btn-icon btn-outline-danger deleteButton">
@@ -37,6 +37,11 @@ function renderTableData(dataObj) {
 
 function renderPlaceholder() {
   $("#role-table").html(`
+    <tr class="placeholder-glow">
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+      <td><span class="placeholder col-8"></span></td>
+    </tr>
     <tr class="placeholder-glow">
       <td><span class="placeholder col-8"></span></td>
       <td><span class="placeholder col-8"></span></td>
@@ -192,49 +197,18 @@ function setAndShowSuccessModal(modalBody) {
   $("#successModal").modal("show");
 }
 
-// function openAddForm() {
-//     $.ajax({
-//         type: "get",
-//         url: "/role/addForm",
-//         contentType: "html",
-//         success: function (addForm) {
-//             $('#baseModal').modal('show');
-//             $('#baseModalTitle').html(`<strong>Tambah Role</strong>`);
-//             $('#baseModalBody').html(addForm);
-//             $('#baseModalFooter').html(`
-//                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
-//                     Batal
-//                 </button>
-//                 <button onclick="saveRoleAccess()" id="saveRoleBtn" type="button" class="btn btn-primary">Simpan</button>
-//             `);
-//         }
-//     });
-// }
+$(document).on("input", ".save-role", function () {
+  const roleCodeFilled = $("#roleCode").val().trim() !== "";
+  const roleNameFilled = $("#roleName").val().trim() !== "";
 
-// function saveRoleAccess() {
-//     let name = $('#roleAccessName').val();
-//     let code = $('#roleAccessCode').val();
-//     let createdBy = 0;
-
-//     if (!name.trim()) {
-//         alert("Nama Role harus diisi");
-//         return;
-//     }
-
-//     let jsonData = { name, code, createdBy };
-//     $.ajax({
-//         type: "POST",
-//         url: "http://localhost:9001/api/admin/role",
-//         data: JSON.stringify(jsonData),
-//         contentType: "application/json",
-//         success: function (response) {
-//             location.reload();
-//         },
-//         error: function (error) {
-//             console.error(error);
-//         }
-//     });
-// }
+  if (roleCodeFilled && roleNameFilled) {
+    $("#saveRoleBtn").removeClass("disabled");
+    $("#updateRoleBtn").removeClass("disabled");
+  } else {
+    $("#saveRoleBtn").addClass("disabled");
+    $("#updateRoleBtn").removeClass("disabled");
+  }
+});
 
 // function openEditForm(id) {
 //     $.ajax({

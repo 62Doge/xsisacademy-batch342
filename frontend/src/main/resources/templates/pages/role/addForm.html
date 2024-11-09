@@ -26,17 +26,6 @@
     showBaseModal();
   });
 
-  $(document).on("input", ".save-role", function () {
-    const roleCodeFilled = $("#roleCode").val().trim() !== "";
-    const roleNameFilled = $("#roleName").val().trim() !== "";
-
-    if (roleCodeFilled && roleNameFilled) {
-      $("#saveRoleBtn").removeClass("disabled");
-    } else {
-      $("#saveRoleBtn").addClass("disabled");
-    }
-  });
-
   $(document).on("click", "#saveRoleBtn", function (e) {
     e.preventDefault();
     const button = $(this);
