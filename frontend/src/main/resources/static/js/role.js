@@ -11,6 +11,7 @@ const ROLE_URL = BE_BASE_URL + "/admin/role";
 let sortDirection = "asc";
 let rowPerPage = 5;
 let currentPage = 0;
+let searchQuery = "";
 
 function renderTableData(dataObj) {
   const tableContainer = $("#role-table");
@@ -130,7 +131,7 @@ function loadSearchResult(
 $(document).on("click", ".page-link.nav-btn", function () {
   const page = $(this).data("page");
   currentPage = page;
-  loadSearchResult(page, rowPerPage, sortDirection);
+  loadSearchResult(page, rowPerPage, sortDirection, searchQuery);
 });
 
 $("#applySorting").click(function (e) {
@@ -138,7 +139,7 @@ $("#applySorting").click(function (e) {
   const selectedSort = $('input[name="orderTypeRadio"]:checked').data("sort");
   if (selectedSort != sortDirection) {
     sortDirection = selectedSort;
-    loadSearchResult(0, rowPerPage, sortDirection);
+    loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
   }
 });
 
@@ -159,8 +160,21 @@ $("#applyRowPerPage").click(function (e) {
 
   if (selectedPerPageVal != rowPerPage) {
     rowPerPage = selectedPerPageVal;
-    loadSearchResult(0, rowPerPage, sortDirection);
+    loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
   }
+});
+
+let debounceTimer;
+$("#searchRole").on("input", function () {
+  const query = $(this).val().trim();
+
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(() => {
+    if (query.length > 0) {
+      searchQuery = query;
+      loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
+    }
+  }, 300);
 });
 
 // function searchRoleAccess(name) {
