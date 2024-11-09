@@ -1,3 +1,48 @@
-<div>
-  Anda akan menghapus <span id="roleAccessName"></span>?
-</div>
+<script th:fragment="script">
+  $(document).on("click", ".deleteButton", function () {
+    const button = $(this);
+    const roleId = button.parent().parent().data("id");
+
+    $.ajax({
+      type: "get",
+      url: ROLE_URL + "/" + roleId,
+      contentType: "application/json",
+      success(response) {
+        const data = response.data;
+        $("#deleteConfirmationModalBody").html(`
+        <p class="pb-0 mb-0 text-center fs-5">Apakah anda yakin akan menghapus <span class="fw-bold">${data.name}</span>?</p>
+        <p class="pb-0 mb-0 text-center fs-5">Tindakan ini tidak dapat dibatalkan.</p>
+        `);
+
+        $("#deleteConfirmationModalButton").data("id", data.id);
+        $("#deleteConfirmationModal").modal("show");
+      },
+
+      error() {
+        $("#errorModal").modal("show");
+      },
+    });
+  });
+
+  $(document).on("click", "#deleteConfirmationModalButton", function (e) {
+    e.preventDefault();
+    const button = $(this);
+    const roleId = button.data("id");
+    button.addClass("disabled");
+    $.ajax({
+      type: "delete",
+      url: ROLE_URL + "/soft-delete/" + roleId,
+      contentType: "application/json",
+      success: function (response) {
+        loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
+        $("#deleteConfirmationModal").modal("hide");
+
+        setAndShowSuccessModal("Berhasil menghapus data!");
+      },
+      error() {
+        $("#errorModal").modal("show");
+      },
+    });
+    button.removeClass("disabled");
+  });
+</script>

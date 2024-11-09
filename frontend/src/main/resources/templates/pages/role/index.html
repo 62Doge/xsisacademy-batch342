@@ -242,11 +242,15 @@
       <th:block
         th:replace="~{fragments/SuccessModal::modal(class='modal-sm')}"
       ></th:block>
+      <th:block
+        th:replace="~{fragments/DeleteConfirmationModal::modal}"
+      ></th:block>
     </th:block>
     <th:block layout:fragment="pageBottom">
       <script th:src="@{/js/role.js}"></script>
       <script th:replace="~{pages/role/addForm::script}"></script>
       <script th:replace="~{pages/role/editForm::script}"></script>
+      <script th:replace="~{pages/role/deleteModal::script}"></script>
     </th:block>
   </body>
 </html>

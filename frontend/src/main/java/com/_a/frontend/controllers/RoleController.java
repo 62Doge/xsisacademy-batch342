@@ -12,20 +12,4 @@ public class RoleController {
     public String index() {
         return "pages/role/index";
     }
-
-    @GetMapping({ "/addForm", "/addForm/" })
-    public String form() {
-        return "pages/role/addForm";
-    }
-
-    @GetMapping({ "/editForm", "/editForm/" })
-    public String edit() {
-        return "pages/role/editForm";
-    }
-
-    @GetMapping({ "/deleteModal", "/deleteModal/" })
-    public String delete() {
-        return "pages/role/deleteModal";
-    }
-
 }
