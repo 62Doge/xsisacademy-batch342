@@ -63,7 +63,7 @@ function renderPagination(pageInfo) {
   if (pageInfo.totalPages >= 3) {
     $("#paginationContainer").append(`
     <li class="page-item prev ${0 === pageInfo.page ? "disabled" : ""}">
-        <button class="page-link nav-btn" data-page="${0}"><i
+        <button class="page-link nav-btn" data-page="0"><i
          class="tf-icon bx bx-chevrons-left"></i></button>
     </li>
         `);
@@ -72,7 +72,7 @@ function renderPagination(pageInfo) {
   for (let i = 0; i < pageInfo.totalPages; i++) {
     $("#paginationContainer").append(`
         <li class="page-item ${i === pageInfo.page ? "active disabled" : ""}">
-            <button class="page-link nav-btn">
+            <button class="page-link nav-btn" data-page="${i}">
               ${"<span>" + (i + 1) + "</span>"}
             </button>
         </li>
@@ -126,7 +126,10 @@ function loadSearchResult(
 }
 
 $(document).on("click", ".page-link.nav-btn", function () {
-  loadSearchResult($(this).data("page"), 1, sortDirection);
+  const page = $(this).data("page");
+  console.log("page: " + page);
+
+  loadSearchResult(page, 1, sortDirection);
 });
 
 $("#applySorting").click(function (e) {
