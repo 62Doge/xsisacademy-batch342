@@ -42,8 +42,10 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
   @Autowired
   private PasswordEncoder passwordEncoder;
 
+  @Transactional
   @Override
   public void requestPasswordReset(ForgotPasswordRequestDto requestDto) throws Exception {
+
     User user = userRepository.findByEmail(requestDto.getEmail())
         .orElseThrow(() -> new UserNotFoundException("Email tidak terdaftar"));
 
@@ -64,6 +66,7 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
       }
 
       activeToken.setIsExpired(true);
+      activeToken.setModifiedBy(user.getId());
       tokenRepository.save(activeToken);
     }
 
@@ -105,7 +108,15 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
           "password tidak memenuhi standar (minimal 8 karakter, harus mengandung huruf besar, huruf kecil, angka, dan special character)");
     }
 
+    Token token = tokenRepository
+        .findActiveTokenByEmailAndToken(verifyOtpRequestDto.getEmail(), verifyOtpRequestDto.getOtp(),
+            LocalDateTime.now())
+        .orElse(null);
+
     User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("Email tidak terdaftar"));
+
+    token.setIsExpired(true);
+    token.setModifiedBy(user.getId());
 
     String newPasswordEncrypted = passwordEncoder.encode(newPassword);
 
@@ -116,7 +127,9 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
     resetPasswordRepository.save(resetPassword);
 
     user.setPassword(newPasswordEncrypted);
+    user.setModifiedBy(user.getId());
     userRepository.save(user);
+    tokenRepository.save(token);
   }
 
   private boolean isValidPassword(String password) {

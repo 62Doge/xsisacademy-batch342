@@ -44,6 +44,7 @@ public class EmailServiceImpl implements EmailService {
     token.setExpiredOn(LocalDateTime.now().plusMinutes(10));
     token.setIsExpired(false);
     token.setUsed_for("RESET_PASSWORD");
+    token.setCreatedBy(user.getId());
     tokenRepository.save(token);
 
     Context context = new Context();
