@@ -156,4 +156,11 @@ public class LocationServiceImpl implements Services<LocationRequestDTO, Locatio
         locationRepository.save(location);
     }
 
+    public List<LocationResponseDTO> findAllKecamatanOrKota() {
+        // using less optimal approach, but easier to understand
+        return locationRepository.findLocationKecamatanOrKota().stream()
+                .map(location -> modelMapper.map(location, LocationResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
 }

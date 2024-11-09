@@ -31,7 +31,7 @@
           <li class="nav-item">
             <button
               type="button"
-              class="nav-link active"
+              class="nav-link "
               role="tab"
               data-bs-toggle="tab"
               data-bs-target="#navs-top-withdraw"
@@ -41,6 +41,19 @@
               Tarik Saldo
             </button>
           </li>
+          <li class="nav-item">
+            <button
+              type="button"
+              class="nav-link active"
+              role="tab"
+              data-bs-toggle="tab"
+              data-bs-target="#navs-top-address"
+              aria-controls="navs-top-address"
+              aria-selected="false"
+            >
+              Alamat
+            </button>
+          </li>
         </ul>
         <div class="tab-content">
           <div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
@@ -48,12 +61,21 @@
           </div>
 
           <div
-            class="tab-pane fade show active"
+            class="tab-pane fade "
             id="navs-top-withdraw"
             role="tabpanel"
           >
             <th:block
               th:replace="~{pages/profile/tabWithdraw::withdrawContent}"
+            ></th:block>
+          </div>
+          <div
+            class="tab-pane fade show active"
+            id="navs-top-address"
+            role="tabpanel"
+          >
+            <th:block
+              th:replace="~{pages/profile/tabAddress::addressContent}"
             ></th:block>
           </div>
         </div>
@@ -68,10 +90,14 @@
       <th:block
         th:replace="~{pages/profile/tabWithdraw::withdrawScript}"
       ></th:block>
+      <th:block
+        th:replace="~{pages/profile/tabAddress::addressScript}"
+      ></th:block>
     </th:block>
 
     <th:block layout:fragment="pageAbove">
       <th:block th:replace="~{pages/profile/tabWithdraw::style}"></th:block>
+      <th:block th:replace="~{pages/profile/tabAddress::style}"></th:block>
       <th:block
         th:replace="~{fragments/BaseModal::modal(class='modal-sm', modalBackdrop='static', modalKeyboard='false')}"
       ></th:block>

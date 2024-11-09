@@ -1,5 +1,6 @@
 package com._a.backend.controllers;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/admin/location")
 @CrossOrigin("*")
 public class LocationController {
+
     @Autowired
     private LocationServiceImpl locationService;
     @Autowired
@@ -57,23 +59,6 @@ public class LocationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
-    // using paging above
-    // @GetMapping("")
-    // public ResponseEntity<?> findAllLocations() {
-    // try {
-    // List<LocationResponseDTO> locationResponseDTOS = locationService.findAll();
-    //
-    // ApiResponse<List<LocationResponseDTO>> successResponse =
-    // new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(),
-    // locationResponseDTOS);
-    // return new ResponseEntity<>(successResponse, HttpStatus.OK);
-    // }catch (Exception e) {
-    // ApiResponse<List<LocationResponseDTO>> errorResponse =
-    // new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
-    // HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
-    // return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    // }
-    // }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getLocationById(@PathVariable("id") Long id) {
@@ -256,6 +241,19 @@ public class LocationController {
             ApiResponse<LocationResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     "Failed to delete Location ", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/kecamatan-or-kota")
+    public ResponseEntity<?> getLocationKecamatanOrKota() {
+        try {
+            ApiResponse<List<LocationResponseDTO>> successResponse = new ApiResponse<>(
+                    HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), locationService.findAllKecamatanOrKota());
+            return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        } catch (Exception e) {
+            ApiResponse<?> errorResponse = new ApiResponse<>(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 

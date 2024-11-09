@@ -1,0 +1,684 @@
+<div class="container m-0 p-0 mt-5" th:fragment="addressContent">
+  <div class="row g-2">
+    <div class="col-12 d-flex mb-2">
+      <div class="me-2 flex-grow-1">
+        <input type="text" id="searchAddress" class="form-control" placeholder="Cari alamat atau nama penerima" />
+      </div>
+      <div class="btn-group me-2">
+        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+          aria-expanded="true" data-bs-auto-close="outside">
+          Urutkan Data
+        </button>
+        <ul class="dropdown-menu">
+          <li>
+            <h6 class="dropdown-header text-uppercase">Urutkan bersadarkan:</h6>
+          </li>
+          <li>
+            <label class="dropdown-item w-100">
+              <input type="radio" class="form-check-input me-2" name="orderColumnRadio" id="defaultAddressRadio"
+                value="">
+              Default
+            </label>
+          </li>
+          <li>
+            <label class="dropdown-item w-100">
+              <input type="radio" class="form-check-input me-2" name="orderColumnRadio" id="addressAddressRadio"
+                value="address">
+              Alamat
+            </label>
+          </li>
+          <li>
+            <label class="dropdown-item w-100">
+              <input type="radio" class="form-check-input me-2" name="orderColumnRadio" id="labelAddressRadio"
+                value="label">
+              Label Alamat
+            </label>
+          </li>
+          <li>
+            <label class="dropdown-item w-100">
+              <input type="radio" class="form-check-input me-2" name="orderColumnRadio" id="recipientAddressRadio"
+                value="recipient">
+              Penerima
+            </label>
+          </li>
+          <li>
+            <label class="dropdown-item w-100">
+              <input type="radio" class="form-check-input me-2" name="orderColumnRadio"
+                id="recipientPhoneNumberAddressRadio" value="recipientPhoneNumber">
+              Nomor Penerima
+            </label>
+          </li>
+          <li>
+            <label class="dropdown-item w-100">
+              <input type="radio" class="form-check-input me-2" name="orderColumnRadio" id="postalCodeAddressRadio"
+                value="postalCode">
+              Kode Pos
+            </label>
+          </li>
+          <li>
+            <div class="w-100 text-center p-2">
+              <button type="button" class="btn btn-primary mt-2 w-100" onclick="setPageOrder()">Terapkan</button>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+
+    </div>
+    <div class="col-12 d-flex mb-2">
+      <button type="button" class="btn btn-sm btn-outline-secondary disabled d-flex align-items-center"
+        aria-expanded="true" id="multiDeleteBtn" onclick="openDeleteModal()">
+        <i class='bx bxs-trash-alt me-1'></i> Hapus
+      </button>
+
+      <span class="ms-auto d-flex align-items-center text-secondary">
+        <button type="button" class="btn btn-sm text-primary" id="AZOrderToggle" value="ASC">A-Z</button>
+        <span class="text-primary">|</span>
+        <button onclick="openPageModal()" type="button" class="btn btn-sm text-primary"
+          id="customPageSizeToggle">5</button>
+        <span class="text-primary">|</span>
+        <button onclick="openAddForm()" type="button" class="btn btn-sm text-primary d-flex align-items-center"
+          id="addAddressBtn">
+          <i class='bx bx-plus me-1'></i>Tambah
+        </button>
+      </span>
+
+    </div>
+    <div class="col-12">
+      <div class="card">
+        <h5 class="card-header"><strong>Alamat</strong></h5>
+        <div class="table-responsive text-nowrap">
+          <table class="table">
+            <tbody class="table-border-bottom-0" id="address-table">
+
+            </tbody>
+          </table>
+        </div>
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-end mx-3 mt-2" id="pageList">
+            <li class="page-item prev d-flex align-items-center d-none" id="previousPageControl">
+              <a class="page-link d-flex align-items-center" href="javascript:previousPage();"><i
+                  class='bx bx-chevron-left'></i>Prev</a>
+            </li>
+            <li class="page-item next d-flex align-items-center d-none" id="nextPageControl">
+              <a class="page-link d-flex align-items-center" href="javascript:nextPage();">Next<i
+                  class='bx bx-chevron-right'></i></a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block th:fragment="addressScript">
+  <script>
+    let user;
+    let addressData = [];
+    let currentPage = 1;
+    let pageSize = 5;
+    let sortBy = "id";
+    let sortDir = "asc";
+    let currentSearchQuery = "";
+    let totalPages;
+    let currentLocationLevelId;
+    let addressIds = [];
+    let locationSelect = [];
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+      loadLocationSelect();
+      var toggleButton = document.getElementById("AZOrderToggle");
+      toggleButton.addEventListener("click", function (e) {
+        e.preventDefault();
+        // Check the current value and toggle the text and value accordingly
+        if (toggleButton.value === "ASC") {
+          toggleButton.value = "DESC";
+          toggleButton.textContent = "Z-A";
+        } else {
+          toggleButton.value = "ASC";
+          toggleButton.textContent = "A-Z";
+        }
+        sortDir = toggleButton.value;
+        loadAddresses();
+        $("#searchAddress").on("input", function () {
+          currentSearchQuery = $(this).val();
+          $("#address-table").empty();
+          loadAddresses();
+        });
+      });
+      $.ajax({
+        url: `http://localhost:9001/api/admin/user/${USER_LOGGED_ID}`,
+        type: 'GET',
+        success: function (response) {
+          user = response.data;
+          console.log(user);
+          loadAddresses();
+          $("#searchAddress").on("input", function () {
+            currentSearchQuery = $(this).val();
+            $("#address-table").empty();
+            loadAddresses();
+          });
+        },
+        error: function (error) {
+          console.error('An error occurred:', error);
+        }
+      });
+    });
+
+    function checkboxesDelete() {
+      const deleteButton = document.getElementById('multiDeleteBtn');
+      const checkboxes = document.querySelectorAll('.checkboxes');
+
+      addressIds = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => parseInt(checkbox.value));
+
+      if (!addressIds.length) {
+        deleteButton.classList.add("disabled");
+      } else {
+        deleteButton.classList.remove("disabled");
+      }
+    }
+
+    function loadAddresses() {
+      $.ajax({
+        type: "GET",
+        url: `http://localhost:9001/api/admin/biodata-address/biodata/${user.biodataId}/search?pageNo=${currentPage - 1
+          }&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}&keyword=${currentSearchQuery}`,
+        contentType: "application/json",
+        success: function (response) {
+          addressData = response.data.content;
+          totalPages = response.data.metadata.totalPages;
+          console.log(addressData)
+
+          let tableData = ``;
+          addressData.forEach((address) => {
+            let addressLocation = `${address.address}`;
+            addressLocation += address.location ? `, ${address.location.name}` : "";
+            if (address.location.parent !== null) {
+              addressLocation += `, ${address.location.parent.name}`;
+            }
+            tableData += `
+                <tr>
+                  <td>
+                    <input onclick="checkboxesDelete()" class="checkboxes form-check-input d-flex align-items-center" type="checkbox" value="${address.id}"
+                      aria-label="Checkbox for ${address.label}" onclick="">
+                  </td>
+                  <td>
+                    <strong>${address.label}</strong><br>
+                    ${address.recipient}, ${address.recipientPhoneNumber}<br>
+                    ${addressLocation}
+                  </td>
+                  <td class="action-buttons">
+                    <button onclick="openEditForm(${address.id})" type="button" class="btn btn-sm text-primary align-items-center">
+                      <span class='tf-icons bx bxs-pencil me-1'></span>Ubah
+                    </button>
+                    <button onclick="openDeleteModal([${address.id}])" type="button" class="btn btn-sm text-primary align-items-center">
+                      <span class='tf-icons bx bxs-trash-alt me-1'></span>Hapus
+                    </button>
+                  </td>
+                </tr>
+                `;
+          });
+          $("#address-table").html(tableData);
+          pageButtons();
+        },
+        error: function (error) {
+          alert("Failed to load address !");
+          console.error("Error loading address:", error);
+        },
+      });
+    }
+
+    function validateForm(event, updateId = null) {
+      event.preventDefault();
+
+      const fields = [
+        {
+          id: "addressLabel",
+          errorId: "addressLabelError",
+          message: "Label Alamat is required",
+        },
+        {
+          id: "addressRecipient",
+          errorId: "addressRecipientError",
+          message: "Nama Penerima is required",
+        },
+        {
+          id: "addressRecipientPhoneNumber",
+          errorId: "addressRecipientPhoneNumberError",
+          message: "Nomor Penerima is required",
+        },
+        {
+          id: "locationId",
+          errorId: "locationIdError",
+          message: "Kecamatan / Kota is required",
+        },
+        {
+          id: "addressAddress",
+          errorId: "addressAddressError",
+          message: "Alamat is required",
+        },
+      ];
+
+      let isValid = true;
+
+      fields.forEach((field) => {
+        const input = document.getElementById(field.id);
+        const error = document.getElementById(field.errorId);
+        error.textContent = "";
+
+        if (!input.value.trim()) {
+          input.classList.add("is-invalid");
+          error.textContent = field.message;
+          isValid = false;
+        } else {
+          input.classList.remove("is-invalid");
+        }
+      });
+
+      if (isValid) {
+        updateId ? updateAddress(updateId) : saveAddress();
+      }
+    }
+
+    function loadForm() {
+      $("#baseModalBody").empty();
+      $("#baseModalTitle").empty();
+      $("#baseModalFooter").empty();
+
+      $("#baseModalTitle").html(`<strong>Tambah Alamat</strong>`);
+      $("#baseModalBody").html(`
+    <form id="addAddressForm"> 
+        <div class="mb-3">
+            <label class="form-label" for="addressLabel">Label Alamat*</label>
+            <input name="label" type="text" class="form-control" id="addressLabel" placeholder="Contoh: Rumah, Kantor" >
+            <span id="addressLabelError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="addressRecipient">Nama Penerima*</label>
+            <input name="recipient" type="text" class="form-control" id="addressRecipient" >
+            <span id="addressRecipientError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="addressRecipientPhoneNumber">Nomor HP Penerima*</label>
+            <input name="recipientPhoneNumber" type="text" class="form-control" id="addressRecipientPhoneNumber" >
+            <span id="addressRecipientPhoneNumberError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="locationId">Kecamatan / Kota*</label>
+            <select class="form-select" name="locationId" id="locationId">
+            </select>
+            <span id="locationIdError" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="addressPostalCode">Kode Pos</label>
+            <input name="postalCode" type="text" class="form-control" id="addressPostalCode">
+        </div>
+        <div class="mb-3">
+            <label for="addressAddress" class="form-label">Alamat*</label>
+            <textarea name="address" type="text" class="form-control" id="addressAddress" placeholder="Form isian" rows="2"></textarea>
+            <span id="addressAddressError" class="text-danger"></span>
+        </div>
+    </form>
+    `);
+      $("#baseModalFooter").html(`
+    <button data-bs-dismiss="modal" type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">
+    Batal
+    </button>
+    <button id="saveAddressBtn" type="button" class="btn btn-primary">Simpan</button>
+    `);
+    }
+
+    function loadLocationSelect() {
+      $.ajax({
+        type: "GET",
+        url: "http://localhost:9001/api/admin/location/kecamatan-or-kota",
+        contentType: "application/json",
+        success: function (response) {
+          locationSelect = response.data;
+        },
+        error: function (error) {
+          console.error("Failed to load location data:", error);
+        },
+      });
+    }
+
+    function populateLocationSelect(selectId = null) {
+      $("#locationId").empty();
+      $("#locationId").append(
+        `<option value="" selected disabled hidden>Cari kecamatan/kota</option>`
+      );
+      $.each(locationSelect, function (index, location) {
+        const isSelected = selectId === location.id ? "selected" : "";
+        const locationParent = location.parent
+          ? `, ${location.parent.locationLevel.abbreviation} ${location.parent.name}`
+          : "";
+        $("#locationId").append(
+          `<option value=${location.id} ${isSelected}>${location.locationLevel.abbreviation} ${location.name}${locationParent}</option>`
+        );
+      });
+    }
+
+    function openAddForm() {
+      loadForm();
+      populateLocationSelect();
+      $("#baseModal").modal("show");
+      document
+        .getElementById("saveAddressBtn")
+        .addEventListener("click", function (event) {
+          validateForm(event);
+        });
+      $("#addAddressForm").submit(function (event) {
+        validateForm(event);
+      });
+    }
+
+    function saveAddress() {
+      let label = $("#addressLabel").val();
+      let recipient = $("#addressRecipient").val();
+      let recipientPhoneNumber = $("#addressRecipientPhoneNumber").val();
+      let locationId = parseInt($("#locationId").val());
+      let postalCode = $("#addressPostalCode").val();
+      let address = $("#addressAddress").val();
+      let createdBy = 0; //If user logged in works, use session user logged in info
+
+      let jsonData = {
+        label,
+        recipient,
+        recipientPhoneNumber,
+        locationId,
+        postalCode,
+        biodataId: user.biodataId,
+        address,
+        createdBy,
+      };
+
+      console.log(JSON.stringify(jsonData));
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:9001/api/admin/biodata-address",
+        data: JSON.stringify(jsonData),
+        contentType: "application/json",
+        success: function (response) {
+          $("#baseModal").modal("hide");
+          loadAddresses();
+        },
+        error: function (error) {
+          // if (error.status === 409)
+          alert("Failed to save address: address conflict / already exist");
+          console.error("Failed to save address: ", error);
+        },
+      });
+    }
+
+    function openEditForm(id) {
+      $.ajax({
+        type: "GET",
+        url: `http://localhost:9001/api/admin/biodata-address/${id}`,
+        contentType: "application/json",
+        success: function (response) {
+          let address = response.data;
+          loadForm();
+          $("#addressLabel").val(address.label);
+          $("#addressRecipient").val(address.recipient);
+          $("#addressRecipientPhoneNumber").val(address.recipientPhoneNumber);
+          $("#addressPostalCode").val(address.postalCode);
+          $("#addressAddress").val(address.address);
+          populateLocationSelect(address.locationId);
+          $("#baseModal").modal("show");
+          document
+            .getElementById("saveAddressBtn")
+            .addEventListener("click", function (event) {
+              validateForm(event, id);
+            });
+          $("#addressForm").submit(function (event) {
+            validateForm(event, id);
+          });
+        },
+        error: function (error) {
+          if (error.status === 409) alert("Failed to load location data!");
+          console.error("Failed to load location data:", error);
+        },
+      });
+    }
+
+    function updateAddress(id) {
+      let label = $("#addressLabel").val();
+      let recipient = $("#addressRecipient").val();
+      let recipientPhoneNumber = $("#addressRecipientPhoneNumber").val();
+      let locationId = parseInt($("#locationId").val());
+      let postalCode = $("#addressPostalCode").val();
+      let address = $("#addressAddress").val();
+      let modifiedBy = 0;
+
+      let jsonData = {
+        label,
+        recipient,
+        recipientPhoneNumber,
+        locationId,
+        postalCode,
+        biodataId: user.biodataId,
+        address,
+        modifiedBy,
+      };
+      $.ajax({
+        type: "PUT",
+        url: `http://localhost:9001/api/admin/biodata-address/update/${id}`,
+        data: JSON.stringify(jsonData),
+        contentType: "application/json",
+        success: function (response) {
+          $("#baseModal").modal("hide");
+          loadAddresses();
+        },
+        error: function (error) {
+          alert("Failed to update address: address conflict / already exist");
+          console.error("Failed to update address:", error);
+        },
+      });
+    }
+
+    function openDeleteModal(ids = null) {
+      ids = !ids ? addressIds : ids;
+      let jsonData = { ids }
+      console.log(JSON.stringify(jsonData));
+      $.ajax({
+        type: "POST",
+        url: `http://localhost:9001/api/admin/biodata-address/multiple-ids`,
+        data: JSON.stringify(jsonData),
+        contentType: "application/json",
+        success: function (response) {
+          let addresses = response.data; // Assuming response.data is an array of addresses
+          $("#baseModal").modal("show");
+          $("#baseModalTitle").html(`<strong>Hapus Alamat</strong>`);
+          let addressListHtml = addresses
+            .map((address) => `<div class="text-primary">${address}</div>`)
+            .join("");
+          $("#baseModalBody").html(`
+          <div>
+              Anda yakin ingin menghapus alamat:
+              ${addressListHtml}
+              <div class="mt-3">Anda tidak dapat mengembalikan alamat yang sudah dihapus</div>
+          </div>
+      `);
+          $("#baseModalFooter").html(`
+          <button data-bs-dismiss="modal" type="button" class="btn btn-outline-secondary">
+              Batal
+          </button>
+          <button onclick='deleteAddress([${ids}],${JSON.stringify(addresses)})' type="button" class="btn btn-primary">
+              Hapus
+          </button>
+      `);
+        },
+        error: function (error) {
+          alert("Failed to load address data for deletion!");
+          console.error("Failed to load address data for deletion:", error);
+        },
+      });
+    }
+
+    function deleteAddress(ids = null, addresses) {
+      let jsonData = {
+        ids: !ids ? addressIds : ids,
+        deletedBy: 0,
+      };
+      $.ajax({
+        type: "PATCH",
+        url: `http://localhost:9001/api/admin/biodata-address/soft-delete/multiple`,
+        data: JSON.stringify(jsonData),
+        contentType: "application/json",
+        success: function (response) {
+          $("#baseModal").modal("hide");
+          loadAddresses();
+          $("#multiDeleteBtn").addClass("disabled");
+        },
+        error: function (error) {
+          // alert("Failed to delete: Location is used!");
+          $("#baseModal").modal("show");
+          $("#baseModalTitle").html(`<strong>Hapus Alamat</strong>`);
+          let addressListHtml = addresses
+            .map((address) => `<div class="text-primary">${address}</div>`)
+            .join("");
+          $("#baseModalBody").html(`
+            <div style="text-align: center;">
+                Tidak dapat menghapus Alamat:
+                ${addressListHtml}
+                <br>
+                <div class="mt-3">Alamat tersebut masih digunakan</div>
+            </div>
+        `);
+          $("#baseModalFooter").html(`
+                  <button data-bs-dismiss="modal" type="button" class="btn btn-primary">
+                      Kembali
+                  </button>
+              `);
+          console.error(
+            "Failed to delete Address",
+            error.status
+          );
+        },
+      });
+    }
+
+    function openPageModal() {
+
+      $("#baseModalBody").empty();
+      $("#baseModalTitle").empty();
+      $("#baseModalFooter").empty();
+      // Set up the content for the "Go to Page" modal
+      document.getElementById("baseModalTitle").innerText = "Atur item per halaman";
+
+      // Modal body: input field for the page number
+      document.getElementById("baseModalBody").innerHTML = `
+    <input type="number" onchange="checkPerPage()" onkeyup="checkPerPage()" value="${pageSize}" id="itemPerPage" class="form-control" placeholder="Masukkan banyak item" min="1">
+    <span id="itemPerPageError" class="text-danger"></span>
+  `;
+
+      $(".modal-content").submit(function (e) {
+        e.preventDefault();
+        changeCustomPageSizeToggle();
+      });
+
+      // Modal footer: close and go buttons
+      document.getElementById("baseModalFooter").innerHTML = `
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-primary" onclick="changeCustomPageSizeToggle()">Go</button>
+  `;
+
+      // Show the modal
+      $("#baseModal").modal("show");
+    }
+
+    function checkPerPage() {
+      if ($("#itemPerPage").val() < 1) {
+        $("#itemPerPage").val(1);
+      }
+    }
+
+    function changeCustomPageSizeToggle() {
+      if (!$("#itemPerPage").val()) {
+        $("#itemPerPageError").text("Item per page is required!");
+      } else {
+        pageSize = $("#itemPerPage").val();
+        $("#customPageSizeToggle").text(`${pageSize}`);
+        loadAddresses();
+        $("#baseModal").modal("hide");
+      }
+    }
+
+    function setPageOrder() {
+      sortBy = $('input[name="orderColumnRadio"]:checked').val();
+      sortDir = $('#AZOrderToggle').val();
+      loadAddresses();
+    }
+
+    function pageButtons() {
+      if (currentPage > totalPages) {
+        if (totalPages > 0) {
+          moveToPage(totalPages);
+          return;
+        } else {
+          currentPage = 1;
+        }
+      }
+
+      // Previous button if currentPage != 1
+      if (currentPage !== 1) {
+        $("#previousPageControl").removeClass("d-none");
+      } else {
+        $("#previousPageControl").addClass("d-none");
+      }
+
+      // If there are more pages after the current range, show '...' and last page
+      if (currentPage < totalPages) {
+        $("#nextPageControl").removeClass("d-none");
+      }
+
+      if (currentPage === totalPages) {
+        $("#nextPageControl").addClass("d-none");
+      }
+
+      // Set the selected sorting options in the dropdown
+      $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop(
+        "checked",
+        true
+      );
+    }
+
+    function moveToPage(pageNumber) {
+      currentPage = pageNumber;
+      loadAddresses();
+    }
+
+    function nextPage() {
+      if (currentPage + 1 <= totalPages) {
+        currentPage++;
+      }
+      loadAddresses();
+    }
+
+    function previousPage() {
+      if (currentPage - 1 > 0) {
+        currentPage--;
+      }
+      loadAddresses();
+    }
+
+  </script>
+</th:block>
+
+<th:block th:fragment="style">
+  <style>
+    .action-buttons {
+      text-align: right;
+    }
+  </style>
+</th:block>
+
+<!-- <div class="row g-2">
+    <div class="col-12 col-md-6 d-flex">
+    </div>
+  
+    <div class="col-12 col-md-6 d-flex">
+    </div>
+  </div> -->

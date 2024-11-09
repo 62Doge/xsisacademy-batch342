@@ -22,7 +22,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "m_biodata_address")
 @AllArgsConstructor
 @NoArgsConstructor
-public class BiodataAddress extends BaseEntity{
+public class BiodataAddress extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -32,30 +33,30 @@ public class BiodataAddress extends BaseEntity{
     @JoinColumn(name = "biodata_id", insertable = false, updatable = false)
     @JsonBackReference
     private Biodata biodata;
-    
+
     @Column(name = "biodata_id")
     private Long biodataId;
-    
+
     @Column(name = "label", length = 100)
     private String label;
-    
+
     @Column(name = "recipient", length = 100)
     private String recipient;
-    
+
     @Column(name = "recipient_phone_number", length = 15)
     private String recipientPhoneNumber;
-    
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "location_id", insertable = false, updatable = false)
+    @JsonBackReference
+    private Location location;
+
+    @Column(name = "location_id")
+    private Long locationId;
+
     @Column(name = "postal_code", length = 10)
     private String postalCode;
 
     @Column(name = "address")
     private String address;
-
-    @ManyToOne(fetch= FetchType.EAGER)
-    @JoinColumn(name = "location_id", insertable = false, updatable = false)
-    @JsonBackReference
-    private Location location;
-    
-    @Column(name = "location_id")
-    private Long locationId;
 }
