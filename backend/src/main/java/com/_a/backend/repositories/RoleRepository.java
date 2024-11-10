@@ -27,7 +27,7 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
                 :searchText is null
                 or lower(r.name) like %:searchText%
             )
-            and (
+            or (
                 :searchText is null
                 or lower(r.code) like %:searchText%
             )
