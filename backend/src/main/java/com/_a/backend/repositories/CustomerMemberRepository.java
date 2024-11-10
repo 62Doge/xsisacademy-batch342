@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com._a.backend.dtos.projections.PatientProjectionDto;
+import com._a.backend.dtos.responses.CustomerMemberSummaryResponseDTO;
 import com._a.backend.entities.CustomerMember;
 
 @Repository
@@ -43,6 +44,17 @@ public interface CustomerMemberRepository extends JpaRepository<CustomerMember, 
                         "cm.is_delete = false AND " +
                         "cm.parent_biodata_id = :parent_biodata_id AND " +
                         "b.fullname ILIKE CONCAT('%', :name, '%')", nativeQuery = true)
-        Page<PatientProjectionDto> findPatientByName(@Param("name") String name, @Param("parent_biodata_id") Long parentBiodataId, Pageable pageable);
-        
+        Page<PatientProjectionDto> findPatientByName(@Param("name") String name,
+                        @Param("parent_biodata_id") Long parentBiodataId, Pageable pageable);
+
+        @Query("""
+                        select cm
+                        from CustomerMember cm
+                        join cm.customer c
+                        join c.biodata b
+                        join cm.customerRelation cr
+                        where cm.parentBiodataId = ?1
+                        and cm.isDelete = false
+                                """)
+        List<CustomerMemberSummaryResponseDTO> findCustomerMembersByUserBiodataId(Long biodataId);
 }
