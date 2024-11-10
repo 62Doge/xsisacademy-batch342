@@ -5,11 +5,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.PatientRequestDTO;
 import com._a.backend.dtos.responses.PatientResponseDTO;
+import com._a.backend.entities.CustomerMember;
 import com._a.backend.payloads.ApiResponse;
+import com._a.backend.repositories.CustomerMemberRepository;
 import com._a.backend.services.impl.DumpAuthServiceImpl;
 import com._a.backend.services.impl.PatientServiceImpl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +36,9 @@ public class PatientController {
 
     @Autowired
     PatientServiceImpl patientService;
+
+    @Autowired
+    CustomerMemberRepository customerMemberRepository;
 
     @Autowired
     DumpAuthServiceImpl dumpAuthServiceImpl;
@@ -138,6 +144,12 @@ public class PatientController {
     public ResponseEntity<?> savePatient(@RequestBody PatientRequestDTO patientRequestDTO) {
         try {
             Long parentBiodataId = dumpAuthServiceImpl.getDetails().getBiodataId();
+            if (patientRequestDTO.getRelation().equals("Diri Sendiri")) {
+                if (customerMemberRepository.existsByCustomerRelationIdAndParentBiodataIdAndIsDeleteFalse(1L, parentBiodataId)) {
+                    ApiResponse<PatientResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Cannot have more than 1 ownself patient", null);
+                    return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
+                }
+            }
             PatientResponseDTO patientResponseDTOSaved = patientService.save(parentBiodataId, patientRequestDTO);
             ApiResponse<PatientResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
                     HttpStatus.OK.getReasonPhrase(), patientResponseDTOSaved);
@@ -154,6 +166,13 @@ public class PatientController {
     public ResponseEntity<?> updatePatient(@PathVariable Long id, @RequestBody PatientRequestDTO patientRequestDTO) {
         try {
             Long parentBiodataId = dumpAuthServiceImpl.getDetails().getBiodataId();
+            Optional<CustomerMember> existingOwnselfPatient = customerMemberRepository.findByCustomerRelationIdAndParentBiodataIdAndIsDeleteFalse(1L, parentBiodataId);
+            if (patientRequestDTO.getRelation().equals("Diri Sendiri")) {
+                if (existingOwnselfPatient.isPresent() && !existingOwnselfPatient.get().getId().equals(id)) {
+                    ApiResponse<PatientResponseDTO> conflictResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Cannot have more than 1 ownself patient", null);
+                    return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(conflictResponse);
+                }
+            }
             PatientResponseDTO patientResponseDTO = patientService.update(id, parentBiodataId, patientRequestDTO);
             ApiResponse<PatientResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
                     HttpStatus.OK.getReasonPhrase(), patientResponseDTO);

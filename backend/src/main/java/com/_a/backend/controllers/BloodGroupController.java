@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.BloodGroupRequestDTO;
 import com._a.backend.dtos.responses.BloodGroupResponseDTO;
+import com._a.backend.entities.BloodGroup;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.repositories.BloodGroupRepository;
 import com._a.backend.services.impl.BloodGroupServiceImpl;
@@ -48,7 +49,6 @@ public class BloodGroupController {
         }
     }
     
-
     @GetMapping("")
     public ResponseEntity<?> getAllBloodGroups() {
         try {
@@ -80,8 +80,8 @@ public class BloodGroupController {
     
     @PostMapping("")
     public ResponseEntity<?> createBloodGroup(@Valid @RequestBody BloodGroupRequestDTO bloodGroupRequestDTO) {
-        if (bloodGroupRepository.existsByCode(bloodGroupRequestDTO.getCode())) {
-            ApiResponse<BloodGroupResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Blood Group already exist", null);
+        if (bloodGroupRepository.existsByCodeIgnoreCaseAndIsDeleteFalse(bloodGroupRequestDTO.getCode())) {
+            ApiResponse<BloodGroupResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Blood Group already exists", null);
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
         }
         try {
@@ -102,6 +102,11 @@ public class BloodGroupController {
             if (bloodGroupResponseDTO.isEmpty()) {
                 ApiResponse<BloodGroupResponseDTO> notFoundResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Blood Group not found", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
+            }
+            Optional<BloodGroup> existingBloodGroupCode = bloodGroupRepository.findByCodeIgnoreCaseAndIsDeleteFalse(bloodGroupRequestDTO.getCode());
+            if (existingBloodGroupCode.isPresent() && !existingBloodGroupCode.get().getId().equals(id)) {
+                ApiResponse<BloodGroupResponseDTO> conflictResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Blood Group already exists", null);
+                return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(conflictResponse);
             }
             BloodGroupResponseDTO bloodGroupResponseDTOSaved = bloodGroupService.update(bloodGroupRequestDTO, id);
             ApiResponse<BloodGroupResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bloodGroupResponseDTOSaved);

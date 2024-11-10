@@ -1,6 +1,7 @@
 package com._a.backend.repositories;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,9 +14,13 @@ import com._a.backend.entities.Bank;
 @Repository
 public interface BankRepository extends JpaRepository<Bank, Long> {
     
-    Boolean existsByName(String name);
+    Boolean existsByNameIgnoreCaseAndIsDeleteFalse(String name);
     
-    Boolean existsByVaCode(String vaCode);
+    Boolean existsByVaCodeAndIsDeleteFalse(String vaCode);
+
+    Optional<Bank> findByNameIgnoreCaseAndIsDeleteFalse(String name);
+
+    Optional<Bank> findByVaCodeAndIsDeleteFalse(String name);
 
     List<Bank> findByNameContainingIgnoreCaseAndIsDeleteFalse(String name);
     

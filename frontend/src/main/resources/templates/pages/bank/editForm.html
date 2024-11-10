@@ -1,8 +1,14 @@
+<div id="editFormValidation">
+    
+</div>
 <div class="mb-3">
     <label for="editBankName" class="form-label">Nama</label>
     <input type="text" class="form-control" id="editBankName" placeholder="Nama Bank">
+    <div class="mt-1"><span id="editNameValidation" style="color: #ff3e1d;"></span></div>
 </div>
 <div class="mb-1">
     <label for="editBankVA" class="form-label">Kode VA</label>
-    <input type="number" class="form-control" id="editBankVA" placeholder="Kode VA" min="0">
+    <input type="number" class="form-control" id="editBankVA" placeholder="Kode VA" min="0" maxlength="10"
+        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
+    <div class="mt-1"><span id="editVaCodeValidation" style="color: #ff3e1d;"></span></div>
 </div>

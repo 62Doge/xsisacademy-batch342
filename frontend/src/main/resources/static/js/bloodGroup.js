@@ -50,15 +50,28 @@ function openAddForm() {
             `);
 
             $('#saveBloodGroupButton').on('click', function () {
-                addBloodGroup();
+                let isFormValid = true;
+                let codeField = $('#addBloodCode').val();
+
+                if(!codeField) {
+                    $('#addCodeValidation').html("Kode tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#addCodeValidation').html("");
+                }
+
+                if (isFormValid) {
+                    addBloodGroup();
+                }
             });
         }
     });
 }
 
 function addBloodGroup() {
+    let codeVal = $('#addBloodCode').val().trim().replace(/\s+/g, ' ');
     let bloodGroupJSON = {
-        "code": $('#addBloodCode').val(),
+        "code": codeVal,
         "description": $('#addBloodDesc').val()
     }
     $.ajax({
@@ -71,6 +84,12 @@ function addBloodGroup() {
         },
         error: function (error) {
             console.log(error);
+            let errorMessage = error.responseJSON.message;
+            if (errorMessage == "Blood Group already exists") {
+                $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Kode sudah digunakan. Silakan gunakan kode lain.</div>`);
+            } else {
+                $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menyimpan Golongan Darah</div>`);
+            }
         }
     });
 }
@@ -106,7 +125,19 @@ function openEditForm(id) {
             });
 
             $('#editBloodGroupButton').on('click', function () {
-                editBloodGroup(id);
+                let isFormValid = true;
+                let codeField = $('#editBloodCode').val();
+
+                if(!codeField) {
+                    $('#editCodeValidation').html("Kode tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#editCodeValidation').html("");
+                }
+
+                if (isFormValid) {
+                    editBloodGroup(id);
+                }
             });
         },
         error: function (error) {
@@ -116,8 +147,9 @@ function openEditForm(id) {
 }
 
 function editBloodGroup(id) {
+    let codeVal = $('#editBloodCode').val().trim().replace(/\s+/g, ' ');
     let editBloodGroupJSON = {
-        "code": $('#editBloodCode').val(),
+        "code": codeVal,
         "description": $('#editBloodDesc').val()
     }
     $.ajax({
@@ -130,6 +162,14 @@ function editBloodGroup(id) {
         },
         error: function (error) {
             console.log(error);
+            let errorMessage = error.responseJSON.message;
+            if (errorMessage == "Blood Group not found") {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Golongan darah tidak dapat ditemukan</div>`);
+            } else if (errorMessage == "Blood Group already exists") {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Kode sudah digunakan. Silakan gunakan kode lain.</div>`);
+            } else {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menyimpan golongan darah</div>`);
+            }
         }
     });
 }

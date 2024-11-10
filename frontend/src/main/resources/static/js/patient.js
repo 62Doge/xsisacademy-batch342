@@ -91,13 +91,13 @@ function searchPatient(query) {
                     `);
                 }
             }
-            
+
             $('#pageList').append(`
                 <li class="page-item next" id="nextPageControl">
                     <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
                 </li>
             `);
-            
+
             // dropdown button default value
             $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
             $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
@@ -111,7 +111,7 @@ function searchPatient(query) {
 function loadData() {
     $.ajax({
         type: "get",
-        url: `http://localhost:9001/api/patient/active?page=${currentPage-1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
+        url: `http://localhost:9001/api/patient/active?page=${currentPage - 1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
             console.log(response);
@@ -188,7 +188,7 @@ function loadData() {
             $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
             $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
         },
-        error:  function (error) {
+        error: function (error) {
             console.log(error);
         }
     });
@@ -265,12 +265,43 @@ function calculateAge(birthdate) {
     return age;
 }
 
+function loadBloodGroups() {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: "get",
+            url: "http://localhost:9001/api/admin/blood-group/active",
+            contentType: "application/json",
+            success: function (response) {
+                let bloodGroups = response.data;
+                if ($('#baseModalTitle').html() === '<strong>Tambah Pasien</strong>') {
+                    bloodGroups.forEach(bloodGroup => {
+                        $('#addPatientBlood').append(`
+                            <option value="${bloodGroup.code}">${bloodGroup.code}</option>
+                        `);
+                    });
+                } else if ($('#baseModalTitle').html() === '<strong>Edit Pasien</strong>') {
+                    bloodGroups.forEach(bloodGroup => {
+                        $('#editPatientBlood').append(`
+                            <option value="${bloodGroup.code}">${bloodGroup.code}</option>
+                        `);
+                    });
+                }
+                resolve();
+            },
+            error: function (error) {
+                console.log(error);
+                reject();
+            }
+        });
+    });
+}
+
 function openAddForm() {
     $.ajax({
         type: "get",
         url: "/patient/addForm",
         contentType: "html",
-        success: function (addForm) {
+        success: async function (addForm) {
             $('#baseModal').modal('show');
             $('#baseModalTitle').html(`<strong>Tambah Pasien</strong>`);
             $('#baseModalBody').html(addForm);
@@ -280,8 +311,45 @@ function openAddForm() {
                 </button>
                 <button id="savePatientButton" type="button" class="btn btn-primary">Simpan</button>
             `);
+            await loadBloodGroups();
             $('#savePatientButton').on('click', function () {
-                addPatient();
+                let isFormValid = true;
+                let nameField = $('#addPatientName').val();
+                let birthdayField = $('#addPatientBirthday').val();
+                let genderField = $("input[name='addPatientGender']").is(":checked");
+                let relationField = $('#addPatientRelation').val();
+
+                if (!nameField) {
+                    $('#addNameValidation').html("Nama tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#addNameValidation').html("");
+                }
+
+                if (!birthdayField) {
+                    $('#addBirthdayValidation').html("Tanggal lahir tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#addBirthdayValidation').html("");
+                }
+
+                if (!genderField) {
+                    $('#addGenderValidation').html("Jenis kelamin tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#addGenderValidation').html("");
+                }
+
+                if (!relationField) {
+                    $('#addRelationValidation').html("Relasi tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#addRelationValidation').html("");
+                }
+
+                if (isFormValid) {
+                    addPatient();
+                }
             });
         },
         error: function (error) {
@@ -311,7 +379,12 @@ function addPatient() {
             location.reload();
         },
         error: function (error) {
-            console.log(error);
+            let errorMessage = error.responseJSON.message;
+            if (errorMessage === "Cannot have more than 1 ownself patient") {
+                $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Hanya dapat menyimpan 1 pasien dengan relasi "Diri Sendiri"</div>`);
+            } else {
+                $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menyimpan Pasien</div>`);
+            }
         }
     });
 }
@@ -321,7 +394,7 @@ function openEditForm(id) {
         type: "get",
         url: "/patient/editForm",
         contentType: "html",
-        success: function (editForm) {
+        success: async function (editForm) {
             $('#baseModal').modal('show');
             $('#baseModalTitle').html(`<strong>Edit Pasien</strong>`);
             $('#baseModalBody').html(editForm);
@@ -331,6 +404,7 @@ function openEditForm(id) {
                 </button>
                 <button id="editPatientButton" type="button" class="btn btn-primary">Simpan</button>
             `);
+            await loadBloodGroups();
             $.ajax({
                 type: "get",
                 url: `http://localhost:9001/api/patient/${id}`,
@@ -372,7 +446,43 @@ function openEditForm(id) {
                 }
             });
             $('#editPatientButton').on('click', function () {
-                editPatient(id);
+                let isFormValid = true;
+                let nameField = $('#editPatientName').val();
+                let birthdayField = $('#editPatientBirthday').val();
+                let genderField = $("input[name='editPatientGender']").is(":checked");
+                let relationField = $('#editPatientRelation').val();
+
+                if (!nameField) {
+                    $('#editNameValidation').html("Nama tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#editNameValidation').html("");
+                }
+
+                if (!birthdayField) {
+                    $('#editBirthdayValidation').html("Tanggal lahir tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#editBirthdayValidation').html("");
+                }
+
+                if (!genderField) {
+                    $('#editGenderValidation').html("Jenis kelamin tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#editGenderValidation').html("");
+                }
+
+                if (!relationField) {
+                    $('#editRelationValidation').html("Relasi tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#editRelationValidation').html("");
+                }
+
+                if (isFormValid) {
+                    editPatient(id);
+                }
             });
         }
     });
@@ -399,7 +509,12 @@ function editPatient(id) {
             location.reload();
         },
         error: function (error) {
-            console.log(error);
+            let errorMessage = error.responseJSON.message;
+            if (errorMessage === "Cannot have more than 1 ownself patient") {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Hanya dapat menyimpan 1 pasien dengan relasi "Diri Sendiri"</div>`);
+            } else {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menyimpan Pasien</div>`);
+            }
         }
     });
 }
@@ -452,6 +567,7 @@ function deletePatient(id) {
         },
         error: function (error) {
             console.log(error);
+            $('#deleteFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menghapus Pasien</div>`);
         }
     });
 }
@@ -459,7 +575,7 @@ function deletePatient(id) {
 function openBatchDeleteModal() {
     let selectedPatients = [];
 
-    $("input:checkbox[name='selectedPatient']:checked").each(function(){
+    $("input:checkbox[name='selectedPatient']:checked").each(function () {
         selectedPatients.push($(this).val());
     });
 
@@ -495,7 +611,7 @@ function openBatchDeleteModal() {
                     }
                 });
             });
-            
+
             $('#batchDeletePatientButton').on('click', function () {
                 selectedPatients.forEach(id => {
                     deletePatient(id);

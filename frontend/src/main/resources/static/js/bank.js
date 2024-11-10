@@ -23,7 +23,7 @@ $(document).ready(function () {
 function searchBank(query) {
     $.ajax({
         type: "get",
-        url: `http://localhost:9001/api/admin/bank/name/${query}?page=${currentPage-1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
+        url: `http://localhost:9001/api/admin/bank/name/${query}?page=${currentPage - 1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
             console.log(response);
@@ -72,13 +72,13 @@ function searchBank(query) {
                     `);
                 }
             }
-            
+
             $('#pageList').append(`
                 <li class="page-item next" id="nextPageControl">
                     <a class="page-link" href="javascript:nextPage();"><i class='bx bx-chevron-right'></i></i></a>
                 </li>
             `);
-            
+
             // dropdown button default value
             $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop("checked", true);
             $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
@@ -92,10 +92,9 @@ function searchBank(query) {
 function loadData() {
     $.ajax({
         type: "get",
-        url: `http://localhost:9001/api/admin/bank/active?page=${currentPage-1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
+        url: `http://localhost:9001/api/admin/bank/active?page=${currentPage - 1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
-            console.log(response);
             let bankData = response.data.content;
             totalPages = response.data.totalPages;
 
@@ -232,19 +231,31 @@ function openAddForm() {
                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
                     Batal
                 </button>
-                <button disabled id="saveBankButton" type="button" class="btn btn-primary">Simpan</button>
+                <button id="saveBankButton" type="button" class="btn btn-primary">Simpan</button>
             `);
 
-            $('#addBankName, #addBankVA').on('input', toggleButtonState);
-
-            function toggleButtonState() {
-                const nameFilled = $('#addBankName').val().trim() !== '';
-                const vaFilled = $('#addBankVA').val().trim() !== '';
-                $('#saveBankButton').prop('disabled', !(nameFilled && vaFilled));
-            }
-
             $('#saveBankButton').on('click', function () {
-                addBank();
+                let isFormValid = true;
+                let nameField = $('#addBankName').val().trim().replace(/\s+/g, ' ');
+                let vaField = $('#addBankVA').val().trim().replace(/\s+/g, ' ');
+
+                if (!nameField) {
+                    $('#addNameValidation').html("Nama tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#addNameValidation').html("");
+                }
+
+                if (!vaField) {
+                    $('#addVaCodeValidation').html("Kode VA tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#addVaCodeValidation').html("");
+                }
+
+                if (isFormValid) {
+                    addBank();
+                }
             });
         },
         error: function (error) {
@@ -254,9 +265,11 @@ function openAddForm() {
 }
 
 function addBank() {
+    let nameVal = $('#addBankName').val().trim().replace(/\s+/g, ' ');
+    let vaCodeVal = $('#addBankVA').val().trim().replace(/\s+/g, ' ');
     let addBankJSON = {
-        "name": $('#addBankName').val(),
-        "vaCode": $('#addBankVA').val()
+        "name": nameVal,
+        "vaCode": vaCodeVal
     }
     $.ajax({
         type: "post",
@@ -267,7 +280,14 @@ function addBank() {
             location.reload();
         },
         error: function (error) {
-            console.log(error);
+            let errorMessage = error.responseJSON.message;
+            if (errorMessage == "Bank already exist") {
+                $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Nama Bank sudah digunakan. Silakan gunakan nama lain.</div>`);
+            } else if (errorMessage == "VA Code already exist") {
+                $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Kode VA sudah digunakan. Silakan gunakan Kode VA lain.</div>`);
+            } else {
+                $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menyimpan Bank</div>`);
+            }
         }
     });
 }
@@ -285,7 +305,7 @@ function openEditForm(id) {
                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
                     Batal
                 </button>
-                <button disabled id="editBankButton" type="button" class="btn btn-primary">Simpan</button>
+                <button id="editBankButton" type="button" class="btn btn-primary">Simpan</button>
             `);
 
             $.ajax({
@@ -296,23 +316,34 @@ function openEditForm(id) {
                     let bank = response.data;
                     $('#editBankName').val(bank.name);
                     $('#editBankVA').val(bank.vaCode);
-                    toggleButtonState();
                 },
                 error: function (error) {
                     console.log(error);
                 }
             });
 
-            $('#editBankName, #editBankVA').on('input', toggleButtonState);
-
-            function toggleButtonState() {
-                const nameFilled = $('#editBankName').val().trim() !== '';
-                const vaFilled = $('#editBankVA').val().trim() !== '';
-                $('#editBankButton').prop('disabled', !(nameFilled && vaFilled));
-            }
-
             $('#editBankButton').on('click', function () {
-                editBank(id);
+                let isFormValid = true;
+                let nameField = $('#editBankName').val().trim().replace(/\s+/g, ' ');
+                let vaField = $('#editBankVA').val().trim().replace(/\s+/g, ' ');
+
+                if (!nameField) {
+                    $('#editNameValidation').html("Nama tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#editNameValidation').html("");
+                }
+
+                if (!vaField) {
+                    $('#editVaCodeValidation').html("Kode VA tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#editVaCodeValidation').html("");
+                }
+
+                if (isFormValid) {
+                    editBank(id);
+                }
             });
         },
         error: function (error) {
@@ -322,9 +353,11 @@ function openEditForm(id) {
 }
 
 function editBank(id) {
+    let nameVal = $('#editBankName').val().trim().replace(/\s+/g, ' ');
+    let vaCodeVal = $('#editBankVA').val().trim().replace(/\s+/g, ' ');
     let editBankJSON = {
-        "name": $('#editBankName').val(),
-        "vaCode": $('#editBankVA').val()
+        "name": nameVal,
+        "vaCode": vaCodeVal
     }
     $.ajax({
         type: "put",
@@ -336,6 +369,16 @@ function editBank(id) {
         },
         error: function (error) {
             console.log(error);
+            let errorMessage = error.responseJSON.message;
+            if (errorMessage == "Bank name already exists") {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Nama Bank sudah digunakan. Silakan gunakan nama yang lain.</div>`);
+            } else if (errorMessage == "VA Code already exists") {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Kode VA sudah digunakan. Silakan gunakan Kode VA yang lain.</div>`);
+            } else if (errorMessage == "Bank not found") {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Bank tidak dapat ditemukan</div>`);
+            } else {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menyimpan Bank</div>`);
+            }
         }
     });
 }
@@ -385,7 +428,12 @@ function deleteBank(id) {
             location.reload();
         },
         error: function (error) {
-            console.error(error);
+            let errorMessage = error.responseJSON.message;
+            if (errorMessage == "Bank not found") {
+                $('#deleteFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Bank tidak dapat ditemukan.</div>`);
+            } else {
+                $('#deleteFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menghapus Bank</div>`);
+            }
         }
     });
 }

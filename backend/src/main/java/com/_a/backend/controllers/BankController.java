@@ -134,12 +134,12 @@ public class BankController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createBank(@Valid @RequestBody BankRequestDTO bankRequestDTO) {
-        if (bankRepository.existsByName(bankRequestDTO.getName())) {
+    public ResponseEntity<?> saveBank(@Valid @RequestBody BankRequestDTO bankRequestDTO) {
+        if (bankRepository.existsByNameIgnoreCaseAndIsDeleteFalse(bankRequestDTO.getName())) {
             ApiResponse<BankResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Bank already exist", null);
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
         }
-        if (bankRepository.existsByVaCode(bankRequestDTO.getVaCode())) {
+        if (bankRepository.existsByVaCodeAndIsDeleteFalse(bankRequestDTO.getVaCode())) {
             ApiResponse<BankResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "VA Code already exist", null);
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
         }
@@ -161,13 +161,23 @@ public class BankController {
                 ApiResponse<BankResponseDTO> notFoundResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Bank not found", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
             }
+            Optional<Bank> existingBankName = bankRepository.findByNameIgnoreCaseAndIsDeleteFalse(bankRequestDTO.getName());
+            if (existingBankName.isPresent() && !existingBankName.get().getId().equals(id)) {
+                ApiResponse<BankResponseDTO> conflictResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Bank name already exists", null);
+                return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(conflictResponse);
+            }
+            Optional<Bank> existingBankVaCode = bankRepository.findByVaCodeAndIsDeleteFalse(bankRequestDTO.getVaCode());
+            if (existingBankVaCode.isPresent() && !existingBankVaCode.get().getId().equals(id)) {
+                ApiResponse<BankResponseDTO> conflictResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "VA Code already exists", null);
+                return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(conflictResponse);
+            }
             BankResponseDTO bankResponseDTOSaved = bankService.update(bankRequestDTO, id);
             ApiResponse<BankResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bankResponseDTOSaved);
             return ResponseEntity.ok(successResponse);
         } catch (Exception e) {
             ApiResponse<BankResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to update Bank", null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
-        }
+        } 
     }
 
     @PatchMapping("/delete/{id}")
