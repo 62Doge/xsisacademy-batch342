@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilityItemResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
-import com._a.backend.dtos.responses.TreatmentResponseDTO;
 import com._a.backend.entities.Appointment;
+import com._a.backend.entities.DoctorOffice;
 import com._a.backend.repositories.AppointmentRepository;
 import com._a.backend.repositories.DoctorOfficeRepository;
 import com._a.backend.services.AppointmentService;
@@ -32,12 +32,12 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public AppointmentMedicalFacilitiesResponseDTO getMedicalFacilitiesByDoctorId(Long id) {
     AppointmentMedicalFacilitiesResponseDTO responseDTO = new AppointmentMedicalFacilitiesResponseDTO();
-    responseDTO.setMedicalFacilities(doctorOfficeRepository.findMedicalFacilitiesByDoctorId(id)
-        .stream()
-        .map(medicalFacility -> {
-          List<TreatmentResponseDTO> treatments = doctorOfficeRepository.findTreatmentsVyDoctorOfficeId(medicalFacility.ge)
-        })
-        .collect(Collectors.toList()));
+    List<DoctorOffice> doctorOffice = doctorOfficeRepository.findByDoctorIdJpql(id);
+    responseDTO.setMedicalFacilities(
+        doctorOffice
+            .stream()
+            .map(office -> new AppointmentMedicalFacilityItemResponseDTO(office))
+            .collect(Collectors.toList()));
 
     return responseDTO;
   }
