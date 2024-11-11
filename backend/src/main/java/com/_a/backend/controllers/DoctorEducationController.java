@@ -54,7 +54,8 @@ public class DoctorEducationController {
                         new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "doctor education not found", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
             } else {
-              ApiResponse<List<DoctorEducationResponseDTO>> successResponse = new ApiResponse<List<DoctorEducationResponseDTO>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), doctorEducation);
+              ApiResponse<List<DoctorEducationResponseDTO>> successResponse = 
+                new ApiResponse<List<DoctorEducationResponseDTO>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), doctorEducation);
               return ResponseEntity.status(HttpStatus.OK).body(successResponse);
             }
         } catch (Exception e) {

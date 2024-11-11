@@ -41,6 +41,11 @@
         <div class="row">
           <div class="col-md-4">
             <div class="container-fluid text-center">
+              <div>
+                <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" style="margin-left: 150px;">
+                  <i class="bx bxs-pencil"></i>
+                </button>
+              </div>
               <div id="doctor-image">
 
               </div><br>
@@ -59,29 +64,28 @@
                 <i class='bx bxs-star'></i>
               </div>
               <hr>
-              <button class="btn btn-primary">Janji</button>
-              <button class="btn btn-secondary">Obrolan / Konsultasi</button>
+                <button type="button" class="btn btn-success position-relative mx-1" id="appointment-button">Janji 
+                  <span id="appointment-count" class="badge position-absolute top-0 start-100 translate-middle rounded-pill bg-danger"></span></button>
+                <button type="button" class="btn btn-info mx-1 ">Obrolan / Konsultasi</button>
             </div>
             <div class="container-fluid">
               <div class="section-title", style="background-color: #eaf4fc; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                Tentang Saya
+                <h4>Tentang Saya</h4>
               </div>
               
-              <h6>Tindakan medis</h6>
+              <h4>Tindakan medis</h4>
               <ul>
-                <li>
                  <div id="doctor-treatment">
 
                  </div>
-                </li>
               </ul>
               
-              <h6>Riwayat Praktek</h6>
+              <h4>Riwayat Praktek</h4>
               <div id="doctor-office">
 
               </div>
 
-              <h6>Pendidikan</h6>
+              <h4>Pendidikan</h4>
               <div id="doctor-education">
 
               </div>
@@ -113,9 +117,10 @@
               </div>
 
               <div class="tab-pane fade show active" id="tindakan">
-                <!-- Konten Tindakan -->
-                <h2>Tindakan</h2>
-                <p>Ini adalah konten Tindakan</p>
+                <div id="kontenTindakan">
+
+                </div><br>
+                <button type="button" class="btn btn-primary" onclick="addFormTreatment()"><i class="bx bx-add-to-queue"></i>Tambah Tindakan</button>
               </div>
 
               <div class="tab-pane fade show" id="aktifitas">
