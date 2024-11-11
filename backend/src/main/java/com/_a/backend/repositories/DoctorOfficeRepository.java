@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com._a.backend.dtos.responses.TreatmentResponseDTO;
 import com._a.backend.entities.DoctorOffice;
 import com._a.backend.entities.MedicalFacility;
 
@@ -31,4 +32,13 @@ public interface DoctorOfficeRepository extends JpaRepository<DoctorOffice, Long
         AND d.isDelete=false
       """)
   List<MedicalFacility> findMedicalFacilitiesByDoctorId(Long doctorId);
+
+  @Query("""
+        SELECT new com._a.backend.dtos.responses.TreatmentResponseDTO(t.id, t.name)
+        FROM Treatment t
+        JOIN t.doctorOffice d
+        WHERE d.id = ?1
+        AND d.isDelete = false
+      """)
+  List<TreatmentResponseDTO> findTreatmentsVyDoctorOfficeId(Long doctorOfficeId);
 }
