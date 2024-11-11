@@ -8,13 +8,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com._a.backend.dtos.projections.ExceedingAppoinmentProjectionDto;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilityItemResponseDTO;
+import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
 import com._a.backend.entities.Appointment;
 import com._a.backend.entities.DoctorOffice;
 import com._a.backend.repositories.AppointmentRepository;
 import com._a.backend.repositories.DoctorOfficeRepository;
+import com._a.backend.repositories.DoctorOfficeScheduleRepository;
 import com._a.backend.services.AppointmentService;
 
 @Service
@@ -24,7 +27,10 @@ public class AppointmentServiceImpl implements AppointmentService {
   DoctorOfficeRepository doctorOfficeRepository;
 
   @Autowired
-  private AppointmentRepository appointmentRepository;
+  AppointmentRepository appointmentRepository;
+
+  @Autowired
+  DoctorOfficeScheduleRepository doctorOfficeScheduleRepository;
 
   @Autowired
   ModelMapper modelMapper;
@@ -40,6 +46,22 @@ public class AppointmentServiceImpl implements AppointmentService {
             .collect(Collectors.toList()));
 
     return responseDTO;
+  }
+
+  @Override
+  public List<ExceedingAppoinmentProjectionDto> getExceedingAppointmentsInNextThreeWeeksByDoctorId(Long doctorId) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException(
+        "Unimplemented method 'getExceedingAppointmentsInNextThreeWeeksByDoctorId'");
+  }
+
+  @Override
+  public List<DoctorOfficeScheduleResponseDTO> getDoctorOfficeSchedulesByDoctorId(Long doctorId) {
+
+    return doctorOfficeScheduleRepository.findByDoctorId(doctorId)
+        .stream()
+        .map(dos -> new DoctorOfficeScheduleResponseDTO(dos))
+        .toList();
   }
 
   @Override

@@ -24,10 +24,14 @@ public interface DoctorOfficeRepository extends JpaRepository<DoctorOffice, Long
   List<DoctorOffice> findAllByIsDeleteFalse();
 
   @Query("""
-        SELECT d
-        FROM DoctorOffice d
-        WHERE d.doctor.id = ?1
-        AND d.isDelete=false
+        SELECT do
+        FROM DoctorOffice do
+        join do.doctor d
+        join d.doctorOfficeSchedules dos
+        WHERE do.doctor.id = ?1
+        and dos.doctorId = ?1
+        AND do.isDelete=false
       """)
   List<DoctorOffice> findByDoctorIdJpql(Long doctorId);
+
 }

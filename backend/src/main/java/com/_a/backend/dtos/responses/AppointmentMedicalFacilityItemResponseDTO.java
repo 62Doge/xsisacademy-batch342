@@ -15,12 +15,14 @@ import lombok.NoArgsConstructor;
 public class AppointmentMedicalFacilityItemResponseDTO {
   private Long id;
   private String name;
+  private Long doctorOfficeId;
 
   private List<DoctorOfficeTreatmentResponseDTO> officeTreatments;
 
   public AppointmentMedicalFacilityItemResponseDTO(DoctorOffice doctorOffice) {
     this.id = doctorOffice.getMedicalFacility().getId();
     this.name = doctorOffice.getMedicalFacility().getName();
+    this.doctorOfficeId = doctorOffice.getId();
 
     this.officeTreatments = doctorOffice
         .getDoctorOfficeTreatments()
