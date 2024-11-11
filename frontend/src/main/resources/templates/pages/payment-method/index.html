@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin | Level Lokasi</title>
+    <title>Admin | Cara Pembayaran </title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -11,11 +11,11 @@
         <div class="container-xxl flex-grow-1 container-p-y">
             <div class="d-flex mb-2">
                 <div class="me-2">
-                    <input type="text" id="searchLocationLevel" class="form-control" placeholder="Cari Level Lokasi"/>
+                    <input type="text" id="searchPaymentMethod" class="form-control" placeholder="Cari Cara Pembayaran"/>
                 </div>
                 <div class="me-2">
-                    <button id="addLocationLevelButton" type="button" class="btn btn-primary" onclick="openAddForm()">
-                        <span class="tf-icons bx bx-add-to-queue"></span> Tambah Level Lokasi
+                    <button id="addPaymentMethodButton" type="button" class="btn btn-primary" onclick="openAddForm()">
+                        <span class="tf-icons bx bx-add-to-queue"></span> Tambah Cara Pembayaran
                     </button>
                 </div>
                 <div class="btn-group me-2">
@@ -27,20 +27,6 @@
                         <li>
                             <h6 class="dropdown-header text-uppercase">Urutkan bersadarkan:</h6>
                         </li>
-<!--                        <li>-->
-<!--                            <a class="dropdown-item" href="javascript:void(0);">-->
-<!--                                <div class="form-check">-->
-<!--                                    <label class="form-check-label w-100" for="locationLevelNameCheckbox">-->
-<!--                                        <input type="radio" class="form-check-input" name="orderColumnRadio"-->
-<!--                                               id="locationLevelNameCheckbox" value="name">-->
-<!--                                        Nama Level Lokasi-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                            </a>-->
-<!--                        </li>-->
-<!--                        <li>-->
-<!--                            <hr class="dropdown-divider">-->
-<!--                        </li>-->
                         <li>
                             <a class="dropdown-item" href="javascript:void(0);">
                                 <div class="form-check">
@@ -98,17 +84,16 @@
                 </div>
             </div>
             <div class="card">
-                <h5 class="card-header"><strong>Level Lokasi</strong></h5>
+                <h5 class="card-header"><strong>Cara Pembayaran</strong></h5>
                 <div class="table-responsive text-nowrap">
                     <table class="table">
                         <thead>
                         <tr>
                             <th>Nama</th>
-                            <th>Nama Singkat</th>
                             <th>Action</th>
                         </tr>
                         </thead>
-                        <tbody class="table-border-bottom-0" id="location-level-table">
+                        <tbody class="table-border-bottom-0" id="payment-method-table">
 
                         </tbody>
                     </table>
@@ -135,7 +120,7 @@
 
 </div>
 <th:block layout:fragment="pageBottom">
-    <script th:src="@{/js/locationLevel.js}"></script>
+    <script th:src="@{/js/paymentMethod.js}"></script>
 </th:block>
 </body>
 </html>

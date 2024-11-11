@@ -12,47 +12,46 @@ $(document).ready(function () {
     }
 
     loadData();
-    $('#searchLocationLevel').on('input', function () {
+    $('#searchPaymentMethod').on('input', function () {
         let searchQuery = $(this).val();
         currentSearchQuery = searchQuery;
         currentPage = 1;
         if (searchQuery) {
-            searchLocationLevel(searchQuery);
+            searchPaymentMethod(searchQuery);
         } else {
-            $('#location-level-table').empty();
+            $('#payment-method-table').empty();
             loadData();
         }
     });
 })
 
-function searchLocationLevel(query) {
+function searchPaymentMethod(query) {
     $.ajax({
         type: "get",
-        url: `http://localhost:9001/api/admin/location-level/name/${query}?pageNo=${currentPage-1}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
+        url: `http://localhost:9001/api/admin/payment-method/name/${query}?pageNo=${currentPage-1}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
-            let locationLevelData = response.data.content;
+            let paymentMethodData = response.data.content;
             totalPages = response.data.metadata.totalPages;
 
 
             let tableData = ``;
-            locationLevelData.forEach(locationLevel => {
+            paymentMethodData.forEach(paymentMethod => {
                 tableData += `
                     <tr>
-                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>${locationLevel.name}</strong></td>
-                        <td>${locationLevel.abbreviation}</td>
+                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>${paymentMethod.name}</strong></td>
                         <td>
-                            <button onclick="openEditForm(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-warning">
+                            <button onclick="openEditForm(${paymentMethod.id})" type="button" class="btn btn-icon btn-outline-warning">
                                 <span class="tf-icons bx bxs-edit"></span>
                             </button>
-                            <button onclick="openDeleteModal(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-danger">
+                            <button onclick="openDeleteModal(${paymentMethod.id})" type="button" class="btn btn-icon btn-outline-danger">
                                 <span class="tf-icons bx bxs-trash"></span>
                             </button>
                         </td>
                     </tr>
                 `
             });
-            $('#location-level-table').html(tableData);
+            $('#payment-method-table').html(tableData);
 
             // show pages
             $('#pageList').empty();
@@ -89,7 +88,7 @@ function searchLocationLevel(query) {
             $('input[name="orderTypeRadio"][value="' + sortDir + '"]').prop("checked", true);
         },
         error: function (error) {
-            console.log("Error searching Location Level: ", error);
+            console.log("Error searching Payment Method: ", error);
         }
     });
 }
@@ -98,24 +97,23 @@ function searchLocationLevel(query) {
 function loadData() {
     $.ajax({
         type: "get",
-        url: `http://localhost:9001/api/admin/location-level?pageNo=${currentPage-1}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
+        url: `http://localhost:9001/api/admin/payment-method?pageNo=${currentPage-1}&pageSize=${pageSize}&sortBy=${sortBy}&sortDirection=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
-            let locationLevelData = response.data.content;
+            let paymentMethodData = response.data.content;
             totalPages = response.data.metadata.totalPages;
 
-            $('#location-level-table').empty();
+            $('#payment-method-table').empty();
 
-            locationLevelData.forEach(locationLevel => {
-                $('#location-level-table').append(`
+            paymentMethodData.forEach(paymentMethod => {
+                $('#payment-method-table').append(`
                     <tr>
-                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>${locationLevel.name}</strong></td>
-                        <td>${locationLevel.abbreviation}</td>
+                        <td><i class="fab fa-angular fa-lg text-danger me-3"></i><strong>${paymentMethod.name}</strong></td>
                         <td>
-                            <button onclick="openEditForm(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-warning">
+                            <button onclick="openEditForm(${paymentMethod.id})" type="button" class="btn btn-icon btn-outline-warning">
                                 <span class="tf-icons bx bxs-edit"></span>
                             </button>
-                            <button onclick="openDeleteModal(${locationLevel.id})" type="button" class="btn btn-icon btn-outline-danger">
+                            <button onclick="openDeleteModal(${paymentMethod.id})" type="button" class="btn btn-icon btn-outline-danger">
                                 <span class="tf-icons bx bxs-trash"></span>
                             </button>
                         </td>
@@ -167,7 +165,7 @@ function loadData() {
 function moveToPage(pageNumber) {
     currentPage = pageNumber;
     if (currentSearchQuery) {
-        searchLocationLevel(currentSearchQuery);
+        searchPaymentMethod(currentSearchQuery);
     } else {
         loadData();
     }
@@ -178,7 +176,7 @@ function nextPage() {
         currentPage++;
     }
     if (currentSearchQuery) {
-        searchLocationLevel(currentSearchQuery);
+        searchPaymentMethod(currentSearchQuery);
     } else {
         loadData();
     }
@@ -190,7 +188,7 @@ function previousPage() {
         currentPage--;
     }
     if (currentSearchQuery) {
-        searchLocationLevel(currentSearchQuery);
+        searchPaymentMethod(currentSearchQuery);
     } else {
         loadData();
     }
@@ -200,7 +198,7 @@ function setPageSize(query) {
     pageSize = query;
     localStorage.setItem('pageSize', pageSize);
     if (currentSearchQuery) {
-        searchLocationLevel(currentSearchQuery);
+        searchPaymentMethod(currentSearchQuery);
     } else {
         loadData();
     }
@@ -209,7 +207,7 @@ function setPageSize(query) {
 function setPageOrder() {
     sortDir = $('input[name="orderTypeRadio"]:checked').val();
     if (currentSearchQuery) {
-        searchLocationLevel(currentSearchQuery);
+        searchPaymentMethod(currentSearchQuery);
     } else {
         loadData();
     }
@@ -220,7 +218,7 @@ function customPageSize() {
     pageSize = query;
     localStorage.setItem('pageSize', pageSize);
     if (currentSearchQuery) {
-        searchLocationLevel(currentSearchQuery);
+        searchPaymentMethod(currentSearchQuery);
     } else {
         loadData();
     }
@@ -229,35 +227,34 @@ function customPageSize() {
 function openAddForm() {
     $.ajax({
         type: "get",
-        url: "/location-level/addForm",
+        url: "/payment-method/addForm",
         contentType: "html",
         success: function (addForm) {
             $('#baseModal').modal('show');
-            $('#baseModalTitle').html(`<strong>Tambah Level Lokasi</strong>`);
+            $('#baseModalTitle').html(`<strong>Tambah Cara Pembayaran</strong>`);
             $('#baseModalBody').html(addForm);
             $('#baseModalFooter').html(`
                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
                     Batal
                 </button>
-                <button onclick="saveLocationLevel()" id="saveLocationLevelBtn" type="button" class="btn btn-primary">Simpan</button>
+                <button onclick="savePaymentMethod()" id="savePaymentMethodBtn" type="button" class="btn btn-primary">Simpan</button>
             `);
         }
     });
 }
 
-function saveLocationLevel() {
-    let name = $('#locationLevelName').val().trim();
-    let abbreviation = $('#locationLevelAbbreviation').val();
+function savePaymentMethod() {
+    let name = $('#paymentMethodName').val().trim();
 
     if (!name.trim()) {
-        alert("Location Level name required");
+        alert("Nama cara pembayaran harus diisi.");
         return;
     }
 
-    let jsonData = { name, abbreviation };
+    let jsonData = { name };
     $.ajax({
         type: "POST",
-        url: "http://localhost:9001/api/admin/location-level",
+        url: "http://localhost:9001/api/admin/payment-method",
         data: JSON.stringify(jsonData),
         contentType: "application/json",
         success: function (response) {
@@ -265,9 +262,9 @@ function saveLocationLevel() {
         },
         error: function (error) {
             if (error.status === 409) {
-                alert("Location Level name already exists.");
+                alert("Nama cara pembayaran sudah ada.");
             } else {
-                alert("Failed to save Location Level. Please try again later.");
+                alert("Failed to save Payment Method. Please try again later.");
             }
             console.error(error);
         }
@@ -277,29 +274,28 @@ function saveLocationLevel() {
 function openEditForm(id) {
     $.ajax({
         type: "GET",
-        url: `http://localhost:9001/api/admin/location-level/${id}`,
+        url: `http://localhost:9001/api/admin/payment-method/${id}`,
         contentType: "application/json",
         success: function (response) {
-            let locationLevel = response.data;
+            let paymentMethod = response.data;
 
             // load modal
             $.ajax({
                 type: "get",
-                url: "/location-level/editForm",
+                url: "/payment-method/editForm",
                 contentType: "html",
                 success: function (editForm) {
                     $('#baseModal').modal('show');
-                    $('#baseModalTitle').html(`<strong>Edit Level Lokasi</strong>`);
+                    $('#baseModalTitle').html(`<strong>Edit Cara Pembayaran</strong>`);
                     $('#baseModalBody').html(editForm);
 
-                    $('#locationLevelName').val(locationLevel.name);
-                    $('#locationLevelAbbreviation').val(locationLevel.abbreviation);
+                    $('#paymentMethodName').val(paymentMethod.name);
 
                     $('#baseModalFooter').html(`
                         <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
                             Batal
                         </button>
-                        <button onclick="updateLocationLevel(${id})" type="button" class="btn btn-primary">
+                        <button onclick="updatePaymentMethod(${id})" type="button" class="btn btn-primary">
                             Simpan
                         </button>
                     `);
@@ -307,25 +303,24 @@ function openEditForm(id) {
             });
         },
         error: function (error) {
-            console.error("Failed to load location level data:", error);
+            console.error("Failed to load Payment Method data:", error);
         }
     });
 }
 
 
-function updateLocationLevel(id) {
-    let name = $('#locationLevelName').val();
-    let abbreviation = $('#locationLevelAbbreviation').val();
+function updatePaymentMethod(id) {
+    let name = $('#paymentMethodName').val();
 
     if (!name.trim()) {
-        alert("Nama Level Lokasi harus diisi");
+        alert("Nama cara pembayaran harus diisi.");
         return;
     }
 
-    let jsonData = { name, abbreviation };
+    let jsonData = { name};
     $.ajax({
         type: "PUT",
-        url: `http://localhost:9001/api/admin/location-level/update/${id}`,
+        url: `http://localhost:9001/api/admin/payment-method/update/${id}`,
         data: JSON.stringify(jsonData),
         contentType: "application/json",
         success: function (response) {
@@ -333,10 +328,10 @@ function updateLocationLevel(id) {
             loadData();
         },
         error: function (error) {
-            if (error.status === 409) {
-                alert("Location Level name already exists.");
+            if (error.status === 403) {
+                alert("Nama cara pembayaran sudah ada.");
             } else {
-                alert("Failed to update Location Level. Please try again later.");
+                alert("Failed to update Payment Method. Please try again later.");
             }
             console.error(error);
         }
@@ -347,16 +342,16 @@ function updateLocationLevel(id) {
 function openDeleteModal(id) {
     $.ajax({
         type: "GET",
-        url: `http://localhost:9001/api/admin/location-level/${id}`,
+        url: `http://localhost:9001/api/admin/payment-method/${id}`,
         contentType: "application/json",
         success: function (response) {
-            let locationLevel = response.data;
+            let paymentMethod = response.data;
 
             $('#baseModal').modal('show');
             $('#baseModalTitle').html(`<strong>Hapus Level Lokasi</strong>`);
             $('#baseModalBody').html(`
                 <div>
-                    Anda akan menghapus <span id="locationLevelName">${locationLevel.name}</span>?
+                    Anda akan menghapus <span id="paymentMethodName">${paymentMethod.name}</span>?
                 </div>
             `);
 
@@ -364,30 +359,30 @@ function openDeleteModal(id) {
                 <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
                     Tidak
                 </button>
-                <button onclick="deleteLocationLevel(${id})" type="button" class="btn btn-danger">
+                <button onclick="deletePaymentMethod(${id})" type="button" class="btn btn-danger">
                     Ya
                 </button>
             `);
         },
         error: function (error) {
-            console.error("Failed to load location level data for deletion:", error);
+            console.error("Failed to load payment method data for deletion:", error);
         }
     });
 }
 
-function deleteLocationLevel(id) {
+function deletePaymentMethod(id) {
     $.ajax({
         type: "PATCH",
-        url: `http://localhost:9001/api/admin/location-level/soft-delete/${id}`,
+        url: `http://localhost:9001/api/admin/payment-method/soft-delete/${id}`,
         success: function (response) {
             $('#baseModal').modal('hide');
             loadData();
         },
         error: function (error) {
             if (error.status === 409) {
-                alert("Cannot delete location level: it's active on locations..");
+                alert("Tidak bisa menghapus cara pembayaran, data tersebut masih digunakan.");
             } else {
-                alert("Failed to delete Location Level. Please try again later.");
+                alert("Failed to delete Payment Method. Please try again later.");
             }
             console.log(error);
         }
