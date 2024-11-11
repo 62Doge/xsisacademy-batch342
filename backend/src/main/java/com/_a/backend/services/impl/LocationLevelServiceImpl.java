@@ -121,8 +121,4 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
     public void deleteById(Long id) {
         locationLevelRepository.deleteById(id);
     }
-
-    public boolean existsByNameIsDeleteFalseAndIdNot(String name, Long id) {
-       return locationLevelRepository.existsByNameContainingIgnoreCaseAndIsDeleteFalseAndIdNot(name, id);
-    }
 }

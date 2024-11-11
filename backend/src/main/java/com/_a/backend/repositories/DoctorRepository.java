@@ -15,4 +15,6 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
   @Query(value= "SELECT * FROM m_doctor WHERE is_delete = false AND id = ?1", nativeQuery = true)
   List<Doctor> findByDoctorId(Long id);
   Page<Doctor> findAllByIsDeleteFalse(Pageable pageable);
+
+  Doctor findTopByOrderByStrDesc();
 }

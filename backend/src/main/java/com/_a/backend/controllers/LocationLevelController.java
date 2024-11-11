@@ -22,9 +22,6 @@ import java.util.Optional;
 public class LocationLevelController {
     @Autowired
     private LocationLevelServiceImpl locationLevelService;
-    @Autowired
-    private LocationLevelRepository locationLevelRepository;
-
 
     @GetMapping("")
     public ResponseEntity<ApiResponse<PaginatedResponseDTO<LocationLevelResponseDTO>>> getLocationLevels(
@@ -110,6 +107,7 @@ public class LocationLevelController {
     public ResponseEntity<?> saveLocationLevel(@Valid @RequestBody LocationLevelRequestDTO locationLevelRequestDTO) {
         try {
             LocationLevelResponseDTO locationLevelResponseDTOSaved = locationLevelService.save(locationLevelRequestDTO);
+
             ApiResponse<LocationLevelResponseDTO> successResponse =
                     new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), locationLevelResponseDTOSaved);
             return ResponseEntity.ok(successResponse);
