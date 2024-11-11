@@ -4,6 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -16,18 +18,29 @@ public class DoctorProfileController {
         return "pages/doctor-profile/index";
     }
   
-    @GetMapping("/addForm")
+    @GetMapping("/addFormSpecialization")
     public ModelAndView form() {
-        ModelAndView view = new ModelAndView("pages/doctor-profile/addForm");
+        ModelAndView view = new ModelAndView("pages/doctor-profile/addFormSpecialization");
         return view;
     }
     
-    @GetMapping("/editForm")
+    @GetMapping("/editFormSpecialization")
     public ModelAndView edit() {
-        ModelAndView view = new ModelAndView("pages/doctor-profile/editForm");
+        ModelAndView view = new ModelAndView("pages/doctor-profile/editFormSpecialization");
+        return view;
+    }
+
+    @GetMapping("/addFormTreatment")
+    public ModelAndView formTreatment() {
+        ModelAndView view = new ModelAndView("pages/doctor-profile/addFormTreatment");
+        return view;
+    }
+
+    @GetMapping("/deleteFormTreatment")
+    public ModelAndView deleteformTreatment() {
+        ModelAndView view = new ModelAndView("pages/doctor-profile/deleteFormTreatment");
         return view;
     }
     
     
-  
 }

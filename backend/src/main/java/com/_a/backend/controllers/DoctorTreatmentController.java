@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.DoctorTreatmentRequestDTO;
-import com._a.backend.dtos.responses.DoctorOfficeResponseDTO;
 import com._a.backend.dtos.responses.DoctorTreatmentResponseDTO;
+import com._a.backend.entities.DoctorTreatment;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.services.impl.DoctorTreatmentServiceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,6 +47,26 @@ public class DoctorTreatmentController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
       }
   }
+
+  @GetMapping("/treatment/{id}")
+  public ResponseEntity<?> getDoctorTreatmentById(@PathVariable Long id) {
+    try {
+      Optional<DoctorTreatmentResponseDTO> doctorTreatment = doctorTreatmentService.findById(id);
+      if (doctorTreatment.isEmpty()) {
+        ApiResponse<DoctorTreatmentResponseDTO> notFoundResponse =
+            new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "doctor treatment not found", null);
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
+      } else {
+        ApiResponse<Optional<DoctorTreatmentResponseDTO>> successResponse =
+            new ApiResponse<Optional<DoctorTreatmentResponseDTO>>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), doctorTreatment);
+          return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+      }
+    } catch (Exception e) {
+      ApiResponse<Optional<DoctorTreatmentResponseDTO>> errorResponse =
+          new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+  }
   
   @GetMapping("/{id}")
   public ResponseEntity<?> getDoctorTreatmentByDoctorId(@PathVariable Long id) {
@@ -62,7 +83,7 @@ public class DoctorTreatmentController {
           return ResponseEntity.status(HttpStatus.OK).body(successResponse);
         }
       } catch (Exception e) {
-        ApiResponse<List<DoctorOfficeResponseDTO>> errorResponse =
+        ApiResponse<List<DoctorTreatmentResponseDTO>> errorResponse =
           new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
       }
@@ -76,7 +97,7 @@ public class DoctorTreatmentController {
             new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), doctorTreatmentResponseDTO);
         return ResponseEntity.ok(successResponse);
           } catch (Exception e) {
-        ApiResponse<DoctorOfficeResponseDTO> errorResponse =
+        ApiResponse<DoctorTreatmentResponseDTO> errorResponse =
           new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to save doctor treatment", null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
       
@@ -97,8 +118,8 @@ public class DoctorTreatmentController {
           new ApiResponse<DoctorTreatmentResponseDTO>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), doctorTreatmentResponseDTOSaved);
         return ResponseEntity.ok(successResponse);
       } catch (Exception e) {
-        ApiResponse<DoctorOfficeResponseDTO> errorResponse = 
-          new ApiResponse<DoctorOfficeResponseDTO>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to update doctor treatment", null);
+        ApiResponse<DoctorTreatmentResponseDTO> errorResponse =
+          new ApiResponse<DoctorTreatmentResponseDTO>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Failed to update doctor treatment", null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
       }
   }
@@ -118,7 +139,7 @@ public class DoctorTreatmentController {
   }
 
   // Soft delete
-  @PutMapping("/delete/{id}")
+  @PatchMapping("/delete/{id}")
   public ResponseEntity<?> softDeleteDoctorTreatment(@PathVariable Long id) {
     try {
       Optional<DoctorTreatmentResponseDTO> doctorTreatmentResponseDTO = doctorTreatmentService.findById(id);
