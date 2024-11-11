@@ -19,7 +19,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="javascript:void(0);">Beranda</a>
+                    <a href="/">Beranda</a>
                 </li>
                 <li class="breadcrumb-item">
                     <a href="javascript:void(0);">Profil</a>
@@ -83,78 +83,31 @@
                     </div>
 
                     <!-- buttons beside the search box -->
-                    <div class="btn-group me-1">
-                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-expanded="false" data-bs-auto-close="outside">
-                            Urutkan
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <h6 class="dropdown-header text-uppercase">Urutkan berdasarkan:</h6>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="patientNameCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderColumnRadio"
-                                                id="patientNameCheckbox" value="fullname">
-                                            Nama
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="vaCodeCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderColumnRadio"
-                                                id="vaCodeCheckbox" value="age">
-                                            Umur
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="AZOrderCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderTypeRadio"
-                                                id="AZOrderCheckbox" value="ASC">
-                                            A-Z
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="ZAOrderCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderTypeRadio"
-                                                id="ZAOrderCheckbox" value="DESC">
-                                            Z-A
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <div class="w-100 text-center p-2">
-                                    <button type="button" class="btn btn-primary mt-2 w-100"
-                                        onclick="setPageOrder()">Terapkan</button>
-                                </div>
-                            </li>
+                    <div class="btn-group me-2">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortByButton"
+                            data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"></button>
+                        <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
+                            <li><h6 class="dropdown-header text-uppercase">Urutkan Kolom:</h6></li>
+                            <li><a class="dropdown-item" href="javascript:setOrderBy('fullname')">Nama</a></li>
+                            <li><a class="dropdown-item" href="javascript:setOrderBy('age')">Umur</a></li>
                         </ul>
                     </div>
-                    <div class="btn-group me-1">
+                    <div class="btn-group me-2">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDirButton"
+                            data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"></button>
+                        <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
+                            <li><h6 class="dropdown-header text-uppercase">Urutkan Abjad:</h6></li>
+                            <li><a class="dropdown-item" href="javascript:setOrderDir('ASC')">A-Z</a></li>
+                            <li><a class="dropdown-item" href="javascript:setOrderDir('DESC')">Z-A</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-expanded="true">
-                            Data Per Halaman
-                        </button>
+                            aria-expanded="true" id="pageSizeButton"></button>
                         <ul class="dropdown-menu"
                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(0px, 41px, 0px);"
                             data-popper-placement="bottom-start">
+                            <li><h6 class="dropdown-header text-uppercase">Item Per Halaman:</h6></li>
                             <li><a class="dropdown-item" href="javascript:setPageSize(5);">5</a></li>
                             <li><a class="dropdown-item" href="javascript:setPageSize(10);">10</a></li>
                             <li><a class="dropdown-item" href="javascript:setPageSize(25);">25</a></li>

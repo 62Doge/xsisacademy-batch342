@@ -19,6 +19,18 @@ $(document).ready(function () {
             loadData();
         }
     });
+    if (sortBy === 'fullname') {
+        $('#sortByButton').html('Nama');
+    } else if (sortBy === 'age') {
+        $('#sortByButton').html('Umur');
+    }
+    if (sortDir === 'ASC') {
+        $('#sortDirButton').html('A-Z');
+    } else if (sortDir === 'DESC') {
+        $('#sortDirButton').html('Z-A');
+    }
+    $('#pageSizeButton').html(pageSize);
+    $('#pageSizeInput').val(pageSize);
 })
 
 function searchPatient(query) {
@@ -225,8 +237,13 @@ function previousPage() {
     }
 }
 
-function setPageSize(query) {
-    pageSize = query;
+function setOrderBy(query) {
+    sortBy = query;
+    if (sortBy === 'fullname') {
+        $('#sortByButton').html('Nama');
+    } else if (sortBy === 'age') {
+        $('#sortByButton').html('Umur');
+    }
     if (currentSearchQuery) {
         searchPatient(currentSearchQuery);
     } else {
@@ -234,9 +251,24 @@ function setPageSize(query) {
     }
 }
 
-function setPageOrder() {
-    sortBy = $('input[name="orderColumnRadio"]:checked').val();
-    sortDir = $('input[name="orderTypeRadio"]:checked').val();
+function setOrderDir(query) {
+    sortDir = query;
+    if (sortDir === 'ASC') {
+        $('#sortDirButton').html('A-Z');
+    } else if (sortDir === 'DESC') {
+        $('#sortDirButton').html('Z-A');
+    }
+    if (currentSearchQuery) {
+        searchPatient(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function setPageSize(query) {
+    pageSize = query;
+    $('#pageSizeButton').html(pageSize);
+    $('#pageSizeInput').val(pageSize);
     if (currentSearchQuery) {
         searchPatient(currentSearchQuery);
     } else {
@@ -247,6 +279,8 @@ function setPageOrder() {
 function customPageSize() {
     let query = $('#pageSizeInput').val();
     pageSize = query;
+    $('#pageSizeButton').html(pageSize);
+    $('#pageSizeInput').val(pageSize);
     if (currentSearchQuery) {
         searchPatient(currentSearchQuery);
     } else {

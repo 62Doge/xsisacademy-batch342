@@ -18,6 +18,18 @@ $(document).ready(function () {
             loadData();
         }
     });
+    if (sortBy === 'name') {
+        $('#sortByButton').html('Nama Bank');
+    } else if (sortBy === 'vaCode') {
+        $('#sortByButton').html('Kode VA');
+    }
+    if (sortDir === 'ASC') {
+        $('#sortDirButton').html('A-Z');
+    } else if (sortDir === 'DESC') {
+        $('#sortDirButton').html('Z-A');
+    }
+    $('#pageSizeButton').html(pageSize);
+    $('#pageSizeInput').val(pageSize);
 })
 
 function searchBank(query) {
@@ -188,8 +200,13 @@ function previousPage() {
     }
 }
 
-function setPageSize(query) {
-    pageSize = query;
+function setOrderBy(query) {
+    sortBy = query;
+    if (sortBy === 'name') {
+        $('#sortByButton').html('Nama Bank');
+    } else if (sortBy === 'vaCode') {
+        $('#sortByButton').html('Kode VA');
+    }
     if (currentSearchQuery) {
         searchBank(currentSearchQuery);
     } else {
@@ -197,9 +214,24 @@ function setPageSize(query) {
     }
 }
 
-function setPageOrder() {
-    sortBy = $('input[name="orderColumnRadio"]:checked').val();
-    sortDir = $('input[name="orderTypeRadio"]:checked').val();
+function setOrderDir(query) {
+    sortDir = query;
+    if (sortDir === 'ASC') {
+        $('#sortDirButton').html('A-Z');
+    } else if (sortDir === 'DESC') {
+        $('#sortDirButton').html('Z-A');
+    }
+    if (currentSearchQuery) {
+        searchBank(currentSearchQuery);
+    } else {
+        loadData();
+    }
+}
+
+function setPageSize(query) {
+    pageSize = query;
+    $('#pageSizeButton').html(pageSize);
+    $('#pageSizeInput').val(pageSize);
     if (currentSearchQuery) {
         searchBank(currentSearchQuery);
     } else {
@@ -209,8 +241,9 @@ function setPageOrder() {
 
 function customPageSize() {
     let query = $('#pageSizeInput').val();
-    console.log(query);
     pageSize = query;
+    $('#pageSizeButton').html(pageSize);
+    $('#pageSizeInput').val(pageSize);
     if (currentSearchQuery) {
         searchBank(currentSearchQuery);
     } else {

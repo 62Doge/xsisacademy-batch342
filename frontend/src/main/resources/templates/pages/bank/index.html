@@ -20,77 +20,32 @@
                             <span class="tf-icons bx bx-add-to-queue"></span> Tambah Bank
                         </button>
                     </div>
+
                     <div class="btn-group me-2">
-                        <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-expanded="false" data-bs-auto-close="outside">
-                            Urutkan Data
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <h6 class="dropdown-header text-uppercase">Urutkan berdasarkan:</h6>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="bankNameCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderColumnRadio"
-                                                id="bankNameCheckbox" value="name">
-                                            Nama Bank
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="vaCodeCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderColumnRadio"
-                                                id="vaCodeCheckbox" value="vaCode">
-                                            Kode VA
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="AZOrderCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderTypeRadio"
-                                                id="AZOrderCheckbox" value="ASC">
-                                            A-Z
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="javascript:void(0);">
-                                    <div class="form-check">
-                                        <label class="form-check-label w-100" for="ZAOrderCheckbox">
-                                            <input type="radio" class="form-check-input" name="orderTypeRadio"
-                                                id="ZAOrderCheckbox" value="DESC">
-                                            Z-A
-                                        </label>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <div class="w-100 text-center p-2">
-                                    <button type="button" class="btn btn-primary mt-2 w-100" onclick="setPageOrder()">Terapkan</button>
-                                </div>
-                            </li>
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortByButton"
+                            data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"></button>
+                        <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
+                            <li><h6 class="dropdown-header text-uppercase">Urutkan Kolom:</h6></li>
+                            <li><a class="dropdown-item" href="javascript:setOrderBy('name')">Nama Bank</a></li>
+                            <li><a class="dropdown-item" href="javascript:setOrderBy('vaCode')">Kode VA</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group me-2">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDirButton"
+                            data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false"></button>
+                        <ul class="dropdown-menu" aria-labelledby="defaultDropdown">
+                            <li><h6 class="dropdown-header text-uppercase">Urutkan Abjad:</h6></li>
+                            <li><a class="dropdown-item" href="javascript:setOrderDir('ASC')">A-Z</a></li>
+                            <li><a class="dropdown-item" href="javascript:setOrderDir('DESC')">Z-A</a></li>
                         </ul>
                     </div>
                     <div class="btn-group">
                         <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-expanded="true">
-                            Data Per Halaman
-                        </button>
+                            aria-expanded="true" id="pageSizeButton"></button>
                         <ul class="dropdown-menu"
                             style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(0px, 41px, 0px);"
                             data-popper-placement="bottom-start">
+                            <li><h6 class="dropdown-header text-uppercase">Item Per Halaman:</h6></li>
                             <li><a class="dropdown-item" href="javascript:setPageSize(5);">5</a></li>
                             <li><a class="dropdown-item" href="javascript:setPageSize(10);">10</a></li>
                             <li><a class="dropdown-item" href="javascript:setPageSize(25);">25</a></li>
