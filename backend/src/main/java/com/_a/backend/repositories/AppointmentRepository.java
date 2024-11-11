@@ -2,6 +2,7 @@ package com._a.backend.repositories;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -26,6 +27,17 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
                         """)
         List<AppointmentExceededDateProjectionDTO> findExceededDates(@Param("doctorId") Long doctorId,
                         @Param("toDateLater") LocalDate toDateLater);
+
+        @Query("""
+                        select coalesce((case when count(a) = dos.slot then true else false end), false)
+                        from Appointment a
+                        join a.doctorOfficeSchedule dos
+                        where a.appointmentDate = :appointmentDate
+                        and dos.id = :doctorOfficeScheduleId
+                        group by dos.slot
+                        """)
+        Optional<Boolean> isAppointmentCountExceeded(@Param("appointmentDate") LocalDate appointmentDate,
+                        @Param("doctorOfficeScheduleId") Long doctorOfficeScheduleId);
 
         @Query(value = "SELECT * FROM t_appointment WHERE is_delete = false AND doctor_office_id = ?1 AND appointment_date > NOW()", nativeQuery = true)
         List<Appointment> findByOfficeId(Long id);

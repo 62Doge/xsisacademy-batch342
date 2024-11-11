@@ -67,6 +67,11 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
+  public Boolean isAppointmentCountExceeded(LocalDate appointmenDate, Long doctorOfficeScheduleId) {
+    return appointmentRepository.isAppointmentCountExceeded(appointmenDate, doctorOfficeScheduleId).orElse(false);
+  }
+
+  @Override
   public List<AppointmentResponseDTO> findAll() {
     List<Appointment> appointments = appointmentRepository.findAll();
     List<AppointmentResponseDTO> appointmentResponseDTOs = appointments.stream().map(
