@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilityItemResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
+import com._a.backend.dtos.responses.TreatmentResponseDTO;
 import com._a.backend.entities.Appointment;
 import com._a.backend.repositories.AppointmentRepository;
 import com._a.backend.repositories.DoctorOfficeRepository;
@@ -33,7 +34,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     AppointmentMedicalFacilitiesResponseDTO responseDTO = new AppointmentMedicalFacilitiesResponseDTO();
     responseDTO.setMedicalFacilities(doctorOfficeRepository.findMedicalFacilitiesByDoctorId(id)
         .stream()
-        .map(medicalFacility -> new AppointmentMedicalFacilityItemResponseDTO(medicalFacility))
+        .map(medicalFacility -> {
+          List<TreatmentResponseDTO> treatments = doctorOfficeRepository.findTreatmentsVyDoctorOfficeId(medicalFacility.ge)
+        })
         .collect(Collectors.toList()));
 
     return responseDTO;

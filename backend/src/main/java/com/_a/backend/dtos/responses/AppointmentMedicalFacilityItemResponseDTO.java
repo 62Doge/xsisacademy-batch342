@@ -2,6 +2,7 @@ package com._a.backend.dtos.responses;
 
 import java.util.List;
 
+import com._a.backend.entities.DoctorOffice;
 import com._a.backend.entities.MedicalFacility;
 
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ public class AppointmentMedicalFacilityItemResponseDTO {
 
   private List<TreatmentResponseDTO> treatments;
 
-  public AppointmentMedicalFacilityItemResponseDTO(MedicalFacility medicalFacility,
+  public AppointmentMedicalFacilityItemResponseDTO(DoctorOffice medicalFacility,
       List<TreatmentResponseDTO> treatments) {
     this.id = medicalFacility.getId();
     this.name = medicalFacility.getName();
