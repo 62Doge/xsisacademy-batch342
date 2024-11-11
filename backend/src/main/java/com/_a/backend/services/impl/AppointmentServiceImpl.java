@@ -1,5 +1,6 @@
 package com._a.backend.services.impl;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,7 +9,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com._a.backend.dtos.projections.ExceedingAppoinmentProjectionDto;
+import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilityItemResponseDTO;
 import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
@@ -49,19 +50,20 @@ public class AppointmentServiceImpl implements AppointmentService {
   }
 
   @Override
-  public List<ExceedingAppoinmentProjectionDto> getExceedingAppointmentsInNextThreeWeeksByDoctorId(Long doctorId) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException(
-        "Unimplemented method 'getExceedingAppointmentsInNextThreeWeeksByDoctorId'");
-  }
-
-  @Override
   public List<DoctorOfficeScheduleResponseDTO> getDoctorOfficeSchedulesByDoctorId(Long doctorId) {
 
     return doctorOfficeScheduleRepository.findByDoctorId(doctorId)
         .stream()
         .map(dos -> new DoctorOfficeScheduleResponseDTO(dos))
         .toList();
+  }
+
+  @Override
+  public List<AppointmentExceededDateProjectionDTO> getExceededDatesByDoctorId(Long doctorId) {
+    LocalDate today = LocalDate.now();
+    LocalDate toDateLater = today.plusWeeks(3);
+
+    return appointmentRepository.findExceededDates(doctorId, toDateLater);
   }
 
   @Override

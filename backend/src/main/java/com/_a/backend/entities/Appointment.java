@@ -1,6 +1,6 @@
 package com._a.backend.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "t_appointment")
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Appointment extends BaseEntity{
+public class Appointment extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Appointment extends BaseEntity{
   private Long id;
 
   @Column(name = "appointment_date")
-  private Date appointmentDate;
+  private LocalDate appointmentDate;
 
   @ManyToOne
   @JoinColumn(name = "customer_id", insertable = false, updatable = false)
@@ -40,7 +40,7 @@ public class Appointment extends BaseEntity{
   private Long customerId;
 
   @ManyToOne
-  @JoinColumn(name = "doctor_office_id",  insertable = false, updatable = false)
+  @JoinColumn(name = "doctor_office_id", insertable = false, updatable = false)
   @JsonManagedReference
   private DoctorOffice doctorOffice;
 
@@ -48,7 +48,7 @@ public class Appointment extends BaseEntity{
   private Long doctorOfficeId;
 
   @ManyToOne
-  @JoinColumn(name = "doctor_office_schedule_id",  insertable = false, updatable = false)
+  @JoinColumn(name = "doctor_office_schedule_id", insertable = false, updatable = false)
   @JsonManagedReference
   private DoctorOfficeSchedule doctorOfficeSchedule;
 
@@ -56,11 +56,11 @@ public class Appointment extends BaseEntity{
   private Long doctorOfficeScheduleId;
 
   @ManyToOne
-  @JoinColumn(name = "doctor_office_treatment_id",  insertable = false, updatable = false)
+  @JoinColumn(name = "doctor_office_treatment_id", insertable = false, updatable = false)
   @JsonManagedReference
   private DoctorOfficeTreatment doctorOfficeTreatment;
 
   @Column(name = "doctor_office_treatment_id")
   private Long doctorOfficeTreatmentId;
-  
+
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com._a.backend.dtos.projections.ExceedingAppoinmentProjectionDto;
+import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
 import com._a.backend.payloads.ApiResponse;
@@ -33,10 +33,10 @@ public class AppoinmentController {
   }
 
   @GetMapping({ "/exceeded-date/{doctorId}", "/exceeded-date/{doctorId}/" })
-  public ResponseEntity<ApiResponse<List<ExceedingAppoinmentProjectionDto>>> getExceededAppointmentDate(
+  public ResponseEntity<ApiResponse<List<AppointmentExceededDateProjectionDTO>>> getExceededAppointmentDate(
       @PathVariable Long doctorId) {
     return new ResponseEntity<>(
-        ApiResponse.success(200, appointmentService.getExceedingAppointmentsInNextThreeWeeksByDoctorId(doctorId)),
+        ApiResponse.success(200, appointmentService.getExceededDatesByDoctorId(doctorId)),
         HttpStatus.OK);
   }
 
