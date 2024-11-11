@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.DoctorTreatmentRequestDTO;
 import com._a.backend.dtos.responses.DoctorTreatmentResponseDTO;
-import com._a.backend.entities.DoctorTreatment;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.services.impl.DoctorTreatmentServiceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
