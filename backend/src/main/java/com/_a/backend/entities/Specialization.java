@@ -22,6 +22,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "m_specialization")
 public class Specialization extends BaseEntity{
   
+  public Specialization(String name) {
+    this.name = name;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
