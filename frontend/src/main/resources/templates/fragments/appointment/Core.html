@@ -1,0 +1,18 @@
+<div th:fragment="pageAbove">
+    <th:block th:replace="~{fragments/appointment/FormModal}"></th:block>
+</div>
+
+<div th:fragment="pageBottom">
+    <script>
+        $(document).on('click', '.appointment-button', (e) => {
+            e.preventDefault();
+            const button = $(this);
+            if (IS_USER_LOGGED) {
+                // show appointment modal
+                $('#appointmentModal').modal('show');
+            } else {
+                $('.show-login-button').trigger('click');
+            }
+        });
+    </script>
+</div>

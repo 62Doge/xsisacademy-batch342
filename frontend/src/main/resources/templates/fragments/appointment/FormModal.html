@@ -1,0 +1,66 @@
+<!-- Modal Buat Janji Dokter -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="appointmentModalLabel">Buat Janji Dokter</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex mb-3">
+                    <img src="https://via.placeholder.com/100" class="rounded-circle me-3" alt="Foto Dokter"
+                        style="width: 100px; height: 100px; object-fit: cover;">
+                    <div>
+                        <h5 id="doctorName">Dr. John Doe</h5>
+                        <p id="doctorSpecialty">Spesialisasi: Dermatologi</p>
+                        <p id="doctorExperience">Pengalaman: 4 Tahun</p>
+                    </div>
+                </div>
+
+                <form id="appointmentForm">
+                    <div class="mb-3">
+                        <label for="consultationFor" class="form-label">Konsultasi untuk siapa?</label>
+                        <select id="consultationFor" class="form-select">
+                            <option value="self">Diri Sendiri</option>
+                            <option value="family">Keluarga</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="healthFacility" class="form-label">Pilih Fasilitas Kesehatan</label>
+                        <select id="healthFacility" class="form-select">
+                            <option value="hospital">RSU ABC</option>
+                            <option value="clinic">Klinik XYZ</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <label for="appointmentDate" class="form-label">Tanggal</label>
+                            <input type="date" class="form-control" id="appointmentDate">
+                        </div>
+                        <div class="col">
+                            <label for="appointmentTime" class="form-label">Waktu</label>
+                            <input type="time" class="form-control" id="appointmentTime">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="medicalAction" class="form-label">Tindakan Medis</label>
+                        <select id="medicalAction" class="form-select">
+                            <option value="perawatan_kulit">Perawatan Kulit</option>
+                            <option value="pemeriksaan_darah">Pemeriksaan Darah</option>
+                            <option value="penanganan_luka">Penanganan Luka</option>
+                            <option value="konsultasi_umum">Konsultasi Umum</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Buat Janji</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
