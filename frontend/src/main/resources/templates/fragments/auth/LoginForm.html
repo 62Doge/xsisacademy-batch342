@@ -1,16 +1,23 @@
 <div th:fragment="pageAbove">
-  <th:block th:replace="~{pages/landing/forgotPassword::style}"></th:block>
-  <th:block th:replace="~{fragments/BaseModal::modal(class='modal-md',modalBackdrop='static', modalKeyboard='false')}">
+  <style>
+    #forgotPasswordButton:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+  </style>
+
+  <th:block
+    th:replace="~{fragments/auth/AuthModal::modal(class='modal-md',modalBackdrop='static', modalKeyboard='false')}">
   </th:block>
-  <th:block th:replace="~{fragments/ErrorModal::modal(class='modal-sm')}"></th:block>
+  <th:block th:replace="~{fragments/auth/AuthErrorModal::modal(class='modal-sm')}"></th:block>
 </div>
 
 <div th:fragment="pageBottom">
   <script>
-    $(document).on('showLoginModal', function (e) {
+    $(document).on('click', '.show-login-button', function (e) {
       e.preventDefault();
-      $("#baseModalTitle").text("");
-      $("#baseModalBody").html(`
+      $("#authModalTitle").text("");
+      $("#authModalBody").html(`
   <div class="authentication-wrapper">
     <div class="authentication-inner">
       <div class="card">
@@ -60,8 +67,8 @@
   </div>
       
       `);
-      $("#baseModal").modal("show");
+      $("#authModal").modal("show");
     });
   </script>
-  <th:block th:replace="~{pages/landing/forgotPassword::script}"></th:block>
+  <th:block th:replace="~{fragments/auth/ForgotPassword::script}"></th:block>
 </div>

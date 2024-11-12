@@ -1,0 +1,14 @@
+<div th:fragment="modal" class="modal modal-top fade" id="authModal" tabindex="-1" th:attr="data-bs-backdrop=${modalBackdrop},
+  data-bs-keyboard=${modalKeyboard}
+  ">
+  <div class="modal-dialog modal-dialog-centered" th:classappend="${class}">
+    <form class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="authModalTitle">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="authModalBody"></div>
+      <div class="modal-footer" id="authModalFooter"></div>
+    </form>
+  </div>
+</div>
