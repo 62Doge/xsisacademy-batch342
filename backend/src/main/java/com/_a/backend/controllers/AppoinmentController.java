@@ -13,12 +13,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
+import com._a.backend.dtos.requests.AppointmentRequestDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
+import com._a.backend.dtos.responses.AppointmentResponseDTO;
 import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
 import com._a.backend.payloads.ApiResponse;
 import com._a.backend.services.AppointmentService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @CrossOrigin("*")
 @RestController
@@ -57,4 +61,12 @@ public class AppoinmentController {
 
     return appointmentService.isAppointmentCountExceeded(appointmentDate, doctorOfficeScheduleId);
   }
+
+  @PostMapping({ "", "/" })
+  public ResponseEntity<ApiResponse<AppointmentResponseDTO>> postMethodName(
+      @RequestBody AppointmentRequestDTO requestDTO) {
+
+    return new ResponseEntity<>(ApiResponse.success(201, appointmentService.create(requestDTO)), HttpStatus.CREATED);
+  }
+
 }

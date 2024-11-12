@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
+import com._a.backend.dtos.requests.AppointmentRequestDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
 import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
@@ -17,6 +18,8 @@ public interface AppointmentService {
   List<DoctorOfficeScheduleResponseDTO> getDoctorOfficeSchedulesByDoctorId(Long doctorId);
 
   Boolean isAppointmentCountExceeded(LocalDate appointmenDate, Long doctorOfficeScheduleId);
+
+  AppointmentResponseDTO create(AppointmentRequestDTO requestDTO);
 
   List<AppointmentResponseDTO> findAll();
 

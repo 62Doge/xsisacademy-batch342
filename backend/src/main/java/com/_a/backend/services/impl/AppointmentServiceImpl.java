@@ -8,18 +8,27 @@ import java.util.stream.Collectors;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
+import com._a.backend.dtos.requests.AppointmentRequestDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilityItemResponseDTO;
-import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
+import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
 import com._a.backend.entities.Appointment;
+import com._a.backend.entities.Customer;
 import com._a.backend.entities.DoctorOffice;
+import com._a.backend.entities.DoctorOfficeSchedule;
+import com._a.backend.entities.DoctorOfficeTreatment;
+import com._a.backend.exceptions.IdNotFoundException;
 import com._a.backend.repositories.AppointmentRepository;
+import com._a.backend.repositories.CustomerRepository;
 import com._a.backend.repositories.DoctorOfficeRepository;
 import com._a.backend.repositories.DoctorOfficeScheduleRepository;
+import com._a.backend.repositories.DoctorOfficeTreatmentRepository;
 import com._a.backend.services.AppointmentService;
+import com._a.backend.services.AuthService;
 
 @Service
 public class AppointmentServiceImpl implements AppointmentService {
@@ -32,6 +41,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Autowired
   DoctorOfficeScheduleRepository doctorOfficeScheduleRepository;
+
+  @Autowired
+  CustomerRepository customerRepository;
+
+  @Autowired
+  DoctorOfficeTreatmentRepository doctorOfficeTreatmentRepository;
+
+  @Autowired
+  AuthService authService;
 
   @Autowired
   ModelMapper modelMapper;
@@ -69,6 +87,39 @@ public class AppointmentServiceImpl implements AppointmentService {
   @Override
   public Boolean isAppointmentCountExceeded(LocalDate appointmenDate, Long doctorOfficeScheduleId) {
     return appointmentRepository.isAppointmentCountExceeded(appointmenDate, doctorOfficeScheduleId).orElse(false);
+  }
+
+  @Transactional
+  @Override
+  public AppointmentResponseDTO create(AppointmentRequestDTO requestDTO) {
+    Customer customer = customerRepository.findById(requestDTO.getCustomerId())
+        .orElseThrow(() -> new IdNotFoundException("Customer not found"));
+    DoctorOffice doctorOffice = doctorOfficeRepository.findById(requestDTO.getDoctorOfficeId())
+        .orElseThrow(() -> new IdNotFoundException("Doctor office not found"));
+    DoctorOfficeSchedule doctorOfficeSchedule = doctorOfficeScheduleRepository
+        .findById(requestDTO.getDoctorOfficeScheduleId())
+        .orElseThrow(() -> new IdNotFoundException("Doctor office schedule not found"));
+    DoctorOfficeTreatment doctorOfficeTreatment = doctorOfficeTreatmentRepository
+        .findById(requestDTO.getDoctorOfficeTreatmentId())
+        .orElseThrow(() -> new IdNotFoundException("Doctor office treatment not found"));
+
+    Long userId = authService.getDetails().getId();
+
+    if (this.isAppointmentCountExceeded(requestDTO.getAppointmentDate(), doctorOfficeSchedule.getId())) {
+      throw new RuntimeException("Slot penuh!");
+    }
+
+    Appointment appointment = new Appointment();
+    appointment.setAppointmentDate(requestDTO.getAppointmentDate());
+    appointment.setCustomerId(customer.getId());
+    appointment.setDoctorOfficeId(doctorOffice.getId());
+    appointment.setDoctorOfficeScheduleId(doctorOfficeSchedule.getId());
+    appointment.setDoctorOfficeTreatmentId(doctorOfficeTreatment.getId());
+    appointment.setCreatedBy(userId);
+
+    AppointmentResponseDTO responseDTO = new AppointmentResponseDTO(appointmentRepository.save(appointment));
+
+    return responseDTO;
   }
 
   @Override
