@@ -24,6 +24,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LocationLevel extends BaseEntity {
+    public LocationLevel(String name, String abbrevation) {
+        this.name = name;
+        this.abbreviation = abbrevation;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

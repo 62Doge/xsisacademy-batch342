@@ -29,6 +29,11 @@ public class DoctorTreatment extends BaseEntity {
     this.name = name;
   }
 
+  public DoctorTreatment(Long doctorId, String name){
+    this.doctorId = doctorId;
+    this.name = name;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)

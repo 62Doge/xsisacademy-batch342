@@ -35,6 +35,16 @@ public class MedicalFacility extends BaseEntity {
     this.fax = fax;
   }
 
+  public MedicalFacility(String name, String fullAdress, String email, String phoneCode, String phone, String fax, Long locationId) {
+    this.name = name;
+    this.fullAddress = fullAdress;
+    this.email = email;
+    this.phoneCode = phoneCode;
+    this.phone = phone;
+    this.fax = fax;
+    this.locationId = locationId;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
