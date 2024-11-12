@@ -1,5 +1,21 @@
 <div th:fragment="pageAbove">
+    <style>
+        .modal-dialog-centered {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 600px;
+        }
+    </style>
     <th:block th:replace="~{fragments/appointment/FormModal}"></th:block>
+    <th:block th:replace="~{fragments/Appointment/CheckScheduleLoader}"></th:block>
+    <th:block th:replace="~{fragments/Appointment/RetryModal}"></th:block>
+    <th:block th:replace="~{fragments/Appointment/SuccessModal}"></th:block>
 </div>
 
 <div th:fragment="pageBottom">
@@ -14,5 +30,29 @@
                 $('.show-login-button').trigger('click');
             }
         });
+
+        $('#checkSchedule').click((e) => {
+            e.preventDefault();
+
+            // logic to check when appointment date and doctor office schedule id is not exceeded
+            $('#checkScheduleModal').modal('show');
+            if (!true) {
+                // post create appointment request
+                // if success show success response
+
+                setTimeout(() => {
+                    $('#checkScheduleModal').modal('hide');
+                    $('#appointmentSuccessModal').modal('show');
+                }, 1500)
+            } else {
+                // show  is schedule exceeded
+                setTimeout(() => {
+                    $('#checkScheduleModal').modal('hide');
+                    $('#retryCreateAppointmenModal').modal('show');
+
+                }, 1500)
+
+            }
+        })
     </script>
 </div>

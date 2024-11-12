@@ -1,6 +1,7 @@
 <!-- Modal Buat Janji Dokter -->
-<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true"
+    data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="appointmentModalLabel">Buat Janji Dokter</h5>
@@ -19,7 +20,7 @@
 
                 <form id="appointmentForm">
                     <div class="mb-3">
-                        <label for="consultationFor" class="form-label">Konsultasi untuk siapa?</label>
+                        <label for="consultationFor" class="form-label">Konsultasi untuk *</label>
                         <select id="consultationFor" class="form-select">
                             <option value="self">Diri Sendiri</option>
                             <option value="family">Keluarga</option>
@@ -57,7 +58,7 @@
 
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Buat Janji</button>
+                        <button type="submit" class="btn btn-primary" id="checkSchedule">Buat Janji</button>
                     </div>
                 </form>
             </div>
