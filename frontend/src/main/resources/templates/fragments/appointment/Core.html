@@ -1,58 +1,140 @@
-<div th:fragment="pageAbove">
-    <style>
-        .modal-dialog-centered {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-        }
+<th:block th:fragment="pageAbove">
+  <style>
+    .modal-dialog-centered {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+    }
 
-        .modal-content {
-            width: 100%;
-            max-width: 600px;
-        }
-    </style>
-    <th:block th:replace="~{fragments/appointment/FormModal}"></th:block>
-    <th:block th:replace="~{fragments/Appointment/CheckScheduleLoader}"></th:block>
-    <th:block th:replace="~{fragments/Appointment/RetryModal}"></th:block>
-    <th:block th:replace="~{fragments/Appointment/SuccessModal}"></th:block>
-</div>
+    .modal-content {
+      width: 100%;
+      max-width: 600px;
+    }
+  </style>
+  <th:block th:replace="~{fragments/appointment/FormModal}"></th:block>
+  <th:block
+    th:replace="~{fragments/Appointment/CheckScheduleLoader}"
+  ></th:block>
+  <th:block th:replace="~{fragments/Appointment/RetryModal}"></th:block>
+  <th:block th:replace="~{fragments/Appointment/SuccessModal}"></th:block>
+</th:block>
 
-<div th:fragment="pageBottom">
-    <script>
-        $(document).on('click', '.appointment-button', (e) => {
-            e.preventDefault();
-            const button = $(this);
-            if (IS_USER_LOGGED) {
-                // show appointment modal
-                $('#appointmentModal').modal('show');
-            } else {
-                $('.show-login-button').trigger('click');
-            }
+<th:block th:fragment="pageBottom">
+  <script>
+    let costumerMembers;
+    const appointmentRequestData = {
+      customerId: null,
+      doctorOfficeId: null,
+      doctorOfficeScheduleId: null,
+      doctorOfficeTreatmentId: null,
+      appointmentDate: null,
+    };
+
+    $.ajax({
+      type: "get",
+      url: BE_BASE_URL + "/customer/members",
+      contentType: "application/json",
+      success: function (response) {
+        costumerMembers = response.data;
+        $("#consultationFor").html(
+          `<option value="" disabled selected> -- Pilih -- </option>`
+        );
+
+        costumerMembers.customerMemberList.forEach((member) => {
+          $("#consultationFor").append(`
+                    <option value="${member.customerId}">${
+            member.fullname + ", " + member.customerRelationName
+          }</option>
+                    `);
         });
+      },
+    });
 
-        $('#checkSchedule').click((e) => {
-            e.preventDefault();
+    let medicalFacilities;
+    function renderMedicalFacilityDropdown(
+      doctorId,
+      selectedMedicalFacilityId = null
+    ) {
+      $.ajax({
+        type: "get",
+        url:
+          BE_BASE_URL +
+          "/patient/appointment/doctor-medical-facilities/" +
+          doctorId,
+        contentType: "application/json",
+        success: function (response) {
+          medicalFacilities = response.data.medicalFacilities;
 
-            // logic to check when appointment date and doctor office schedule id is not exceeded
-            $('#checkScheduleModal').modal('show');
-            if (!true) {
-                // post create appointment request
-                // if success show success response
+          $("#healthFacility").html(
+            `<option value="" disabled selected> -- Pilih -- </option>`
+          );
 
-                setTimeout(() => {
-                    $('#checkScheduleModal').modal('hide');
-                    $('#appointmentSuccessModal').modal('show');
-                }, 1500)
-            } else {
-                // show  is schedule exceeded
-                setTimeout(() => {
-                    $('#checkScheduleModal').modal('hide');
-                    $('#retryCreateAppointmenModal').modal('show');
+          medicalFacilities.forEach((mf) => {
+            $("#healthFacility").append(`
+            <option class="medical-facility-option-item" data-doctor-office-id="${mf.doctorOfficeId}" value="${mf.id}">${mf.name}</option>
+            `);
+          });
+        },
+      });
+    }
 
-                }, 1500)
+    $(document).on("click", ".appointment-button", function (e) {
+      e.preventDefault();
+      const button = $(this);
+      const doctorId = button.data("doctor-id");
 
-            }
-        })
-    </script>
-</div>
+      if (IS_USER_LOGGED) {
+        // show appointment modal
+        renderMedicalFacilityDropdown(doctorId);
+        $("#appointmentModal").modal("show");
+      } else {
+        $(".show-login-button").trigger("click");
+      }
+    });
+
+    $("#healthFacility").change(function (e) {
+      e.preventDefault();
+      const selectedFacilityId = parseInt($(this).val());
+      const selectedFacility = medicalFacilities.find(
+        (facility) => facility.id === selectedFacilityId
+      );
+
+      const medicalActionDropdown = $("#medicalAction");
+      medicalActionDropdown.html(
+        '<option value="" disabled selected>-- Pilih Tindakan --</option>'
+      );
+      medicalActionDropdown.prop("disabled", false);
+
+      if (selectedFacility) {
+        selectedFacility.officeTreatments.forEach((treatment) => {
+          medicalActionDropdown.append(
+            `<option value="${treatment.id}">${treatment.treatmentName}</option>`
+          );
+        });
+      }
+    });
+
+    $("#checkSchedule").click((e) => {
+      e.preventDefault();
+
+      // logic to check when appointment date and doctor office schedule id is not exceeded
+      $("#checkScheduleModal").modal("show");
+      if (!true) {
+        // post create appointment request
+        // if success show success response
+
+        setTimeout(() => {
+          $("#checkScheduleModal").modal("hide");
+          $("#appointmentSuccessModal").modal("show");
+        }, 1500);
+      } else {
+        // show  is schedule exceeded
+        setTimeout(() => {
+          $("#checkScheduleModal").modal("hide");
+          $("#retryCreateAppointmenModal").modal("show");
+        }, 1500);
+      }
+    });
+  </script>
+</th:block>
