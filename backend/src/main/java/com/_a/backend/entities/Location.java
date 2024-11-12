@@ -28,6 +28,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Location extends BaseEntity {
+    public Location(String name, Long parentId, Long locationLevelId) {
+        this.name = name;
+        this.parentId = parentId;
+        this.locationLevelId = locationLevelId;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
