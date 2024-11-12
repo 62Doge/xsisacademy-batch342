@@ -20,7 +20,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "t_current_doctor_specialization")
 public class CurrentDoctorSpecialization extends BaseEntity {
-  
+
+  public CurrentDoctorSpecialization(Long doctorId, Long specializationId) {
+    this.doctorId = doctorId;
+    this.specializationId = specializationId;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)

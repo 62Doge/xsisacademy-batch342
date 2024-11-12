@@ -23,6 +23,10 @@ import lombok.NoArgsConstructor;
 @Table(name = "m_service_unit")
 public class ServiceUnit extends BaseEntity {
   
+  public ServiceUnit(String name) {
+    this.name = name;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)

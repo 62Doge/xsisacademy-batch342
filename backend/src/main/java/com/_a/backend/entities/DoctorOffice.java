@@ -1,6 +1,6 @@
 package com._a.backend.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -27,6 +27,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "t_doctor_office")
 public class DoctorOffice extends BaseEntity{
   
+  public DoctorOffice(Long doctorId, Long medicalFacilityId, String specialization, LocalDate startDate, LocalDate endDate, Long serviceUnitId) {
+    this.doctorId = doctorId;
+    this.medicalFacilityId = medicalFacilityId;
+    this.specialization = specialization;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.serviceUnitId = serviceUnitId;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
@@ -36,10 +45,10 @@ public class DoctorOffice extends BaseEntity{
   private String specialization;
 
   @Column(name = "start_date", nullable = false)
-  private Date startDate;
+  private LocalDate startDate;
 
   @Column(name = "end_date")
-  private Date endDate;
+  private LocalDate endDate;
 
   @ManyToOne
   @JoinColumn(name = "doctor_id", insertable = false, updatable = false)

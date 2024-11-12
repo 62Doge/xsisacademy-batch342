@@ -23,6 +23,10 @@ import lombok.NoArgsConstructor;
 @Table(name ="m_medical_facility_category")
 public class MedicalFacilityCategory extends BaseEntity{
   
+  public MedicalFacilityCategory(String name) {
+    this.name = name;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)

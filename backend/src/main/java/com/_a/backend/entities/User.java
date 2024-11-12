@@ -25,6 +25,21 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends BaseEntity {
+
+  public User(Long biodataId) {
+    this.biodataId = biodataId;
+  }
+
+  public User(Long biodataId, Long roleId, String email, String password, int loginAttempt, Boolean isLocked, LocalDateTime lastLogin) {
+    this.biodataId = biodataId;
+    this.roleId = roleId;
+    this.email = email;
+    this.password = password;
+    this.loginAttempt = loginAttempt;
+    this.isLocked = isLocked;
+    this.lastLogin = lastLogin;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
