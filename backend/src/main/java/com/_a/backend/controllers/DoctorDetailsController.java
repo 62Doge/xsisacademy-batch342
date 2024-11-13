@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/doctor/details")
-@CrossOrigin("http://localhost:9002")
+@CrossOrigin("*")
 public class DoctorDetailsController {
 
     @Autowired
@@ -88,7 +88,8 @@ public class DoctorDetailsController {
     @GetMapping("/office-location/schedule/{medicalFacilityId}/{doctorId}")
     public ResponseEntity<?> getSchedule(@PathVariable Long medicalFacilityId, @PathVariable Long doctorId) {
         try {
-            DoctorDetailsScheduleResponseDTO responseDTO = doctorDetailsServiceImpl.getSchedule(medicalFacilityId, doctorId);
+            DoctorDetailsScheduleResponseDTO responseDTO = doctorDetailsServiceImpl.getSchedule(medicalFacilityId,
+                    doctorId);
             ApiResponse<DoctorDetailsScheduleResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
                     HttpStatus.OK.getReasonPhrase(), responseDTO);
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
@@ -102,7 +103,8 @@ public class DoctorDetailsController {
     @GetMapping("/office-location/price-start/{medicalFacilityId}/{doctorId}")
     public ResponseEntity<?> getPriceStart(@PathVariable Long medicalFacilityId, @PathVariable Long doctorId) {
         try {
-            DoctorDetailsPriceStartResponseDTO responseDTO = doctorDetailsServiceImpl.getPriceStart(medicalFacilityId, doctorId);
+            DoctorDetailsPriceStartResponseDTO responseDTO = doctorDetailsServiceImpl.getPriceStart(medicalFacilityId,
+                    doctorId);
             ApiResponse<DoctorDetailsPriceStartResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
                     HttpStatus.OK.getReasonPhrase(), responseDTO);
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
@@ -118,7 +120,8 @@ public class DoctorDetailsController {
     public ResponseEntity<?> getOfficeLocation(@PathVariable Long doctorId) {
         try {
             DoctorDetailsOfficeLocationResponseDTO responseDTO = doctorDetailsServiceImpl.getOfficeLocation(doctorId);
-            ApiResponse<DoctorDetailsOfficeLocationResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
+            ApiResponse<DoctorDetailsOfficeLocationResponseDTO> successResponse = new ApiResponse<>(
+                    HttpStatus.OK.value(),
                     HttpStatus.OK.getReasonPhrase(), responseDTO);
             return ResponseEntity.status(HttpStatus.OK).body(successResponse);
         } catch (Exception e) {
