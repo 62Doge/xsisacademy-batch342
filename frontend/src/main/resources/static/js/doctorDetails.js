@@ -1,4 +1,3 @@
-// Retrieve the doctorId from the URL before the $(document).ready() function
 let doctorId;
 
 window.onload = function () {
@@ -6,13 +5,11 @@ window.onload = function () {
     doctorId = urlParams.get('doctorId');
     
     if (doctorId) {
-        doctorId = parseInt(doctorId, 10); // Convert to integer if necessary
-        console.log("Doctor ID:", doctorId); // For debugging
+        doctorId = parseInt(doctorId, 10);
     } else {
         console.error("No doctorId provided in URL parameters.");
     }
 
-    // Now, ensure that the $(document).ready() function can use doctorId
     $(document).ready(async function () {
         if (doctorId) {
             await loadHeader(doctorId);
@@ -143,24 +140,6 @@ function loadOfficeHistory(doctorId) {
     });
 }
 
-// function loadOfficeLocation(doctorId) {
-//     return new Promise((resolve, reject) => {
-//         $.ajax({
-//             type: "get",
-//             url: `http://localhost:9001/api/doctor/details/office-location/${doctorId}`,
-//             contentType: "application/json",
-//             success: function (response) {
-//                 console.log(response);
-//                 resolve();
-//             },
-//             error: function (error) {
-//                 console.error(error);
-//                 reject();
-//             }
-//         });
-//     });
-// }
-
 function loadOfficeLocation(doctorId) {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -223,7 +202,7 @@ function loadOfficeLocation(doctorId) {
                                                             </ul>
                                                         </div>
                                                         <div class="text-end my-auto">
-                                                            <button type="button" class="btn btn-primary text-nowrap" onclick="makeAppointment(${doctorId}, ${officeLocation.id})">Buat Janji</button>
+                                                            <button data-doctor-id="${doctorId}" data-medical-facility-id="${medicalFacilityId}" type="button" class="btn btn-primary text-nowrap">Buat Janji</button>
                                                         </div>
                                                     </div>
                                                 </div>
