@@ -25,11 +25,11 @@ public interface RoleRepository extends JpaRepository<Role, Long> {
             where
             (
                 :searchText is null
-                or lower(r.name) like %:searchText%
+                or lower(r.name) like lower(concat('%', :searchText, '%'))
             )
             or (
                 :searchText is null
-                or lower(r.code) like %:searchText%
+                or lower(r.code) like lower(concat('%', :searchText, '%'))
             )
             and r.isDelete=false
             """)
