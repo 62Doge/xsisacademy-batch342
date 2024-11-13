@@ -1,4 +1,4 @@
-let doctorId = 1;
+let doctorId = 3;
 
 $(document).ready(async function () {
     await loadHeader(doctorId);
@@ -165,6 +165,7 @@ function loadOfficeLocation(doctorId) {
                         success: function (response) {
                             let priceData = response.data.priceStart;
                             price += priceData;
+                            price = new Intl.NumberFormat('id-ID').format(price);
                             $.ajax({
                                 type: "get",
                                 url: `http://localhost:9001/api/doctor/details/office-location/schedule/${medicalFacilityId}/${doctorId}`,
