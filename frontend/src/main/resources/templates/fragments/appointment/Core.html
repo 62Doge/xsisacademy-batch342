@@ -1,5 +1,4 @@
 <th:block th:fragment="pageAbove">
-  <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css"> -->
   <link rel="stylesheet"
     href="https://cdn.jsdelivr.net/npm/jquery-datetimepicker@2.5.20/build/jquery.datetimepicker.min.css">
   <style>
@@ -24,22 +23,14 @@
 </th:block>
 
 <th:block th:fragment="pageBottom">
-  <!-- <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script> -->
-
 
   <script
     src="https://cdn.jsdelivr.net/npm/jquery-datetimepicker@2.5.20/build/jquery.datetimepicker.full.min.js"></script>
   <script>
     let costumerMembers;
     let doctorScheduleDataResponse;
+    let globalSelectedFacilitySchedule;
     let doctorScheduleExceedDataResponse;
-    const appointmentRequestData = {
-      customerId: null,
-      doctorOfficeId: null,
-      doctorOfficeScheduleId: null,
-      doctorOfficeTreatmentId: null,
-      appointmentDate: null,
-    };
 
     $.ajax({
       type: "get",
@@ -126,8 +117,8 @@
       const currentMinutes = now.getMinutes();
 
       for (let schedule of scheduleData) {
-        let startTime = new Date(`1970-01-01T${schedule.timeScheduleStart}:00`);
-        let endTime = new Date(`1970-01-01T${schedule.timeScheduleEnd}:00`);
+        let startTime = new Date(`2000-06-29T${schedule.timeScheduleStart}:00`);
+        let endTime = new Date(`2000-06-29T${schedule.timeScheduleEnd}:00`);
         let timeSlots = [];
 
         while (startTime < endTime) {
@@ -149,6 +140,21 @@
       return allTimeSlots;
     }
 
+    function getDoctorOfficeScheduleIdByTime(scheduleList, time) {
+      const targetTime = new Date(`2000-06-29T${time}:00`);
+
+      for (const schedule of scheduleList) {
+        const startTime = new Date(`2000-06-29T${schedule.timeScheduleStart}:00`);
+        const endTime = new Date(`2000-06-29T${schedule.timeScheduleEnd}:00`);
+
+        if (targetTime >= startTime && targetTime <= endTime) {
+          return schedule.id;
+        }
+      }
+
+      return null;
+    }
+
     $(document).on("click", ".appointment-button", function (e) {
       e.preventDefault();
       const button = $(this);
@@ -160,6 +166,10 @@
         renderMedicalFacilityDropdown(doctorId);
         // show appointment modal
         $("#appointmentModal").modal("show");
+        $('#appointmentDate').val("");
+        $('#appointmentTime').val("");
+        $('#consultationFor').val("");
+
       } else {
         $(".show-login-button").trigger("click");
       }
@@ -174,8 +184,10 @@
 
       const facilityScheduleInput = $('#appointmentDate');
       facilityScheduleInput.prop('disabled', false);
+      $('#appointmentTime').prop('disabled', true)
 
       const selectedFacilitySchedule = doctorScheduleDataResponse.filter(facility => facility.medicalFacilityId === selectedFacilityId);
+      globalSelectedFacilitySchedule = selectedFacilitySchedule;
 
       const medicalActionDropdown = $("#medicalAction");
       medicalActionDropdown.html(
@@ -206,6 +218,7 @@
             const selectedDay = new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long' });
 
             let availableSlots = selectedFacilitySchedule.filter(schedule => schedule.day === selectedDay);
+            // filter by exceeded slot
             availableSlots = availableSlots.filter(schedule => !doctorScheduleExceedDataResponse.some(dos => dos.doctorOfficeScheduleId == schedule.id && dos.appointmentDate == selectedDate));
 
             // if (availableSlots.length > 0) {
@@ -262,17 +275,43 @@
 
     $("#checkSchedule").click((e) => {
       e.preventDefault();
-
       // logic to check when appointment date and doctor office schedule id is not exceeded
       $("#checkScheduleModal").modal("show");
-      if (!true) {
+      if (IS_USER_LOGGED) {
         // post create appointment request
-        // if success show success response
+        let scheduleTime = $('#appointmentTime').val();
 
-        setTimeout(() => {
-          $("#checkScheduleModal").modal("hide");
-          $("#appointmentSuccessModal").modal("show");
-        }, 1500);
+        const appointmentRequestData = {
+          customerId: $('#consultationFor').val(),
+          doctorOfficeId: $('#healthFacility').find('option:selected').data('doctor-office-id'),
+          doctorOfficeScheduleId: getDoctorOfficeScheduleIdByTime(globalSelectedFacilitySchedule, scheduleTime),
+          doctorOfficeTreatmentId: $('#medicalAction').val(),
+          appointmentDate: $('#appointmentDate').val(),
+        };
+
+        console.log(appointmentRequestData);
+
+
+        // if success show success response
+        $.ajax({
+          type: "post",
+          url: BE_BASE_URL +
+            "/patient/appointment",
+          data: JSON.stringify(appointmentRequestData),
+          contentType: "application/json",
+          success: function (response) {
+            setTimeout(() => {
+              $("#checkScheduleModal").modal("hide");
+              $('#appointmentSuccessModal').modal('show');
+            }, 1000);
+          },
+          error(jqXhr, textStatus) {
+            setTimeout(() => {
+              $("#checkScheduleModal").modal("hide");
+              $('#retryCreateAppointmenModal').modal('show');
+            }, 1000);
+          },
+        });
       } else {
         // show  is schedule exceeded
         setTimeout(() => {
@@ -280,6 +319,17 @@
           $("#retryCreateAppointmenModal").modal("show");
         }, 1500);
       }
+    });
+
+    $('#selectAnotherSchedule').click(function (e) {
+      e.preventDefault();
+      $('#retryCreateAppointmenModal').modal('hide');
+    });
+
+    $('#cancelAppointment').click(function (e) {
+      e.preventDefault();
+      $('#retryCreateAppointmenModal').modal('hide');
+      $("#appointmentModal").modal("hide");
     });
   </script>
 </th:block>
