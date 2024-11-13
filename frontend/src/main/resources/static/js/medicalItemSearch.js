@@ -106,8 +106,9 @@ function validateForm(event) {
     medicalItemKeyword.classList.remove("is-invalid");
   }
   // Check price range
-  console.log(minPrice.value, maxPrice.value);
-  if (maxPrice.value - minPrice.value < 0) {
+  console.log(minPrice.value);
+  console.log(!maxPrice.value.length);
+  if (!maxPrice.value.length === false && maxPrice.value - minPrice.value < 0) {
     maxPrice.classList.add("is-invalid");
     minPrice.classList.add("is-invalid");
     priceRangeError.textContent =

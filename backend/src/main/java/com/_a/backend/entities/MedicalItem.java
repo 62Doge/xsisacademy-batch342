@@ -84,7 +84,7 @@ public class MedicalItem extends BaseEntity {
     private byte[] image;
 
     @Column(name = "image_path", length = 100)
-    private String image_path;
+    private String imagePath;
 
     // @OneToMany(mappedBy = "medicalItem", cascade = CascadeType.ALL)
     // @JsonBackReference

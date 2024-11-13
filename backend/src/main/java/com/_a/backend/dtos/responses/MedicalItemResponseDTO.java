@@ -35,4 +35,5 @@ public class MedicalItemResponseDTO {
     private String packaging;
     private Long priceMax;
     private Long priceMin;
+    private String imagePath;
 }

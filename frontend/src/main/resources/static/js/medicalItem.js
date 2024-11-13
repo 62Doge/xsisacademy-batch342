@@ -11,20 +11,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const paramObject = Object.fromEntries(
     new URLSearchParams(window.location.search)
   );
-  if (!paramObject.keyword.length) {
-    $("#baseModal").modal("show");
-    $("#baseModalTitle").html(`<strong>Cari Obat & Alat Kesehatan</strong>`);
-    $("#baseModalBody").html(`
-                  <div style="text-align: center;">
-                      Tidak dapat mencari obat dan alat kesehatan tanpa keyword.
-                  </div>
-              `);
-    $("#baseModalFooter").html(`
-                  <button data-bs-dismiss="modal" type="button" class="btn btn-primary">
-                      Kembali
-                  </button>
-              `);
-
+  if (checkParams(paramObject)) {
     return;
   }
   setResultText(paramObject);
@@ -32,6 +19,38 @@ document.addEventListener("DOMContentLoaded", (event) => {
   if (!sessionStorage.getItem("cartItems")) saveCartToSessionStorage();
   loadCartFromSessionStorage();
 });
+
+function checkParams(paramObject) {
+  let errorMessages = [];
+  if (!paramObject.keyword.length) {
+    errorMessages.push("Tidak dapat mencari obat dan alat kesehatan tanpa keyword.");
+  }
+
+  if (paramObject.minPrice.length && paramObject.maxPrice.length && parseInt(paramObject.minPrice) > parseInt(paramObject.maxPrice)) {
+    errorMessages.push("Tidak dapat mencari obat dan alat kesehatan saat harga minimum lebih besar dari harga maksimum.");
+  }
+
+  if (errorMessages.length > 0) {
+    showModal("Cari Obat & Alat Kesehatan", errorMessages.join("<br>"));
+    return true;
+  }
+  return false;
+}
+
+function showModal(title, message) {
+  $("#baseModal").modal("show");
+  $("#baseModalTitle").html(`<strong>${title}</strong>`);
+  $("#baseModalBody").html(`
+    <div style="text-align: center;">
+      ${message}
+    </div>
+  `);
+  $("#baseModalFooter").html(`
+    <button data-bs-dismiss="modal" type="button" class="btn btn-primary">
+      Kembali
+    </button>
+  `);
+}
 
 function setResultText(paramObject) {
   let resultText = "Hasil Pencarian berdasarkan kata kunci: ";
@@ -92,7 +111,7 @@ function populateMedicalItemCards() {
 
     card.innerHTML = `
           <div class="card h-100">
-              <div class="card-body">
+              <div class="card-body d-flex justify-content-between align-items-start mb-2 pb-2">
                 <div>
                   <h6 class="card-title" style="font-size:1rem;font-weight:bold;color:#555;margin-bottom:0.2rem;">${
                     item.name
@@ -101,10 +120,9 @@ function populateMedicalItemCards() {
                     item.packaging
                   }</p>
                   <p class="text-muted price-range" style="font-size:0.875rem;color:#999;margin-bottom:1rem;margin-left:1rem;">Rp ${item.priceMin.toLocaleString()} - Rp ${item.priceMax.toLocaleString()}</p>
+				  <p class="card-text" style="font-size:0.875rem;color:#777;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;">${item.indication}</p>
                 </div>
-                <p class="card-text" style="font-size:0.875rem;color:#777;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;">${
-                  item.indication
-                }</p>
+                <img src="${item.imagePath}" alt="${item.name}" style="width: 100px; height: 100px; object-fit: cover; margin-left: 1rem;">
                 </div>
               <div class="card-footer mt-0 pt-0 d-flex justify-content-between align-items-center">
                     ${
@@ -114,7 +132,7 @@ function populateMedicalItemCards() {
                         <button class="btn btn-outline-secondary quantity-btn" data-item-id="${item.id}" data-action="increment">+</button>`
                         : `<button class="btn btn-primary w-75 ms-2 add-to-cart" data-item-id="${item.id}">Tambah ke Keranjang</button>`
                     }
-                  <button class="btn btn-outline-secondary">Detail</button>
+                  <button class="btn btn-outline-secondary me-2">Detail</button>
               </div>
           </div>
       `;
