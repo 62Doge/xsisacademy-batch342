@@ -1,12 +1,30 @@
-let doctorId = 3;
+// Retrieve the doctorId from the URL before the $(document).ready() function
+let doctorId;
 
-$(document).ready(async function () {
-    await loadHeader(doctorId);
-    await loadTreatment(doctorId);
-    await loadEducation(doctorId);
-    await loadOfficeHistory(doctorId);
-    await loadOfficeLocation(doctorId);
-})
+window.onload = function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    doctorId = urlParams.get('doctorId');
+    
+    if (doctorId) {
+        doctorId = parseInt(doctorId, 10); // Convert to integer if necessary
+        console.log("Doctor ID:", doctorId); // For debugging
+    } else {
+        console.error("No doctorId provided in URL parameters.");
+    }
+
+    // Now, ensure that the $(document).ready() function can use doctorId
+    $(document).ready(async function () {
+        if (doctorId) {
+            await loadHeader(doctorId);
+            await loadTreatment(doctorId);
+            await loadEducation(doctorId);
+            await loadOfficeHistory(doctorId);
+            await loadOfficeLocation(doctorId);
+        } else {
+            console.error("doctorId is not set.");
+        }
+    });
+};
 
 function loadHeader(doctorId) {
     return new Promise((resolve, reject) => {

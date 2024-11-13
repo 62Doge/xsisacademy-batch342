@@ -13,6 +13,6 @@ function loadData() {
     });
 }
 
-function showDoctor(doctorId) {
-    
+function showDoctorDetails(doctorId) {
+    window.location.href = `/doctor-details?doctorId=` + doctorId;
 }

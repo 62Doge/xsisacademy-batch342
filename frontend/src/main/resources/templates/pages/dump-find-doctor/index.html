@@ -25,14 +25,14 @@
             <img
               src="https://via.placeholder.com/150"
               class="card-img-top"
-              alt="Doctor Ana Nabila"
+              alt="dr. Tatjana Saphira, Sp.A"
             />
             <div class="card-body text-center">
               <h5 class="card-title text-secondary mb-3">
-                dr. Ana Nabila, Sp.PD
+                dr. Tatjana Saphira, Sp.A
               </h5>
               <div class="d-flex justify-content-center gap-2 mt-3">
-                <button class="btn btn-outline-primary btn-sm">Detail</button>
+                <button data-doctor-id="1" class="btn btn-outline-primary btn-sm" onclick="showDoctorDetails(1)">Detail</button>
                 <button class="btn btn-outline-success btn-sm">Chat</button>
                 <button
                   data-doctor-id="1"
@@ -49,16 +49,17 @@
             <img
               src="https://via.placeholder.com/150"
               class="card-img-top"
-              alt="Doctor Budi Putra"
+              alt="dr. Michael Jackson, Sp.B"
             />
             <div class="card-body text-center">
-              <h5 class="card-title text-secondary mb-3">dr. Budi Putra</h5>
+              <h5 class="card-title text-secondary mb-3">dr. Michael Jackson, Sp.B</h5>
               <div class="d-flex justify-content-center gap-2 mt-3">
-                <button class="btn btn-outline-primary btn-sm">Detail</button>
+                <button data-doctor-id="2" class="btn btn-outline-primary btn-sm" onclick="showDoctorDetails(2)">Detail</button>
                 <button class="btn btn-outline-success btn-sm">Chat</button>
                 <button
                   data-doctor-id="2"
                   class="btn btn-outline-warning btn-sm appointment-button"
+                  onclick="showDoctorDetails(1)"
                 >
                   Buat Janji
                 </button>
@@ -71,38 +72,17 @@
             <img
               src="https://via.placeholder.com/150"
               class="card-img-top"
-              alt="Doctor Budi Putra"
+              alt="dr. Ariana Grande, Sp.THT"
             />
             <div class="card-body text-center">
-              <h5 class="card-title text-secondary mb-3">dr. Budi Supra</h5>
+              <h5 class="card-title text-secondary mb-3">dr. Ariana Grande, Sp.THT</h5>
               <div class="d-flex justify-content-center gap-2 mt-3">
-                <button class="btn btn-outline-primary btn-sm">Detail</button>
+                <button data-doctor-id="3" class="btn btn-outline-primary btn-sm" onclick="showDoctorDetails(3)">Detail</button>
                 <button class="btn btn-outline-success btn-sm">Chat</button>
                 <button
                   data-doctor-id="3"
                   class="btn btn-outline-warning btn-sm appointment-button"
-                >
-                  Buat Janji
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-6 col-md-4 mb-4">
-          <div class="card shadow-sm border-0">
-            <img
-              src="https://via.placeholder.com/150"
-              class="card-img-top"
-              alt="Doctor Budi Putra"
-            />
-            <div class="card-body text-center">
-              <h5 class="card-title text-secondary mb-3">dr. Budi Putri</h5>
-              <div class="d-flex justify-content-center gap-2 mt-3">
-                <button class="btn btn-outline-primary btn-sm">Detail</button>
-                <button class="btn btn-outline-success btn-sm">Chat</button>
-                <button
-                  data-doctor-id="4"
-                  class="btn btn-outline-warning btn-sm appointment-button"
+                  onclick="showDoctorDetails(1)"
                 >
                   Buat Janji
                 </button>
