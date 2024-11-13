@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" layout:decorate="~{layouts/main-without-search}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Set Menu Access</title>
+</head>
+
+<body>
+  <div layout:fragment="content">
+    <div class="content-wrapper">
+      <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row g-2 mb-2">
+          
+          <div class="col-12 col-lg-4">
+            <input id="searchRole" type="text" class="form-control" placeholder="Cari Role"></input>
+          </div>
+
+          <div class="col-12 col-lg">
+            <div class="btn-group w-100">
+              <button type="button"
+              class="btn btn-outline-primary dropdown-toggle w-100"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              data-bs-auto-close="false">Urutkan Data</button>
+
+            <ul class="dropdown-menu w-100">
+              <li>
+                <h6 class="dropdown-header text-uppercase">
+                  Berdasarkan Nama:</h6></li>
+              <li><hr class="dropdown-divider" /></li>
+
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">
+                  <div class="form-check sort-data">
+                    <input class="form-check-input" type="radio" name="orderTypeRadio" 
+                    id="AZOrderCheckbox" data-sort="asc" checked>
+                    <label class="form-check-label w-100" for="AZOrderCheckbox">
+                      A-Z
+                    </label>
+                  </div>
+                </a>
+              </li>
+
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">
+                  <div class="form-check sort-data">
+                    <input class="form-check-input" type="radio" name="orderTypeRadio" id="ZAOrderCheckbox" data-sort="desc">
+                    <label class="form-check-label w-100" for="ZAOrderCheckbox">
+                      Z-A
+                    </label>
+                  </div>
+                </a>
+              </li>
+
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">
+                  <button class="btn btn-primary" type="button" id="applySorting" onclick="applySorting(event)" >
+                    Terapkan
+                  </button>
+                </a>
+              </li>
+            </ul>
+              
+            </div>
+            
+          </div>
+          
+          <div class="col-12 col-lg">
+            <div class="btn-group w-100">
+              <button class="btn btn-outline-primary dropdown-toggle w-100" type="button" 
+              data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="false">
+                Data Perhalaman
+              </button>
+              <ul class="dropdown-menu w-100">
+                <li>
+                  <h6 class="dropdown-header text-uppercase">
+                    Urutkan berdasarkan:</h6></li>
+
+                <li><hr class="dropdown-divider" /></li>
+
+                <li>
+                  <a class="dropdown-item" href="javascript:void(0);">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" checked name="row-per-page" 
+                      id="rowPerPage5" data-row="5">
+                      <label class="form-check-label w-100" for="rowPerPage5">
+                        5
+                      </label>
+                    </div>
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item" href="javascript:void(0);">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" checked name="row-per-page" 
+                      id="rowPerPage10" data-row="10">
+                      <label class="form-check-label w-100" for="rowPerPage10">
+                        10
+                      </label>
+                    </div>
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item" href="javascript:void(0);">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" checked name="row-per-page" 
+                      id="rowPerPage15" data-row="15">
+                      <label class="form-check-label w-100" for="rowPerPage15">
+                        15
+                      </label>
+                    </div>
+                  </a>
+                </li>
+
+                <li><hr class="dropdown-divider" /></li>
+
+                <li>
+                  <a class="dropdown-item" href="javascript:void(0);">
+                    <div class="d-flex align-items-center">
+                      <div class="form-check me-2">
+                        <input class="form-check-input" type="radio" name="row-per-page" 
+                        id="customRowPerPageCheckbox" data-page="3">
+                      </div>
+                      
+                      <div class="flex-grow-1">
+                        <input class="form-control" type="number" value="3" id="customRowPerPageInputNumber">
+                      </div>
+                    </div>
+                  </a>
+                </li>
+
+                <li>
+                  <a class="dropdown-item" href="javascript:void(0);">
+                    <button type="button" class="btn btn-primary w-100"
+                      id="applyRowPerPage" onclick="applyRowPerPage(event)">
+                      Terapkan
+                    </button>
+                  </a>
+                </li>
+
+              </ul>
+          </div>
+
+        </div>
+        </div>
+
+        <div class="card">
+          <h5 class="card-header fs-4 text"><strong>Role</strong></h5>
+          <div class="table-responsive text-nowrap">
+            <table class="table">
+              
+              <thead>
+                <tr>
+                  <th>Nama</th>
+                  <th>Kode</th>
+                  <th class="text-center">#</th>
+                </tr>
+              </thead>
+
+              <tbody class="table-border-bottom-0 justify-content-end" id="role-table">
+                <!-- Isi Table -->
+              </tbody>
+            </table>
+          </div>
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-end mx-3 mt-2" id="paginationContainer">
+              <!-- isi pagination -->
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <th:block
+        th:replace="~{fragments/BaseModal::modal(class='modal-dialog-centered', modalBackdrop='static', modalKeyboard='false')}"
+        ></th:block>
+        <script src="js/setMenuAccess.js"></script>
+  </div>
+  <th:block layout:fragment="pageAbove">
+    <th:block
+        th:replace="~{fragments/ErrorModal::modal(class='modal-sm')}"
+      ></th:block>
+      <th:block
+        th:replace="~{fragments/SuccessModal::modal(class='modal-sm')}"
+      ></th:block>
+      <th:block
+        th:replace="~{fragments/DeleteConfirmationModal::modal}"
+      ></th:block>
+  </th:block>
+</body>
+</html>
