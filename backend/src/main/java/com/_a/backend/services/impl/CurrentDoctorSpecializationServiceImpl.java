@@ -15,7 +15,6 @@ import com._a.backend.dtos.requests.CurrentDoctorSpecializationRequestDTO;
 import com._a.backend.dtos.responses.CurrentDoctorSpecializationResponseDTO;
 import com._a.backend.entities.CurrentDoctorSpecialization;
 import com._a.backend.repositories.CurrentDoctorSpecializationRepository;
-import com._a.backend.services.AuthService;
 import com._a.backend.services.Services;
 
 @Service

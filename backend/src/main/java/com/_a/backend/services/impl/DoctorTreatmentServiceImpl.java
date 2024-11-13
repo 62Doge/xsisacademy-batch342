@@ -16,7 +16,6 @@ import com._a.backend.dtos.requests.DoctorTreatmentRequestDTO;
 import com._a.backend.dtos.responses.DoctorTreatmentResponseDTO;
 import com._a.backend.entities.DoctorTreatment;
 import com._a.backend.repositories.DoctorTreatmentRepository;
-import com._a.backend.services.AuthService;
 import com._a.backend.services.Services;
 
 @Service
