@@ -103,6 +103,9 @@
 
     function generateTimeSlots(scheduleData) {
       let allTimeSlots = [];
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinutes = now.getMinutes();
 
       for (let schedule of scheduleData) {
         let startTime = new Date(`1970-01-01T${schedule.timeScheduleStart}:00`);
@@ -110,8 +113,13 @@
         let timeSlots = [];
 
         while (startTime < endTime) {
-          const formattedTime = startTime.toTimeString().slice(0, 5);
-          timeSlots.push(formattedTime);
+          const slotHour = startTime.getHours();
+          const slotMinutes = startTime.getMinutes();
+
+          if (slotHour > currentHour || (slotHour === currentHour && slotMinutes > currentMinutes)) {
+            const formattedTime = startTime.toTimeString().slice(0, 5);
+            timeSlots.push(formattedTime);
+          }
 
           startTime = new Date(startTime.getTime() + 30 * 60000);
         }
