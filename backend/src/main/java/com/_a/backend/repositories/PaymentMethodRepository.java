@@ -1,6 +1,5 @@
 package com._a.backend.repositories;
 
-import com._a.backend.entities.LocationLevel;
 import com._a.backend.entities.PaymentMethod;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

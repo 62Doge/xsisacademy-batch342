@@ -4,14 +4,12 @@ import com._a.backend.dtos.requests.LocationLevelRequestDTO;
 import com._a.backend.dtos.responses.LocationLevelResponseDTO;
 import com._a.backend.dtos.responses.PaginatedResponseDTO;
 import com._a.backend.payloads.ApiResponse;
-import com._a.backend.repositories.LocationLevelRepository;
 import com._a.backend.services.impl.LocationLevelServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;

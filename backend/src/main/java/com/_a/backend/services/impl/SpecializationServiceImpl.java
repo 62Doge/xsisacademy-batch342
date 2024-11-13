@@ -25,7 +25,7 @@ public class SpecializationServiceImpl implements Services<SpecializationRequest
 
   @Override
   public Page<SpecializationResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
-    // TODO Auto-generated method stub
+    
     throw new UnsupportedOperationException("Unimplemented method 'getAll'");
   }
 
@@ -39,7 +39,7 @@ public class SpecializationServiceImpl implements Services<SpecializationRequest
 
   @Override
   public Optional<SpecializationResponseDTO> findById(Long id) {
-    // TODO Auto-generated method stub
+    
     throw new UnsupportedOperationException("Unimplemented method 'findById'");
   }
 
@@ -66,7 +66,7 @@ public class SpecializationServiceImpl implements Services<SpecializationRequest
 
   @Override
   public void deleteById(Long id) {
-    // TODO Auto-generated method stub
+    
     throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
   }
   
