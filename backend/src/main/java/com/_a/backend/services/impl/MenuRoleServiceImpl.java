@@ -79,6 +79,13 @@ public class MenuRoleServiceImpl implements Services<MenuRoleRequestDTO, MenuRol
         return modelMapper.map(updatedMenuRole, MenuRoleResponseDTO.class);
     }
 
+    public List<MenuRoleResponseDTO> getMenuAccessByRoleId(Long roleId) {
+        List<MenuRole> menuRoles = menuRoleRepository.findByRoleId(roleId);
+        List<MenuRoleResponseDTO> menuRoleResponseDTOs = menuRoles.stream().map(
+            menuRole -> modelMapper.map(menuRole, MenuRoleResponseDTO.class)).toList();
+        return menuRoleResponseDTOs;
+    }
+
     @Transactional
     public void updateMenuAccessForRole(Long roleId, List<Long> selectedMenuIds) {
         // Step 1: Retrieve existing MenuRole records for this roleId
@@ -95,9 +102,11 @@ public class MenuRoleServiceImpl implements Services<MenuRoleRequestDTO, MenuRol
         // selection
         for (MenuRole menuRole : existingMenuRoles) {
             if (selectedMenuIdSet.contains(menuRole.getMenuId())) {
-                menuRole.setIsDelete(false); // Grant access
+                menuRole.setIsDelete(false);
+                menuRole.setModifiedBy(roleId); // Grant access
             } else {
-                menuRole.setIsDelete(true); // Revoke access
+                menuRole.setIsDelete(true);
+                menuRole.setDeletedBy(roleId);// Revoke access
             }
             menuRoleRepository.save(menuRole);
         }
@@ -110,6 +119,7 @@ public class MenuRoleServiceImpl implements Services<MenuRoleRequestDTO, MenuRol
                 newMenuRole.setRoleId(roleId);
                 newMenuRole.setMenuId(menuId);
                 newMenuRole.setIsDelete(false);
+                newMenuRole.setCreatedBy(roleId);
                 menuRoleRepository.save(newMenuRole);
             }
         }

@@ -14,7 +14,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MenuResponseDTO {
-    private Long roleId;
     private Long id;
     private String name;
     private String url;
