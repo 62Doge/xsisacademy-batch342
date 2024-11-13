@@ -1,11 +1,22 @@
 let currentUserRoleId = USER_LOGGED_ID;
 
 document.addEventListener("DOMContentLoaded", (event) => {
-  loadMenuCards("no-role").then(() => {
-    if (IS_USER_LOGGED) {
-      loadMenuCards(currentUserRoleId);
-    }
-  });
+  loadMenuCards("no-role")
+    .then(() => {
+      if (IS_USER_LOGGED) {
+        loadMenuCards(currentUserRoleId);
+      }
+    })
+    .then(() => {
+      const cariObat = $("#cariObat");
+      if (cariObat.length) {
+        cariObat.click(function (e) {
+          e.preventDefault();
+          loadMedicalItemModal();
+          $("#baseModal").modal("show");
+        });
+      }
+    });
 });
 
 function loadMenuCards(roleId) {
@@ -22,13 +33,23 @@ function loadMenuCards(roleId) {
             if (menu.parentId === null) {
             }
             if (!menu.url && !menu.parentId) return;
+            const capitalizedMenuName = menu.name
+              .split(" ")
+              .map((word) => {
+                return word[0].toUpperCase() + word.substring(1);
+              })
+              .join(" ")
+              .replace(/\s/g, "");
+            const menuElementId =
+              capitalizedMenuName.charAt(0).toLowerCase() +
+              capitalizedMenuName.slice(1);
             const card = `
               <div class="col">
                 <div class="card h-100 text-center">
                   <div class="card-body">
                     <h5 class="card-title">${menu.name}</h5>
                     <i class="${menu.bigIcon}" style="font-size: 5rem;"></i>
-                    <a href="${menuUrl}" class="stretched-link"></a>
+                    <a href="${menuUrl}" class="stretched-link" id="${menuElementId}"></a>
                   </div>
                 </div>
               </div>
@@ -65,7 +86,6 @@ function addMenuToSidebar(menus) {
 
   $.each(Parent, function (index, menu) {
     const menuUrl = menu.url !== null ? menu.url : "#";
-    console.log(menu.name);
     menuData = `
       <li class="menu-item">
          <a href="javascript:void(0);" class="menu-link menu-toggle">
@@ -88,7 +108,6 @@ function addMenuToSidebar(menus) {
 
   $.each(Child, function (index, menu) {
     const menuUrl = menu.url !== null ? menu.url : "#";
-    console.log(menu.name);
     menuData = `
      <li class="menu-item">
         <a href="${menuUrl}" class="menu-link">
@@ -106,64 +125,3 @@ function addMenuToSidebar(menus) {
     }
   });
 }
-
-// const menuUrl = menu.url !== null ? menu.url : "#";
-//     console.log(menu.name);
-//     if (menu.childIds.length || (!menu.parentId && !menu.url)) {
-//       menuData = `
-//       <li class="menu-item">
-//          <a href="javascript:void(0);" class="menu-link menu-toggle">
-//            <div class="col-2">
-//              <i class="${menu.smallIcon}"></i>
-//            </div>
-//            <div data-i18n="${menu.name}">${menu.name}</div>
-//          </a>
-//          <ul class="menu-sub" id="sub${menu.id}">
-
-//          </ul>
-//       </li>
-//       `;
-//       if (menu.parentId) {
-//         $(`#sub${menu.parentId}`).append(menuData);
-//       } else {
-//         $(".menu-inner").append(menuData);
-//       }
-//     } else {
-//       menuData = `
-//      <li class="menu-item">
-//         <a href="${menuUrl}" class="menu-link">
-//           <div class="col-2">
-//             <i class="${menu.smallIcon}"></i>
-//           </div>
-//           <div data-i18n="${menu.name}">${menu.name}</div>
-//         </a>
-//      </li>
-//      `;
-//       if ($(`#sub${menu.parentId}`).length) {
-//         $(`#sub${menu.parentId}`).append(menuData);
-//       } else {
-//         $(".menu-inner").append(menuData);
-//       }
-//     }
-
-// <!--
-//     <li class="menu-item active open">
-//       <a href="javascript:void(0);" class="menu-link menu-toggle">
-//         <i class="menu-icon tf-icons bx bx-layout"></i>
-//         <div data-i18n="Layouts">Menu 2</div>
-//       </a>
-
-//       <ul class="menu-sub" >
-//         <li class="menu-item">
-//           <a href="layouts-without-menu.html" class="menu-link">
-//             <div data-i18n="Without menu">Sub menu 2 - 1</div>
-//           </a>
-//         </li>
-//         <li class="menu-item">
-//           <a href="layouts-without-menu.html" class="menu-link">
-//             <div data-i18n="Without menu">Sub menu 2 - 2</div>
-//           </a>
-//         </li>
-//       </ul>
-//     </li>
-//     -->

@@ -49,13 +49,6 @@
             </label>
           </li>
           <li>
-            <label class="dropdown-item w-100">
-              <input type="radio" class="form-check-input me-2" name="orderColumnRadio" id="postalCodeAddressRadio"
-                value="postalCode">
-              Kode Pos
-            </label>
-          </li>
-          <li>
             <div class="w-100 text-center p-2">
               <button type="button" class="btn btn-primary mt-2 w-100" onclick="setPageOrder()">Terapkan</button>
             </div>
@@ -94,13 +87,13 @@
             </tbody>
           </table>
         </div>
-        <nav aria-label="Page navigation">
-          <ul class="pagination justify-content-end mx-3 mt-2" id="pageList">
-            <li class="page-item prev d-flex align-items-center d-none" id="previousPageControl">
+        <nav aria-label="Page navigation" id="addressPagination">
+          <ul class="pagination justify-content-between mx-3 mt-2" id="pageList">
+            <li class="page-item prev d-flex align-items-center disabled ms-auto" id="previousPageControl">
               <a class="page-link d-flex align-items-center" href="javascript:previousPage();"><i
                   class='bx bx-chevron-left'></i>Prev</a>
             </li>
-            <li class="page-item next d-flex align-items-center d-none" id="nextPageControl">
+            <li class="page-item next d-flex align-items-center disabled" id="nextPageControl">
               <a class="page-link d-flex align-items-center" href="javascript:nextPage();">Next<i
                   class='bx bx-chevron-right'></i></a>
             </li>
@@ -121,6 +114,7 @@
     let sortDir = "asc";
     let currentSearchQuery = "";
     let totalPages;
+    let totalElements;
     let currentLocationLevelId;
     let addressIds = [];
     let locationSelect = [];
@@ -189,6 +183,7 @@
         success: function (response) {
           addressData = response.data.content;
           totalPages = response.data.metadata.totalPages;
+          totalElements = response.data.metadata.totalElements;
           console.log(addressData)
 
           let tableData = ``;
@@ -221,6 +216,23 @@
                 `;
           });
           $("#address-table").html(tableData);
+
+          const paginationContainer = document.getElementById("pageList");
+          let currentFirstData =
+            totalElements != 0 ? (currentPage - 1) * pageSize + 1 : 0;
+          let currentLastData =
+            totalElements != 0 ? currentFirstData + addressData.length - 1 : 0;
+            
+          const existingNumberOfData = document.getElementById("numberOfData");
+          if (existingNumberOfData) {
+            existingNumberOfData.parentNode.removeChild(existingNumberOfData);
+          }
+          let numberOfData = document.createElement("p");
+          numberOfData.setAttribute("Id", "numberOfData")
+          numberOfData.innerHTML = `
+              Menampilkan ${currentFirstData} - ${currentLastData} dari ${totalElements}`;
+          paginationContainer.insertBefore(numberOfData, paginationContainer.firstChild);
+
           pageButtons();
         },
         error: function (error) {
@@ -622,21 +634,10 @@
         }
       }
 
-      // Previous button if currentPage != 1
-      if (currentPage !== 1) {
-        $("#previousPageControl").removeClass("d-none");
-      } else {
-        $("#previousPageControl").addClass("d-none");
-      }
-
-      // If there are more pages after the current range, show '...' and last page
-      if (currentPage < totalPages) {
-        $("#nextPageControl").removeClass("d-none");
-      }
-
-      if (currentPage === totalPages) {
-        $("#nextPageControl").addClass("d-none");
-      }
+      if (currentPage == 1) $("#previousPageControl").addClass("disabled");
+      if (currentPage > 1) $("#previousPageControl").removeClass("disabled");
+      if (currentPage == totalPages) $("#nextPageControl").addClass("disabled");
+      if (currentPage < totalPages) $("#nextPageControl").removeClass("disabled");
 
       // Set the selected sorting options in the dropdown
       $('input[name="orderColumnRadio"][value="' + sortBy + '"]').prop(

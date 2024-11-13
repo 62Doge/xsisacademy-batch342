@@ -7,7 +7,6 @@ let sortDir = "asc";
 let totalPages;
 let currentSearchQuery;
 let currentLocationLevelId;
-let ADMIN_LOGGED_ID = 0;
 
 document.addEventListener("DOMContentLoaded", (event) => {
   loadParent();
