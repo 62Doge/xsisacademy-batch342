@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pasien</title>
+    <title>Detail Dokter</title>
     <style>
         .container-fluid {
             background-color: #fff;
@@ -30,7 +30,7 @@
                 <li class="breadcrumb-item">
                     <a href="/dump-find-doctor">Cari Dokter</a>
                 </li>
-                <li class="breadcrumb-item active" id="thisDoctorBreadcrumb">dr. Tatjana Saphira, Sp.A</li>
+                <li class="breadcrumb-item active" id="thisDoctorBreadcrumb">[Doctor Name]</li>
             </ol>
         </nav>
     </div>
@@ -49,46 +49,44 @@
 
         <div class="container-fluid align-content-center p-4 mt-3" id="tindakanMedisCard">
             <h5>Tindakan Medis</h5>
-            <ul>
-                <li>Fisioterapi anak</li>
-                <li>Konsultasi kesehatan anak</li>
-                <li>Skrining tumbuh kembang anak</li>
-                <li>Vaksin anak</li>
-                <li>Konsultasi alergi anak</li>
-                <li>Konsultasi psikologi anak</li>
-                <li>Tes pendengaran OAE</li>
+            <ul id="treatmentList">
+                <!-- <li>Tindakan Medis 1</li>
+                <li>Tindakan Medis 2</li>
+                <li>Tindakan Medis 3</li>
+                <li>Tindakan Medis 4</li>
+                <li>Tindakan Medis 5</li> -->
             </ul>
         </div>
 
         <div class="container-fluid align-content-center p-4 mt-3" id="riwayatPraktekCard">
             <h5>Riwayat Praktek</h5>
-            <ul>
-                <li>
-                    <strong><span>RS Mitra, Depok</span></strong><br>
-                    <span>Dokter Anak</span><br>
-                    <span>2019 - sekarang</span>
+            <ul id="officeHistoryList">
+                <!-- <li>
+                    <strong>RS Mitra, Depok</strong><br>
+                    Dokter Anak<br>
+                    2019 - sekarang
                 </li>
                 <li>
                     <strong><span>RSIA Bunda, Jakarta Pusat</span></strong><br>
                     <span>Dokter Anak</span><br>
                     <span>2018 - sekarang</span>
-                </li>
+                </li> -->
             </ul>
         </div>
 
         <div class="container-fluid align-content-center p-4 mt-3" id="pendidikanCard">
             <h5>Pendidikan</h5>
-            <ul>
-                <li>
-                    <strong><span>Universitas Padjajaran</span></strong><br>
-                    <span>Spesialis Anak</span><br>
-                    <span>2016</span>
+            <ul id="educationList">
+                <!-- <li>
+                    <strong>Universitas Padjajaran</strong><br>
+                    Spesialis Anak<br>
+                    2016
                 </li>
                 <li>
                     <strong><span>Universitas Padjajaran</span></strong><br>
                     <span>Kedokteran Umum</span><br>
                     <span>2011</span>
-                </li>
+                </li> -->
             </ul>
         </div>
     </div>
@@ -98,9 +96,9 @@
             <div class="container-xxl flex-grow-1">
                 <div class="card d-flex flex-row p-4" id="doctorProfileHeader">
                     <div class="w-100">
-                        <h5 id="doctorNameHeader">dr. Tatjana Saphira, Sp.A</h5>
-                        <span id="specializationHeader">Dokter Anak</span><br>
-                        <span id="experienceHeader">4 Tahun Pengalaman</span>
+                        <h5 id="doctorNameHeader">[Doctor Name]</h5>
+                        <span id="specializationHeader">[Specialization]</span><br>
+                        <span id="experienceHeader">[YOE]</span> Tahun Pengalaman
                     </div>
                     <div class="text-end my-auto">
                         <div><button type="button" class="btn btn-primary text-nowrap">Chat Dokter</button></div>
@@ -111,8 +109,8 @@
                     <!-- card header -->
                     <h5 class="card-header px-4 pt-4" style="padding: 0;"><strong>Lokasi Praktek</strong></h5>
                     <hr class="mt-3">
-                    <div>
-                        <div>
+                    <div id="officeLocationList">
+                        <!-- <div>
                             <div class="d-flex flex-row p-4">
                                 <div class="w-100">
                                     <strong>RS Mitra</strong><br>
@@ -183,7 +181,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

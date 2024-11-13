@@ -25,6 +25,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class MedicalFacilitySchedule extends BaseEntity {
+  public MedicalFacilitySchedule(Long medicalFacilityId, String day, String timeScheduleStart, String timeScheduleEnd) {
+    this.medicalFacilityId = medicalFacilityId;
+    this.day = day;
+    this.timeScheduleStart = timeScheduleStart;
+    this.timeScheduleEnd = timeScheduleEnd;
+  }
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

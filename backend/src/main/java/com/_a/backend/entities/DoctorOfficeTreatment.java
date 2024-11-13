@@ -25,6 +25,11 @@ import lombok.NoArgsConstructor;
 @Table(name = "t_doctor_office_treatment")
 public class DoctorOfficeTreatment extends BaseEntity{
   
+  public DoctorOfficeTreatment(Long doctorTreatmentId, Long doctorOfficeId) {
+    this.doctorTreatmentId = doctorTreatmentId;
+    this.doctorOfficeId = doctorOfficeId;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)

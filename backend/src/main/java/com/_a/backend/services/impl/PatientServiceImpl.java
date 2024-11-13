@@ -42,11 +42,6 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
     @Autowired
     ModelMapper modelMapper;
 
-    @Override
-    public List<PatientResponseDTO> findAll() {
-        throw new UnsupportedOperationException("Unimplemented method 'findAll'");
-    }
-
     public Page<PatientResponseDTO> findActivePages(Long parentBiodataId, Pageable pageable) {
         Page<PatientProjectionDto> projections = customerMemberRepository.findPatient(parentBiodataId, pageable);
         return projections.map(projection -> new PatientResponseDTO(

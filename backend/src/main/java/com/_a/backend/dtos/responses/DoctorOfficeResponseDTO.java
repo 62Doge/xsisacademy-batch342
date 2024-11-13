@@ -1,6 +1,6 @@
 package com._a.backend.dtos.responses;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import lombok.Data;
 
@@ -8,8 +8,8 @@ import lombok.Data;
 public class DoctorOfficeResponseDTO {
   private Long id;
   private String specialization;
-  private Date startDate;
-  private Date endDate;
+  private LocalDate startDate;
+  private LocalDate endDate;
   private Long doctorId;
   private Long medicalFacilityId;
   private Long serviceUnitId;

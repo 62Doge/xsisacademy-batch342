@@ -104,7 +104,6 @@ public class PatientController {
                     HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), patient);
             return new ResponseEntity<>(successResponse, HttpStatus.OK);
         } catch (Exception e) {
-            e.printStackTrace();
             ApiResponse<PatientResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
                     "Patient not found", null);
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);

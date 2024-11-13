@@ -1,11 +1,7 @@
 package com._a.backend.services;
 
-import java.util.List;
-
 public interface PatientService<PatientRequestDTO, PatientResponseDTO> {
     
-    List<PatientResponseDTO> findAll();
-
     PatientResponseDTO findById(Long id);
 
     // Optional<PatientResponseDTO> findById(Long id);

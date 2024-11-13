@@ -25,7 +25,12 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "t_doctor_office_schedule")
 public class DoctorOfficeSchedule extends BaseEntity {
-  
+  public DoctorOfficeSchedule(Integer slot, Long doctorId, Long medicalFacilityScheduleId) {
+    this.slot = slot;
+    this.doctorId = doctorId;
+    this.medicalFacilityScheduleId = medicalFacilityScheduleId;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
