@@ -1,67 +1,78 @@
 <!DOCTYPE html>
 <html lang="id" layout:decorate="~{layouts/profile-share-layout}">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detail Dokter</title>
     <style>
-        .container-fluid {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        ul {
-            margin-bottom: 0;
-        }
-        hr {
-            margin: 0;
-        }
+      .container-fluid {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      ul {
+        margin-bottom: 0;
+      }
+      hr {
+        margin: 0;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div layout:fragment="breadcrumbNav">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="/">Beranda</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="/dump-find-doctor">Cari Dokter</a>
-                </li>
-                <li class="breadcrumb-item active" id="thisDoctorBreadcrumb">[Doctor Name]</li>
-            </ol>
-        </nav>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/">Beranda</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="/dump-find-doctor">Cari Dokter</a>
+          </li>
+          <li class="breadcrumb-item active" id="thisDoctorBreadcrumb">
+            [Doctor Name]
+          </li>
+        </ol>
+      </nav>
     </div>
     <div layout:fragment="profileSidebar">
-        <div class="container-fluid align-content-center p-4">
-            <div id="profile-image-div">
-                <div class="text-center">
-                    <div>
-                        <img height="100"
-                            src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?semt=ais_hybrid"
-                            width="100" ,="" style="width: 100px; height: 100px; border-radius: 50%;">
-                    </div>
-                </div>
+      <div class="container-fluid align-content-center p-4">
+        <div id="profile-image-div">
+          <div class="text-center">
+            <div>
+              <img
+                height="100"
+                src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3383.jpg?semt=ais_hybrid"
+                width="100"
+                ,=""
+                style="width: 100px; height: 100px; border-radius: 50%"
+              />
             </div>
+          </div>
         </div>
+      </div>
 
-        <div class="container-fluid align-content-center p-4 mt-3" id="tindakanMedisCard">
-            <h5>Tindakan Medis</h5>
-            <ul id="treatmentList">
-                <!-- <li>Tindakan Medis 1</li>
+      <div
+        class="container-fluid align-content-center p-4 mt-3"
+        id="tindakanMedisCard"
+      >
+        <h5>Tindakan Medis</h5>
+        <ul id="treatmentList">
+          <!-- <li>Tindakan Medis 1</li>
                 <li>Tindakan Medis 2</li>
                 <li>Tindakan Medis 3</li>
                 <li>Tindakan Medis 4</li>
                 <li>Tindakan Medis 5</li> -->
-            </ul>
-        </div>
+        </ul>
+      </div>
 
-        <div class="container-fluid align-content-center p-4 mt-3" id="riwayatPraktekCard">
-            <h5>Riwayat Praktek</h5>
-            <ul id="officeHistoryList">
-                <!-- <li>
+      <div
+        class="container-fluid align-content-center p-4 mt-3"
+        id="riwayatPraktekCard"
+      >
+        <h5>Riwayat Praktek</h5>
+        <ul id="officeHistoryList">
+          <!-- <li>
                     <strong>RS Mitra, Depok</strong><br>
                     Dokter Anak<br>
                     2019 - sekarang
@@ -71,13 +82,16 @@
                     <span>Dokter Anak</span><br>
                     <span>2018 - sekarang</span>
                 </li> -->
-            </ul>
-        </div>
+        </ul>
+      </div>
 
-        <div class="container-fluid align-content-center p-4 mt-3" id="pendidikanCard">
-            <h5>Pendidikan</h5>
-            <ul id="educationList">
-                <!-- <li>
+      <div
+        class="container-fluid align-content-center p-4 mt-3"
+        id="pendidikanCard"
+      >
+        <h5>Pendidikan</h5>
+        <ul id="educationList">
+          <!-- <li>
                     <strong>Universitas Padjajaran</strong><br>
                     Spesialis Anak<br>
                     2016
@@ -87,30 +101,36 @@
                     <span>Kedokteran Umum</span><br>
                     <span>2011</span>
                 </li> -->
-            </ul>
-        </div>
+        </ul>
+      </div>
     </div>
 
     <div class="container" layout:fragment="profileTab">
-        <div class="content-wrapper">
-            <div class="container-xxl flex-grow-1">
-                <div class="card d-flex flex-row p-4" id="doctorProfileHeader">
-                    <div class="w-100">
-                        <h5 id="doctorNameHeader">[Doctor Name]</h5>
-                        <span id="specializationHeader">[Specialization]</span><br>
-                        <span id="experienceHeader">[YOE]</span> Tahun Pengalaman
-                    </div>
-                    <div class="text-end my-auto">
-                        <div><button type="button" class="btn btn-primary text-nowrap">Chat Dokter</button></div>
-                        <div class="mt-2 text-center">Rp30.000</div>
-                    </div>
-                </div>
-                <div class="card mt-3">
-                    <!-- card header -->
-                    <h5 class="card-header px-4 pt-4" style="padding: 0;"><strong>Lokasi Praktek</strong></h5>
-                    <hr class="mt-3">
-                    <div id="officeLocationList">
-                        <!-- <div>
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1">
+          <div class="card d-flex flex-row p-4" id="doctorProfileHeader">
+            <div class="w-100">
+              <h5 id="doctorNameHeader">[Doctor Name]</h5>
+              <span id="specializationHeader">[Specialization]</span><br />
+              <span id="experienceHeader">[YOE]</span> Tahun Pengalaman
+            </div>
+            <div class="text-end my-auto">
+              <div>
+                <button type="button" class="btn btn-primary text-nowrap">
+                  Chat Dokter
+                </button>
+              </div>
+              <div class="mt-2 text-center">Rp30.000</div>
+            </div>
+          </div>
+          <div class="card mt-3">
+            <!-- card header -->
+            <h5 class="card-header px-4 pt-4" style="padding: 0">
+              <strong>Lokasi Praktek</strong>
+            </h5>
+            <hr class="mt-3" />
+            <div id="officeLocationList">
+              <!-- <div>
                             <div class="d-flex flex-row p-4">
                                 <div class="w-100">
                                     <strong>RS Mitra</strong><br>
@@ -182,19 +202,29 @@
                                 </div>
                             </div>
                         </div> -->
-                    </div>
-                </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <th:block layout:fragment="pageAbove">
-        <th:block th:replace="~{fragments/BaseModal::modal(class='modal-dialog-centered')}"></th:block>
+      <th:block
+        th:replace="~{fragments/BaseModal::modal(class='modal-dialog-centered')}"
+      ></th:block>
+      <th:block th:replace="~{fragments/auth/LoginForm::pageAbove}"></th:block>
+      <th:block
+        th:replace="~{fragments/Appointment/Core::pageAbove}"
+      ></th:block>
     </th:block>
 
     <th:block layout:fragment="pageBottom">
-        <script src="js/doctorDetails.js"></script>
-    </th:block>
-</body>
+      <script src="js/doctorDetails.js"></script>
 
+      <th:block th:replace="~{fragments/auth/LoginForm::pageBottom}"></th:block>
+      <th:block
+        th:replace="~{fragments/Appointment/Core::pageBottom}"
+      ></th:block>
+    </th:block>
+  </body>
 </html>
