@@ -11,12 +11,35 @@ import org.springframework.data.repository.query.Param;
 import com._a.backend.entities.Role;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
-    Boolean existsByName(String name);
 
-    Page<Role> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
+    @Query("""
+        SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END 
+        FROM Role r 
+        WHERE r.name = :name 
+        AND r.isDelete = FALSE
+        """)
+    Boolean existsByName(@Param("name") String name);
 
-    Page<Role> findAllByIsDeleteFalse(Pageable pageable);
+    @Query("""
+        SELECT r 
+        FROM Role r 
+        WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :name, '%')) 
+        AND r.isDelete = FALSE
+        """)
+    Page<Role> findByNameContainingIgnoreCaseAndIsDeleteFalse(@Param("pageable") Pageable pageable, @Param("name") String name);
 
+    @Query("""
+        SELECT r 
+        FROM Role r 
+        WHERE r.isDelete = FALSE
+        """)
+    Page<Role> findAllByIsDeleteFalse(@Param("pageable") Pageable pageable);
+
+    @Query("""
+        SELECT r 
+        FROM Role r 
+        WHERE r.isDelete = FALSE
+        """)
     List<Role> findAllByIsDeleteFalse();
 
     @Query("""

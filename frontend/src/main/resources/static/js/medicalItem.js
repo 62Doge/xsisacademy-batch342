@@ -12,7 +12,19 @@ document.addEventListener("DOMContentLoaded", (event) => {
     new URLSearchParams(window.location.search)
   );
   if (!paramObject.keyword.length) {
-    alert("Tidak bisa mencari tanpa keyword!");
+    $("#baseModal").modal("show");
+    $("#baseModalTitle").html(`<strong>Cari Obat & Alat Kesehatan</strong>`);
+    $("#baseModalBody").html(`
+                  <div style="text-align: center;">
+                      Tidak dapat mencari obat dan alat kesehatan tanpa keyword.
+                  </div>
+              `);
+    $("#baseModalFooter").html(`
+                  <button data-bs-dismiss="modal" type="button" class="btn btn-primary">
+                      Kembali
+                  </button>
+              `);
+
     return;
   }
   setResultText(paramObject);
