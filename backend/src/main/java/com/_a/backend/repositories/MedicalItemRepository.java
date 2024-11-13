@@ -44,7 +44,7 @@ public interface MedicalItemRepository extends JpaRepository<MedicalItem, Long> 
     @Query("SELECT m FROM MedicalItem m "
             + "JOIN m.medicalItemSegmentation seg "
             + "JOIN m.medicalItemCategory cat "
-            + "WHERE (:categoryName IS NULL OR LOWER(cat.name) LIKE LOWER(:categoryName)) "
+            + "WHERE (:categoryName IS NULL OR LOWER(cat.name) LIKE LOWER(CONCAT('%', :categoryName , '%'))) "
             + "AND (:keyword IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword , '%')) OR LOWER(m.indication) LIKE LOWER(CONCAT('%', :keyword , '%'))) "
             + "AND (:segmentationName IS NULL OR LOWER(seg.name) LIKE LOWER(CONCAT('%', :segmentationName , '%'))) "
             + "AND (:minPrice IS NULL OR m.priceMin >= :minPrice) "
