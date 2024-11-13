@@ -190,7 +190,10 @@
 
     $("#appointmentModal").modal("show");
     $('#appointmentDate').val("");
+    $('#appointmentDate').prop("disabled", true);
     $('#appointmentTime').val("");
+    $('#appointmentTime').prop("disabled", true);
+    $('#medicalAction').prop("disabled", true);
     $('#consultationFor').val("");
 
     if (medicalFacilityId) {
