@@ -234,7 +234,15 @@
               $('#appointmentTime').prop('disabled', false).datetimepicker({
                 format: 'H:i',
                 datepicker: false,
-                allowTimes: generateTimeSlots(availableSlots),
+                allowTimes: timeSlots,
+                onChangeDateTime: function (dp, $input) {
+                  let inputTime = $input.val();
+
+                  if (!timeSlots.includes(inputTime)) {
+                    let firstTime = timeSlots[0];
+                    $input.val(firstTime);
+                  }
+                }
               });
 
             } else {
