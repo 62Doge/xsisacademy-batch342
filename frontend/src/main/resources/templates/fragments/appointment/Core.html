@@ -32,6 +32,7 @@
   <script>
     let costumerMembers;
     let doctorScheduleDataResponse;
+    let doctorScheduleExceedDataResponse;
     const appointmentRequestData = {
       customerId: null,
       doctorOfficeId: null,
@@ -101,9 +102,26 @@
       });
     }
 
+    function getScheduleExceededData(doctorId) {
+      $.ajax({
+        type: "get",
+        url:
+          BE_BASE_URL +
+          "/patient/appointment/exceeded-date/" +
+          doctorId,
+        contentType: "application/json",
+        success: function (response) {
+          doctorScheduleExceedDataResponse = response.data;
+        },
+      });
+    }
+
     function generateTimeSlots(scheduleData) {
       let allTimeSlots = [];
       const now = new Date();
+      // simulation for dummy time
+      now.setHours(7, 0, 0);
+
       const currentHour = now.getHours();
       const currentMinutes = now.getMinutes();
 
@@ -138,6 +156,7 @@
 
       if (IS_USER_LOGGED) {
         getScheduleData(doctorId);
+        getScheduleExceededData(doctorId);
         renderMedicalFacilityDropdown(doctorId);
         // show appointment modal
         $("#appointmentModal").modal("show");
@@ -157,7 +176,6 @@
       facilityScheduleInput.prop('disabled', false);
 
       const selectedFacilitySchedule = doctorScheduleDataResponse.filter(facility => facility.medicalFacilityId === selectedFacilityId);
-
 
       const medicalActionDropdown = $("#medicalAction");
       medicalActionDropdown.html(
@@ -187,7 +205,8 @@
             const selectedDate = $input.val();
             const selectedDay = new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long' });
 
-            const availableSlots = selectedFacilitySchedule.filter(schedule => schedule.day === selectedDay);
+            let availableSlots = selectedFacilitySchedule.filter(schedule => schedule.day === selectedDay);
+            availableSlots = availableSlots.filter(schedule => !doctorScheduleExceedDataResponse.some(dos => dos.doctorOfficeScheduleId == schedule.id && dos.appointmentDate == selectedDate));
 
             // if (availableSlots.length > 0) {
             //   // $('#appointmentDateTime').datetimepicker({
