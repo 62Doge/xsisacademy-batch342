@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
 import com._a.backend.dtos.requests.AppointmentRequestDTO;
+import com._a.backend.dtos.responses.AppointmentCustomerDocterOfficeScheduleResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilityItemResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
@@ -147,5 +148,15 @@ public class AppointmentServiceImpl implements AppointmentService {
     List<AppointmentResponseDTO> appointmentResponseDTOs = appointments.stream().map(
         appointment -> modelMapper.map(appointment, AppointmentResponseDTO.class)).toList();
     return appointmentResponseDTOs;
+  }
+
+  @Override
+  public List<AppointmentCustomerDocterOfficeScheduleResponseDTO> getAllCustomerDoctorOfficeScheduleByUserId() {
+    Long userId = authService.getDetails().getId();
+    return appointmentRepository
+        .findAllByUserId(userId)
+        .stream()
+        .map(appointment -> new AppointmentCustomerDocterOfficeScheduleResponseDTO(appointment))
+        .toList();
   }
 }

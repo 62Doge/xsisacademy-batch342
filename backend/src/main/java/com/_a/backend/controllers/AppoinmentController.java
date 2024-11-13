@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
 import com._a.backend.dtos.requests.AppointmentRequestDTO;
+import com._a.backend.dtos.responses.AppointmentCustomerDocterOfficeScheduleResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
 import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
@@ -67,6 +68,13 @@ public class AppoinmentController {
       @RequestBody AppointmentRequestDTO requestDTO) {
 
     return new ResponseEntity<>(ApiResponse.success(201, appointmentService.create(requestDTO)), HttpStatus.CREATED);
+  }
+
+  @GetMapping({ "/members-doctor-office-schedule", "/members-doctor-office-schedule/" })
+  public ResponseEntity<ApiResponse<List<AppointmentCustomerDocterOfficeScheduleResponseDTO>>> getAllCustomerDoctorOfficeScheduleForCurrentUser() {
+
+    return new ResponseEntity<>(
+        ApiResponse.success(200, appointmentService.getAllCustomerDoctorOfficeScheduleByUserId()), HttpStatus.OK);
   }
 
 }

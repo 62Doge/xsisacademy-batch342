@@ -41,4 +41,15 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
 
         @Query(value = "SELECT * FROM t_appointment WHERE is_delete = false AND doctor_office_id = ?1 AND appointment_date > NOW()", nativeQuery = true)
         List<Appointment> findByOfficeId(Long id);
+
+        @Query("""
+                                  select a
+                                  from Appointment a
+                                  join a.customer c
+                                  join c.biodata b
+                                  join User u on u.biodataId = b.id
+                                  where a.isDelete=false
+                        and u.id = ?1
+                                          """)
+        List<Appointment> findAllByUserId(Long userId);
 }
