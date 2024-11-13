@@ -13,47 +13,48 @@ import com._a.backend.entities.Role;
 public interface RoleRepository extends JpaRepository<Role, Long> {
 
     @Query("""
-        SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END 
-        FROM Role r 
-        WHERE r.name = :name 
-        AND r.isDelete = FALSE
-        """)
+            SELECT CASE WHEN COUNT(r) > 0 THEN TRUE ELSE FALSE END
+            FROM Role r
+            WHERE r.name = :name
+            AND r.isDelete = FALSE
+            """)
     Boolean existsByName(@Param("name") String name);
 
     @Query("""
-        SELECT r 
-        FROM Role r 
-        WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :name, '%')) 
-        AND r.isDelete = FALSE
-        """)
-    Page<Role> findByNameContainingIgnoreCaseAndIsDeleteFalse(@Param("pageable") Pageable pageable, @Param("name") String name);
+            SELECT r
+            FROM Role r
+            WHERE LOWER(r.name) LIKE LOWER(CONCAT('%', :name, '%'))
+            AND r.isDelete = FALSE
+            """)
+    Page<Role> findByNameContainingIgnoreCaseAndIsDeleteFalse(@Param("pageable") Pageable pageable,
+            @Param("name") String name);
 
     @Query("""
-        SELECT r 
-        FROM Role r 
-        WHERE r.isDelete = FALSE
-        """)
+            SELECT r
+            FROM Role r
+            WHERE r.isDelete = FALSE
+            """)
     Page<Role> findAllByIsDeleteFalse(@Param("pageable") Pageable pageable);
 
     @Query("""
-        SELECT r 
-        FROM Role r 
-        WHERE r.isDelete = FALSE
-        """)
+            SELECT r
+            FROM Role r
+            WHERE r.isDelete = FALSE
+            """)
     List<Role> findAllByIsDeleteFalse();
 
     @Query("""
             select r
             from Role r
             where
-            (
+            ((
                 :searchText is null
                 or lower(r.name) like lower(concat('%', :searchText, '%'))
             )
             or (
                 :searchText is null
                 or lower(r.code) like lower(concat('%', :searchText, '%'))
-            )
+            ))
             and r.isDelete=false
             """)
     Page<Role> findAllWithSearch(

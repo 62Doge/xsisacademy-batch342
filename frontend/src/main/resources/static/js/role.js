@@ -215,15 +215,15 @@ function setAndShowSuccessModal(modalBody) {
   $("#successModal").modal("show");
 }
 
-$(document).on("input", ".save-role", function () {
-  const roleCodeFilled = $("#roleCode").val().trim() !== "";
-  const roleNameFilled = $("#roleName").val().trim() !== "";
+// $(document).on("input", ".save-role", function () {
+//   const roleCodeFilled = $("#roleCode").val().trim() !== "";
+//   const roleNameFilled = $("#roleName").val().trim() !== "";
 
-  if (roleCodeFilled && roleNameFilled) {
-    $("#saveRoleBtn").removeClass("disabled");
-    $("#updateRoleBtn").removeClass("disabled");
-  } else {
-    $("#saveRoleBtn").addClass("disabled");
-    $("#updateRoleBtn").removeClass("disabled");
-  }
-});
+//   if (roleCodeFilled && roleNameFilled) {
+//     $("#saveRoleBtn").removeClass("disabled");
+//     $("#updateRoleBtn").removeClass("disabled");
+//   } else {
+//     $("#saveRoleBtn").addClass("disabled");
+//     $("#updateRoleBtn").removeClass("disabled");
+//   }
+// });

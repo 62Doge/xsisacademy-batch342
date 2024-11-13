@@ -7,19 +7,23 @@
   <form id="roleForm">
       <div class="mb-3">
           <label for="roleName" class="form-label">Nama*</label>
-          <input type="text" class="form-control save-role" id="roleName" placeholder="Nama Role">
+          <input type="text" class="form-control save-role" id="addRoleName" placeholder="Nama Role">
+          <div id="addNameError" class="invalid-feedback"></div>
+
       </div>
       <div class="mb-1s">
           <label for="roleCode" class="form-label">Kode*</label>
-          <input type="text" class="form-control save-role" id="roleCode" placeholder="Kode Role">
+          <input type="text" class="form-control save-role" id="addRoleCode" placeholder="Kode Role">
+          <div id="addCodeError" class="invalid-feedback"></div>
+
       </div>
   </form>
   `,
       `
-  <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+  <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal" id="cancelSaveButton">
       Batal
   </button>
-  <button id="saveRoleBtn" type="button" class="btn btn-primary disabled">Simpan</button>
+  <button id="saveRoleBtn" type="button" class="btn btn-primary ">Simpan</button>
   `
     );
 
@@ -29,30 +33,52 @@
   $(document).on("click", "#saveRoleBtn", function (e) {
     e.preventDefault();
     const button = $(this);
+    const cancelButton = $("#cancelSaveButton");
+    // validation
+    const errors = {};
+    const roleCode = $("#addRoleCode").val().trim();
+    const roleName = $("#addRoleName").val().trim();
 
-    const roleCode = $("#roleCode");
-    const roleName = $("#roleName");
+    if (!roleName) {
+      errors["#addNameError"] = "Nama role tidak boleh kosong.";
+    }
+    if (!roleCode) {
+      errors["#addCodeError"] = "Kode role tidak boleh kosong.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      for (const [selector, message] of Object.entries(errors)) {
+        $(selector).text(message).show();
+
+        setTimeout(() => {
+          $(selector).hide();
+        }, 3000);
+      }
+      return;
+    }
+
     const dataJson = JSON.stringify({
-      name: roleName.val().trim(),
-      code: roleCode.val().trim(),
+      name: roleName,
+      code: roleCode,
     });
     button.addClass("disabled");
+    cancelButton.addClass("disabled");
     $.ajax({
       type: "post",
       url: ROLE_URL,
       data: dataJson,
       contentType: "application/json",
       success(response) {
-        roleCode.val("");
-        roleName.val("");
+        $("#addRoleCode").val("");
+        $("#addRoleName").val("");
         loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
         setAndShowSuccessModal("Berhasil menyimpan data!");
       },
       error() {
-        button.removeClass("disabled");
-
         $("#errorModal").modal("show");
       },
     });
+    button.removeClass("disabled");
+    cancelButton.removeClass("disabled");
   });
 </script>
