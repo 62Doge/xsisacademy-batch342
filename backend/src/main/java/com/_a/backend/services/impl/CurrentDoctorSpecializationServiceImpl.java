@@ -15,6 +15,7 @@ import com._a.backend.dtos.requests.CurrentDoctorSpecializationRequestDTO;
 import com._a.backend.dtos.responses.CurrentDoctorSpecializationResponseDTO;
 import com._a.backend.entities.CurrentDoctorSpecialization;
 import com._a.backend.repositories.CurrentDoctorSpecializationRepository;
+import com._a.backend.services.AuthService;
 import com._a.backend.services.Services;
 
 @Service
@@ -26,6 +27,9 @@ public class CurrentDoctorSpecializationServiceImpl
 
   @Autowired
   ModelMapper modelMapper;
+
+  @Autowired
+  AuthService authService;
 
   @Override
   public Page<CurrentDoctorSpecializationResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
@@ -76,22 +80,24 @@ public class CurrentDoctorSpecializationServiceImpl
   }
 
   @Override
-  public CurrentDoctorSpecializationResponseDTO save(
-      CurrentDoctorSpecializationRequestDTO currentDoctorSpecializationRequestDTO) {
-    CurrentDoctorSpecialization currentDoctorSpecialization = currentDoctorSpecializationRepository
-        .save(modelMapper.map(currentDoctorSpecializationRequestDTO, CurrentDoctorSpecialization.class));
-    CurrentDoctorSpecializationResponseDTO currentDoctorSpecializationResponseDTO = modelMapper.map(
-        currentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
+  public CurrentDoctorSpecializationResponseDTO save(CurrentDoctorSpecializationRequestDTO currentDoctorSpecializationRequestDTO) {
+    Long userId = authService.getDetails().getId();
+    CurrentDoctorSpecialization currentDoctorSpecialization = modelMapper.map(currentDoctorSpecializationRequestDTO, CurrentDoctorSpecialization.class);
+    currentDoctorSpecialization.setCreatedBy(userId);
+    currentDoctorSpecialization = currentDoctorSpecializationRepository.save(currentDoctorSpecialization);
+    CurrentDoctorSpecializationResponseDTO currentDoctorSpecializationResponseDTO = modelMapper.map(currentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
     return currentDoctorSpecializationResponseDTO;
   }
   
   @Override
   public CurrentDoctorSpecializationResponseDTO update(
       CurrentDoctorSpecializationRequestDTO currentDoctorSpecializationRequestDTO, Long id) {
+    Long userId = authService.getDetails().getId();
     Optional<CurrentDoctorSpecialization> optionalCurrentDoctorSpecialization = currentDoctorSpecializationRepository
         .findById(id);
     if (optionalCurrentDoctorSpecialization.isPresent()) {
       CurrentDoctorSpecialization currentDoctorSpecialization = optionalCurrentDoctorSpecialization.get();
+      currentDoctorSpecialization.setModifiedBy(userId);
       modelMapper.map(currentDoctorSpecializationRequestDTO, currentDoctorSpecialization);
       CurrentDoctorSpecialization updatedCurrentDoctorSpecialization = currentDoctorSpecializationRepository.save(currentDoctorSpecialization);
       return modelMapper.map(updatedCurrentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);

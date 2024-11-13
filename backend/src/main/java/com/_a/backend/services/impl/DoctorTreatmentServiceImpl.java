@@ -16,6 +16,7 @@ import com._a.backend.dtos.requests.DoctorTreatmentRequestDTO;
 import com._a.backend.dtos.responses.DoctorTreatmentResponseDTO;
 import com._a.backend.entities.DoctorTreatment;
 import com._a.backend.repositories.DoctorTreatmentRepository;
+import com._a.backend.services.AuthService;
 import com._a.backend.services.Services;
 
 @Service
@@ -26,6 +27,9 @@ public class DoctorTreatmentServiceImpl implements Services<DoctorTreatmentReque
 
   @Autowired
   private ModelMapper modelMapper;
+
+  @Autowired
+  AuthService authService;
 
   @Override
   public Page<DoctorTreatmentResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
@@ -67,8 +71,10 @@ public class DoctorTreatmentServiceImpl implements Services<DoctorTreatmentReque
 
   @Override
   public DoctorTreatmentResponseDTO save(DoctorTreatmentRequestDTO doctorTreatmentRequestDTO) {
-    DoctorTreatment doctorTreatment = doctorTreatmentRepository
-        .save(modelMapper.map(doctorTreatmentRequestDTO, DoctorTreatment.class));
+    Long userId = authService.getDetails().getId();
+    DoctorTreatment doctorTreatment = modelMapper.map(doctorTreatmentRequestDTO, DoctorTreatment.class);
+    doctorTreatment.setCreatedBy(userId);
+    doctorTreatment = doctorTreatmentRepository.save(doctorTreatment);
     DoctorTreatmentResponseDTO doctorTreatmentResponseDTO = modelMapper.map(doctorTreatment,
         DoctorTreatmentResponseDTO.class);
     return doctorTreatmentResponseDTO;
@@ -93,10 +99,12 @@ public class DoctorTreatmentServiceImpl implements Services<DoctorTreatmentReque
 
   // soft Delete
   public void softDeleteById(Long id) {
+    Long userId = authService.getDetails().getId();
     Optional<DoctorTreatment> optionalDoctorTreatment = doctorTreatmentRepository.findById(id);
     if (optionalDoctorTreatment.isPresent()) {
       DoctorTreatment doctorTreatment = optionalDoctorTreatment.get();
       doctorTreatment.setIsDelete(true);
+      doctorTreatment.setDeletedBy(userId);
       doctorTreatment.setDeletedOn(LocalDateTime.now());
       doctorTreatmentRepository.save(doctorTreatment);
     } else {
