@@ -31,6 +31,8 @@
     let doctorScheduleDataResponse;
     let globalSelectedFacilitySchedule;
     let doctorScheduleExceedDataResponse;
+    let globalUniqueDays;
+    let globalTimeSlots;
 
     function fetchCustomerMembers() {
       return new Promise((resolve, reject) => {
@@ -145,12 +147,13 @@
         let startTime = new Date(`2000-06-29T${schedule.timeScheduleStart}:00`);
         let endTime = new Date(`2000-06-29T${schedule.timeScheduleEnd}:00`);
         let timeSlots = [];
+        
 
         while (startTime < endTime) {
           const slotHour = startTime.getHours();
           const slotMinutes = startTime.getMinutes();
 
-          if (slotHour > currentHour || (slotHour === currentHour && slotMinutes > currentMinutes)) {
+          if (slotHour >= currentHour || (slotHour === currentHour && slotMinutes > currentMinutes)) {
             const formattedTime = startTime.toTimeString().slice(0, 5);
             timeSlots.push(formattedTime);
           }
@@ -206,6 +209,7 @@
 
     $(document).on("click", ".appointment-button", function (e) {
       e.preventDefault();
+      
       const button = $(this);
       const doctorId = button.data("doctor-id");
       const medicalFacilityId = button.data("medical-facility-id")||null;
@@ -242,7 +246,8 @@
         // schedule
         const daysAvailable = selectedFacilitySchedule.map(schedule => schedule.day);
         const uniqueDays = [...new Set(daysAvailable)];
-
+        globalUniqueDays = uniqueDays;
+        
         const today = new Date();
         const threeWeeksFromNow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 21);
         $("#appointmentDate").datetimepicker({
@@ -286,17 +291,18 @@
 
             if (availableSlots.length > 0) {
               const timeSlots = generateTimeSlots(availableSlots);
+              globalTimeSlots = timeSlots;
+              
 
               $('#appointmentTime').prop('disabled', false).datetimepicker({
                 format: 'H:i',
-                datepicker: false,
+                datepicker: false, 
                 allowTimes: timeSlots,
                 onChangeDateTime: function (dp, $input) {
                   let inputTime = $input.val();
 
-                  if (!timeSlots.includes(inputTime)) {
-                    let firstTime = timeSlots[0];
-                    $input.val(firstTime);
+                  if (inputTime.slice(3) !== '00' && inputTime.slice(3) !== '30') {
+                    $input.val(inputTime.slice(0,3)+'00');
                   }
                 }
               });
@@ -316,24 +322,84 @@
       }
     });
 
+    function isDateInRange(dateStr, daysList) {
+      const inputDate = new Date(dateStr);
+      const today = new Date();
+
+      const endDate = new Date(today);
+      endDate.setDate(today.getDate() + 21);
+
+      const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+      if (isNaN(inputDate)) {
+        return false;
+      }
+
+      for (let currentDate = new Date(today); currentDate <= endDate; currentDate.setDate(currentDate.getDate() + 1)) {
+        const currentDayName = dayNames[currentDate.getDay()];
+
+        if (daysList.includes(currentDayName) && inputDate.toDateString() === currentDate.toDateString()) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     $("#checkSchedule").click((e) => {
       e.preventDefault();
-      // logic to check when appointment date and doctor office schedule id is not exceeded
-      $("#checkScheduleModal").modal("show");
-      if (IS_USER_LOGGED) {
         // post create appointment request
+        const errors = {};
+        
+        const customerId = $('#consultationFor').val();
+        if (!customerId) {
+          errors['#consultationForError'] = 'Silakan pilih konsultasi yang diinginkan.';
+        }
+
+        const doctorOfficeId = $('#healthFacility').find('option:selected').data('doctor-office-id');
+        if (!doctorOfficeId) {
+          errors['#medicalFacilityError'] = 'Faskes tidak boleh kosong.';
+        }
+
+        const doctorOfficeTreatmentId = $('#medicalAction').val();
+        if (!doctorOfficeTreatmentId) {
+          errors['#medicalActionError'] = 'Input tindakan medis tidak boleh kosong.';
+        }
+
+        const appointmentDate = $('#appointmentDate').val();
+        
+        if (!appointmentDate) {
+          errors['#appointmentDateError'] = 'Tangal kedatangan tidak boleh kosong.';
+        }else if (!isDateInRange(appointmentDate, globalUniqueDays)) {
+          errors['#appointmentDateError'] = 'Tangal diluar jadwal dokter';
+        }
+
         let scheduleTime = $('#appointmentTime').val();
+        if (!scheduleTime) {
+          errors['#appointmentTimeError'] = 'Jam kedatangan tidak boleh kosong.';
+        }else if (!globalTimeSlots.includes(scheduleTime)) {
+          errors['#appointmentTimeError'] = 'Jam kedatangan diluar jadwal dokter.';
+        }
 
+        if (Object.keys(errors).length>0) {
+          for (const [selector, message] of Object.entries(errors)) {
+            $(selector).text(message).show();
+
+            setTimeout(()=>{
+              $(selector).hide();
+            }, 3000);
+          }
+          return;
+        }
+
+        
+        $("#checkScheduleModal").modal("show");
         const appointmentRequestData = {
-          customerId: $('#consultationFor').val(),
-          doctorOfficeId: $('#healthFacility').find('option:selected').data('doctor-office-id'),
+          customerId,
+          doctorOfficeId,
           doctorOfficeScheduleId: getDoctorOfficeScheduleIdByTime(globalSelectedFacilitySchedule, scheduleTime),
-          doctorOfficeTreatmentId: $('#medicalAction').val(),
-          appointmentDate: $('#appointmentDate').val(),
+          doctorOfficeTreatmentId,
+          appointmentDate,
         };
-
-        console.log(appointmentRequestData);
-
 
         // if success show success response
         $.ajax({
@@ -355,13 +421,7 @@
             }, 1000);
           },
         });
-      } else {
-        // show  is schedule exceeded
-        setTimeout(() => {
-          $("#checkScheduleModal").modal("hide");
-          $("#retryCreateAppointmenModal").modal("show");
-        }, 1500);
-      }
+
     });
 
     $('#selectAnotherSchedule').click(function (e) {

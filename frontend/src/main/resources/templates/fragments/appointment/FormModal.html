@@ -39,6 +39,7 @@
               >Konsultasi untuk *</label
             >
             <select id="consultationFor" class="form-select"></select>
+            <div id="consultationForError" class="invalid-feedback"></div>
           </div>
 
           <div class="mb-3">
@@ -46,6 +47,7 @@
               >Pilih Fasilitas Kesehatan *</label
             >
             <select id="healthFacility" class="form-select"></select>
+            <div id="medicalFacilityError" class="invalid-feedback"></div>
           </div>
 
           <div class="mb-0">
@@ -83,6 +85,7 @@
                 placeholder="Pilih Tanggal"
                 disabled
               />
+              <div id="appointmentDateError" class="invalid-feedback"></div>
             </div>
             <div class="col">
               <label for="appointmentTime" class="form-label">Waktu *</label>
@@ -93,6 +96,7 @@
                 placeholder="Pilih Waktu"
                 disabled
               />
+              <div id="appointmentTimeError" class="invalid-feedback"></div>
             </div>
           </div>
 
@@ -103,6 +107,7 @@
             <select id="medicalAction" class="form-select" disabled>
               <option value="" disabled selected>-- Pilih Tindakan --</option>
             </select>
+            <div id="medicalActionError" class="invalid-feedback"></div>
           </div>
 
           <div class="d-flex justify-content-end">
