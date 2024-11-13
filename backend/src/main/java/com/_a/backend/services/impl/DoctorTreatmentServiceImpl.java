@@ -29,7 +29,7 @@ public class DoctorTreatmentServiceImpl implements Services<DoctorTreatmentReque
   private ModelMapper modelMapper;
 
   @Autowired
-  AuthService authService;
+  private DumpAuthServiceImpl dumpAuthServiceImpl;
 
   @Override
   public Page<DoctorTreatmentResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
@@ -71,9 +71,8 @@ public class DoctorTreatmentServiceImpl implements Services<DoctorTreatmentReque
 
   @Override
   public DoctorTreatmentResponseDTO save(DoctorTreatmentRequestDTO doctorTreatmentRequestDTO) {
-    Long userId = authService.getDetails().getId();
     DoctorTreatment doctorTreatment = modelMapper.map(doctorTreatmentRequestDTO, DoctorTreatment.class);
-    doctorTreatment.setCreatedBy(userId);
+    doctorTreatment.setCreatedBy(dumpAuthServiceImpl.getDetails().getId());
     doctorTreatment = doctorTreatmentRepository.save(doctorTreatment);
     DoctorTreatmentResponseDTO doctorTreatmentResponseDTO = modelMapper.map(doctorTreatment,
         DoctorTreatmentResponseDTO.class);
@@ -99,12 +98,11 @@ public class DoctorTreatmentServiceImpl implements Services<DoctorTreatmentReque
 
   // soft Delete
   public void softDeleteById(Long id) {
-    Long userId = authService.getDetails().getId();
     Optional<DoctorTreatment> optionalDoctorTreatment = doctorTreatmentRepository.findById(id);
     if (optionalDoctorTreatment.isPresent()) {
       DoctorTreatment doctorTreatment = optionalDoctorTreatment.get();
       doctorTreatment.setIsDelete(true);
-      doctorTreatment.setDeletedBy(userId);
+      doctorTreatment.setDeletedBy(dumpAuthServiceImpl.getDetails().getId());
       doctorTreatment.setDeletedOn(LocalDateTime.now());
       doctorTreatmentRepository.save(doctorTreatment);
     } else {

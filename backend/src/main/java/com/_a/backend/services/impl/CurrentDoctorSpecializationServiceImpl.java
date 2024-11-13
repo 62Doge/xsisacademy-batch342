@@ -29,7 +29,7 @@ public class CurrentDoctorSpecializationServiceImpl
   ModelMapper modelMapper;
 
   @Autowired
-  AuthService authService;
+  private DumpAuthServiceImpl dumpAuthServiceImpl;
 
   @Override
   public Page<CurrentDoctorSpecializationResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
@@ -81,9 +81,8 @@ public class CurrentDoctorSpecializationServiceImpl
 
   @Override
   public CurrentDoctorSpecializationResponseDTO save(CurrentDoctorSpecializationRequestDTO currentDoctorSpecializationRequestDTO) {
-    Long userId = authService.getDetails().getId();
     CurrentDoctorSpecialization currentDoctorSpecialization = modelMapper.map(currentDoctorSpecializationRequestDTO, CurrentDoctorSpecialization.class);
-    currentDoctorSpecialization.setCreatedBy(userId);
+    currentDoctorSpecialization.setCreatedBy(dumpAuthServiceImpl.getDetails().getId());
     currentDoctorSpecialization = currentDoctorSpecializationRepository.save(currentDoctorSpecialization);
     CurrentDoctorSpecializationResponseDTO currentDoctorSpecializationResponseDTO = modelMapper.map(currentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
     return currentDoctorSpecializationResponseDTO;
@@ -92,12 +91,11 @@ public class CurrentDoctorSpecializationServiceImpl
   @Override
   public CurrentDoctorSpecializationResponseDTO update(
       CurrentDoctorSpecializationRequestDTO currentDoctorSpecializationRequestDTO, Long id) {
-    Long userId = authService.getDetails().getId();
     Optional<CurrentDoctorSpecialization> optionalCurrentDoctorSpecialization = currentDoctorSpecializationRepository
         .findById(id);
     if (optionalCurrentDoctorSpecialization.isPresent()) {
       CurrentDoctorSpecialization currentDoctorSpecialization = optionalCurrentDoctorSpecialization.get();
-      currentDoctorSpecialization.setModifiedBy(userId);
+      currentDoctorSpecialization.setModifiedBy(dumpAuthServiceImpl.getDetails().getId());
       modelMapper.map(currentDoctorSpecializationRequestDTO, currentDoctorSpecialization);
       CurrentDoctorSpecialization updatedCurrentDoctorSpecialization = currentDoctorSpecializationRepository.save(currentDoctorSpecialization);
       return modelMapper.map(updatedCurrentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
