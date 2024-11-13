@@ -1,4 +1,7 @@
 <th:block th:fragment="pageAbove">
+  <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css"> -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/jquery-datetimepicker@2.5.20/build/jquery.datetimepicker.min.css">
   <style>
     .modal-dialog-centered {
       display: flex;
@@ -12,17 +15,23 @@
       max-width: 600px;
     }
   </style>
+
+
   <th:block th:replace="~{fragments/appointment/FormModal}"></th:block>
-  <th:block
-    th:replace="~{fragments/Appointment/CheckScheduleLoader}"
-  ></th:block>
+  <th:block th:replace="~{fragments/Appointment/CheckScheduleLoader}"></th:block>
   <th:block th:replace="~{fragments/Appointment/RetryModal}"></th:block>
   <th:block th:replace="~{fragments/Appointment/SuccessModal}"></th:block>
 </th:block>
 
 <th:block th:fragment="pageBottom">
+  <!-- <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script> -->
+
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/jquery-datetimepicker@2.5.20/build/jquery.datetimepicker.full.min.js"></script>
   <script>
     let costumerMembers;
+    let doctorScheduleDataResponse;
     const appointmentRequestData = {
       customerId: null,
       doctorOfficeId: null,
@@ -43,9 +52,8 @@
 
         costumerMembers.customerMemberList.forEach((member) => {
           $("#consultationFor").append(`
-                    <option value="${member.customerId}">${
-            member.fullname + ", " + member.customerRelationName
-          }</option>
+                    <option value="${member.customerId}">${member.fullname + ", " + member.customerRelationName
+            }</option>
                     `);
         });
       },
@@ -79,26 +87,69 @@
       });
     }
 
+    function getScheduleData(doctorId) {
+      $.ajax({
+        type: "get",
+        url:
+          BE_BASE_URL +
+          "/patient/appointment/doctor-office-schedule/" +
+          doctorId,
+        contentType: "application/json",
+        success: function (response) {
+          doctorScheduleDataResponse = response.data;
+        },
+      });
+    }
+
+    function generateTimeSlots(scheduleData) {
+      let allTimeSlots = [];
+
+      for (let schedule of scheduleData) {
+        let startTime = new Date(`1970-01-01T${schedule.timeScheduleStart}:00`);
+        let endTime = new Date(`1970-01-01T${schedule.timeScheduleEnd}:00`);
+        let timeSlots = [];
+
+        while (startTime < endTime) {
+          const formattedTime = startTime.toTimeString().slice(0, 5);
+          timeSlots.push(formattedTime);
+
+          startTime = new Date(startTime.getTime() + 30 * 60000);
+        }
+
+        allTimeSlots = allTimeSlots.concat(timeSlots);
+      }
+
+      allTimeSlots.sort();
+      return allTimeSlots;
+    }
+
     $(document).on("click", ".appointment-button", function (e) {
       e.preventDefault();
       const button = $(this);
       const doctorId = button.data("doctor-id");
 
       if (IS_USER_LOGGED) {
-        // show appointment modal
+        getScheduleData(doctorId);
         renderMedicalFacilityDropdown(doctorId);
+        // show appointment modal
         $("#appointmentModal").modal("show");
       } else {
         $(".show-login-button").trigger("click");
       }
     });
-
+    // when medical facility change
     $("#healthFacility").change(function (e) {
       e.preventDefault();
       const selectedFacilityId = parseInt($(this).val());
       const selectedFacility = medicalFacilities.find(
         (facility) => facility.id === selectedFacilityId
       );
+
+      const facilityScheduleInput = $('#appointmentDate');
+      facilityScheduleInput.prop('disabled', false);
+
+      const selectedFacilitySchedule = doctorScheduleDataResponse.filter(facility => facility.medicalFacilityId === selectedFacilityId);
+
 
       const medicalActionDropdown = $("#medicalAction");
       medicalActionDropdown.html(
@@ -107,6 +158,65 @@
       medicalActionDropdown.prop("disabled", false);
 
       if (selectedFacility) {
+        // schedule
+        const daysAvailable = selectedFacilitySchedule.map(schedule => schedule.day);
+        const uniqueDays = [...new Set(daysAvailable)];
+
+        const today = new Date();
+        const threeWeeksFromNow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 21);
+        $("#appointmentDate").datetimepicker({
+          format: 'Y-m-d',
+          minDate: today,
+          maxDate: threeWeeksFromNow,
+          value: null,
+          timepicker: false,
+          // autoclose: false,
+          beforeShowDay: function (date) {
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+            return [uniqueDays.includes(dayName)];
+          },
+          onChangeDateTime: function (dp, $input) {
+            const selectedDate = $input.val();
+            const selectedDay = new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long' });
+
+            const availableSlots = selectedFacilitySchedule.filter(schedule => schedule.day === selectedDay);
+
+            // if (availableSlots.length > 0) {
+            //   // $('#appointmentDateTime').datetimepicker({
+            //   //   format: 'Y-m-d H:i',
+            //   //   allowTimes: generateTimeSlots(availableSlots),
+
+            //   //   minDate: today,
+            //   //   maxDate: threeWeeksFromNow,
+            //   //   autoclose: false,
+            //   //   value: null,
+            //   //   beforeShowDay: function(date) {
+            //   //       const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+            //   //       return [uniqueDays.includes(dayName)];
+            //   //   },
+            //   // });
+
+            //   const timeSlots = generateTimeSlots(availableSlots);
+
+            //   $('#appointmentDateTime').datetimepicker('setOptions', { allowTimes: timeSlots });
+            // }
+
+            if (availableSlots.length > 0) {
+              const timeSlots = generateTimeSlots(availableSlots);
+
+              $('#appointmentTime').prop('disabled', false).datetimepicker({
+                format: 'H:i',
+                datepicker: false,
+                allowTimes: generateTimeSlots(availableSlots),
+              });
+
+            } else {
+              $('#appointmentTime').prop('disabled', true).empty();
+            }
+          }
+        });
+
+        // treatment
         selectedFacility.officeTreatments.forEach((treatment) => {
           medicalActionDropdown.append(
             `<option value="${treatment.id}">${treatment.treatmentName}</option>`
