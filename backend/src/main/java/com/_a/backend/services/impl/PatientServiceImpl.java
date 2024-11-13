@@ -19,7 +19,6 @@ import com._a.backend.entities.CustomerMember;
 import com._a.backend.repositories.BiodataRepository;
 import com._a.backend.repositories.CustomerMemberRepository;
 import com._a.backend.repositories.CustomerRepository;
-import com._a.backend.services.AuthService;
 import com._a.backend.services.PatientService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -37,7 +36,7 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
     CustomerMemberRepository customerMemberRepository;
 
     @Autowired
-    AuthService authService;
+    DumpAuthServiceImpl dumpAuthServiceImpl;
 
     @Autowired
     ModelMapper modelMapper;
@@ -120,6 +119,7 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
     public PatientResponseDTO save(Long parentBiodataId, PatientRequestDTO patientRequestDTO) {
         Biodata biodata = new Biodata();
         biodata.setFullname(patientRequestDTO.getFullName());
+        biodata.setCreatedBy(dumpAuthServiceImpl.getDetails().getId());
         Biodata savedBiodata = biodataRepository.save(biodata);
 
         Customer customer = new Customer();
@@ -139,6 +139,7 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         } else if ("AB".equals(patientBlood)) {
             customer.setBloodGroupId(4L);
         }
+        customer.setCreatedBy(dumpAuthServiceImpl.getDetails().getId());
         Customer savedCustomer = customerRepository.save(customer);
 
         CustomerMember customerMember = new CustomerMember();
@@ -154,6 +155,7 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         } else if ("Anak".equals(patientRelation)) {
             customerMember.setCustomerRelationId(4L);
         }
+        customerMember.setCreatedBy(dumpAuthServiceImpl.getDetails().getId());
         CustomerMember savedCustomerMember = customerMemberRepository.save(customerMember);
         patientRequestDTO.setId(savedCustomerMember.getId());
         patientRequestDTO.setParentBiodataId(parentBiodataId);
@@ -213,6 +215,9 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
             existingCustomerMember.setCustomerRelationId(4L);
         }
 
+        existingBiodata.setModifiedBy(dumpAuthServiceImpl.getDetails().getId());
+        existingCustomer.setModifiedBy(dumpAuthServiceImpl.getDetails().getId());
+        existingCustomerMember.setModifiedBy(dumpAuthServiceImpl.getDetails().getId());
         biodataRepository.save(existingBiodata);
         customerRepository.save(existingCustomer);
         CustomerMember updatedCustomerMember = customerMemberRepository.save(existingCustomerMember);

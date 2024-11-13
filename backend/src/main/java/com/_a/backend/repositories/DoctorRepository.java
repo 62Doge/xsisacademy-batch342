@@ -55,13 +55,12 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
                   "WHERE doctor_id = :doctor_id", nativeQuery = true)
   List<DoctorDetailsEducationProjectionDto> getEducation(@Param("doctor_id") Long doctorId);
 
-  @Query(value = "SELECT mmf.name as name, city.name as location, tdo.specialization, tdo.start_date, tdo.end_date " +
-                  "FROM m_doctor md " +
-                  "JOIN t_doctor_office tdo on tdo.doctor_id = md.id " +
-                  "JOIN m_medical_facility mmf on mmf.id = tdo.medical_facility_id " +
-                  "JOIN m_location subdistrict ON subdistrict.id = mmf.location_id " +
-                  "LEFT JOIN m_location city ON subdistrict.parent_id = city.id " +
-                  "WHERE md.id = :doctor_id", nativeQuery = true)
+  @Query(value = "SELECT mmf.name as name, city.name as location, tdo.specialization, tdo.start_date, tdo.end_date " + 
+                  "FROM t_doctor_office tdo " + 
+                  "JOIN m_medical_facility mmf ON tdo.medical_facility_id = mmf.id " + 
+                  "JOIN m_location subdistrict ON subdistrict.id = mmf.location_id " + 
+                  "LEFT join m_location city ON subdistrict.parent_id = city.id " + 
+                  "WHERE tdo.doctor_id = :doctor_id", nativeQuery = true)
   List<DoctorDetailsOfficeHistoryProjectionDto> getOfficeHistory(@Param("doctor_id") Long doctorId);
 
   @Query(value = "SELECT mmfs.day, mmfs.time_schedule_start as start_time, mmfs.time_schedule_end as end_time " + 

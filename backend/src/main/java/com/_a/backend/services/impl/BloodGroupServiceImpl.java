@@ -24,6 +24,9 @@ public class BloodGroupServiceImpl implements Services<BloodGroupRequestDTO, Blo
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    DumpAuthServiceImpl dumpAuthServiceImpl;
+
     @Override
     public Page<BloodGroupResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
         throw new UnsupportedOperationException("Unimplemented method 'getAll'");
@@ -57,8 +60,11 @@ public class BloodGroupServiceImpl implements Services<BloodGroupRequestDTO, Blo
 
     @Override
     public BloodGroupResponseDTO save(BloodGroupRequestDTO bloodGroupRequestDTO) {
-        BloodGroup bloodGroup = bloodGroupRepository.save(modelMapper.map(bloodGroupRequestDTO, BloodGroup.class));
-        BloodGroupResponseDTO bloodGroupResponseDTO = modelMapper.map(bloodGroup, BloodGroupResponseDTO.class);
+        BloodGroup bloodGroup = new BloodGroup();
+        modelMapper.map(bloodGroupRequestDTO, bloodGroup);
+        bloodGroup.setCreatedBy(dumpAuthServiceImpl.getDetails().getId());
+        BloodGroup savedBloodGroup = bloodGroupRepository.save(bloodGroup);
+        BloodGroupResponseDTO bloodGroupResponseDTO = modelMapper.map(savedBloodGroup, BloodGroupResponseDTO.class);
         return bloodGroupResponseDTO;
     }
 
@@ -68,6 +74,7 @@ public class BloodGroupServiceImpl implements Services<BloodGroupRequestDTO, Blo
         if (optionalBloodGroup.isPresent()) {
             BloodGroup bloodGroup = optionalBloodGroup.get();
             modelMapper.map(bloodGroupRequestDTO, bloodGroup);
+            bloodGroup.setModifiedBy(dumpAuthServiceImpl.getDetails().getId());
             BloodGroup updatedBloodGroup = bloodGroupRepository.save(bloodGroup);
             return modelMapper.map(updatedBloodGroup, BloodGroupResponseDTO.class);
         }
@@ -85,6 +92,7 @@ public class BloodGroupServiceImpl implements Services<BloodGroupRequestDTO, Blo
             BloodGroup bloodGroup = optionalBloodGroup.get();
             bloodGroup.setIsDelete(true);
             bloodGroup.setDeletedOn(LocalDateTime.now());
+            bloodGroup.setDeletedBy(dumpAuthServiceImpl.getDetails().getId());
             bloodGroupRepository.save(bloodGroup);
         } else {
             throw new RuntimeException("Blood group not found");

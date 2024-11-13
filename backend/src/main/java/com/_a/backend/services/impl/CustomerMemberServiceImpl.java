@@ -22,10 +22,13 @@ import com._a.backend.services.Services;
 public class CustomerMemberServiceImpl implements Services<CustomerMemberRequestDTO, CustomerMemberResponseDTO> {
 
     @Autowired
-    private CustomerMemberRepository customerMemberRepository;
+    CustomerMemberRepository customerMemberRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    DumpAuthServiceImpl dumpAuthServiceImpl;
+
+    @Autowired
+    ModelMapper modelMapper;
 
     @Override
     public Page<CustomerMemberResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
@@ -88,6 +91,7 @@ public class CustomerMemberServiceImpl implements Services<CustomerMemberRequest
             CustomerMember customerMember = optionalCustomerMember.get();
             customerMember.setIsDelete(true);
             customerMember.setDeletedOn(LocalDateTime.now());
+            customerMember.setDeletedBy(dumpAuthServiceImpl.getDetails().getId());
             customerMemberRepository.save(customerMember);
         } else {
             throw new RuntimeException("Customer Member not found");

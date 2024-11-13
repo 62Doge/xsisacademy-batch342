@@ -22,16 +22,18 @@ import com._a.backend.services.Services;
 public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO> {
 
     @Autowired
-    private BankRepository bankRepository;
+    BankRepository bankRepository;
 
     @Autowired
-    private ModelMapper modelMapper;
+    ModelMapper modelMapper;
+
+    @Autowired
+    DumpAuthServiceImpl dumpAuthServiceImpl;
 
     @Override
     public Page<BankResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
         Sort sort = Sort.by(sortBy);
         sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
-
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Bank> banks = bankRepository.findAllByIsDeleteFalse(pageable);
         Page<BankResponseDTO> bankResponseDTOs = banks
@@ -86,8 +88,11 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
 
     @Override
     public BankResponseDTO save(BankRequestDTO bankRequestDTO) {
-        Bank bank = bankRepository.save(modelMapper.map(bankRequestDTO, Bank.class));
-        BankResponseDTO bankResponseDTO = modelMapper.map(bank, BankResponseDTO.class);
+        Bank bank = new Bank();
+        modelMapper.map(bankRequestDTO, bank);
+        bank.setCreatedBy(dumpAuthServiceImpl.getDetails().getId());
+        Bank savedBank = bankRepository.save(bank);
+        BankResponseDTO bankResponseDTO = modelMapper.map(savedBank, BankResponseDTO.class);
         return bankResponseDTO;
     }
 
@@ -97,6 +102,7 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
         if (optionalBank.isPresent()) {
             Bank bank = optionalBank.get();
             modelMapper.map(bankRequestDTO, bank);
+            bank.setModifiedBy(dumpAuthServiceImpl.getDetails().getId());
             Bank updatedBank = bankRepository.save(bank);
             return modelMapper.map(updatedBank, BankResponseDTO.class);
         }
@@ -114,6 +120,7 @@ public class BankServiceImpl implements Services<BankRequestDTO, BankResponseDTO
             Bank bank = optionalBank.get();
             bank.setIsDelete(true);
             bank.setDeletedOn(LocalDateTime.now());
+            bank.setDeletedBy(dumpAuthServiceImpl.getDetails().getId());
             bankRepository.save(bank);
         } else {
             throw new RuntimeException("Bank not found");
