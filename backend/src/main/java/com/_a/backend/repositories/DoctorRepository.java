@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com._a.backend.dtos.projections.DoctorDetailsEducationProjectionDto;
 import com._a.backend.dtos.projections.DoctorDetailsHeaderProjectionDto;
+import com._a.backend.dtos.projections.DoctorDetailsImageProjectionDto;
 import com._a.backend.dtos.projections.DoctorDetailsOfficeHistoryProjectionDto;
 import com._a.backend.dtos.projections.DoctorDetailsOfficeLocationProjectionDto;
 import com._a.backend.dtos.projections.DoctorDetailsPriceStartProjectionDto;
@@ -93,5 +94,11 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
                   "LEFT JOIN m_location city ON subdistrict.parent_id = city.id " +
                   "WHERE md.id = :doctor_id AND tdo.end_date IS NULL", nativeQuery = true)
   List<DoctorDetailsOfficeLocationProjectionDto> getOfficeLocation(@Param("doctor_id") Long doctorId);
+
+  @Query(value = "SELECT mb.image_path as image " +
+                  "FROM m_doctor md " + 
+                  "JOIN m_biodata mb ON md.biodata_id = mb.id " + 
+                  "WHERE md.id = :doctor_id", nativeQuery = true)
+  DoctorDetailsImageProjectionDto getImage(@Param("doctor_id") Long doctorId);
 
 }

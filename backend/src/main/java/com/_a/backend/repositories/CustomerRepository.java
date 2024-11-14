@@ -19,4 +19,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
       and u.id = ?1
       """)
   Optional<Customer> findByUserId(Long userId);
+
 }

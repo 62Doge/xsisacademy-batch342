@@ -77,6 +77,19 @@ public class BloodGroupController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/code/{query}")
+    public ResponseEntity<?> getCodeByQuery(@PathVariable String query) {
+        try {
+            List<BloodGroupResponseDTO> responseDTOs = bloodGroupService.findByCode(query);
+            ApiResponse<List<BloodGroupResponseDTO>> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), responseDTOs);
+                return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        } catch (Exception e) {
+            ApiResponse<List<BloodGroupResponseDTO>> errorResponse = new ApiResponse<List<BloodGroupResponseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     
     @PostMapping("")
     public ResponseEntity<?> createBloodGroup(@Valid @RequestBody BloodGroupRequestDTO bloodGroupRequestDTO) {
