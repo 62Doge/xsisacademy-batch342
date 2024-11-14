@@ -1,122 +1,122 @@
 let doctorId;
 
 window.onload = function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    doctorId = urlParams.get('doctorId');
-    
-    if (doctorId) {
-        doctorId = parseInt(doctorId, 10);
-    } else {
-        console.error("No doctorId provided in URL parameters.");
-    }
+  const urlParams = new URLSearchParams(window.location.search);
+  doctorId = urlParams.get('doctorId');
 
-$(document).ready(async function () {
+  if (doctorId) {
+    doctorId = parseInt(doctorId, 10);
+  } else {
+    console.error("No doctorId provided in URL parameters.");
+  }
+
+  $(document).ready(async function () {
     await loadHeader(doctorId);
     await loadTreatment(doctorId);
     await loadEducation(doctorId);
     await loadOfficeHistory(doctorId);
     await loadOfficeLocation(doctorId);
-})
+  })
 
-function loadHeader(doctorId) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      type: "get",
-      url: `http://localhost:9001/api/doctor/details/header/${doctorId}`,
-      contentType: "application/json",
-      success: function (response) {
-        // console.log(response);
-        let headerData = response.data;
-        let doctorName = headerData.name;
-        let doctorSpecialization = headerData.specialization;
-        let doctorYOE = headerData.yearOfExperience;
-        $("#doctorNameHeader").html(doctorName);
-        $("#thisDoctorBreadcrumb").html(doctorName);
-        $("#specializationHeader").html(doctorSpecialization);
-        $("#experienceHeader").html(doctorYOE);
-        resolve();
-      },
-      error: function (error) {
-        console.error(error);
-        reject();
-      },
+  function loadHeader(doctorId) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: "get",
+        url: `http://localhost:9001/api/doctor/details/header/${doctorId}`,
+        contentType: "application/json",
+        success: function (response) {
+          // console.log(response);
+          let headerData = response.data;
+          let doctorName = headerData.name;
+          let doctorSpecialization = headerData.specialization;
+          let doctorYOE = headerData.yearOfExperience;
+          $("#doctorNameHeader").html(doctorName);
+          $("#thisDoctorBreadcrumb").html(doctorName);
+          $("#specializationHeader").html(doctorSpecialization);
+          $("#experienceHeader").html(doctorYOE);
+          resolve();
+        },
+        error: function (error) {
+          console.error(error);
+          reject();
+        },
+      });
     });
-  });
-}
+  }
 
-function loadTreatment(doctorId) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      type: "get",
-      url: `http://localhost:9001/api/doctor/details/treatment/${doctorId}`,
-      contentType: "application/json",
-      success: function (response) {
-        // console.log(response);
-        let treatmentData = response.data;
-        let treatments = treatmentData.treatments;
-        treatments.forEach((treatment) => {
-          $("#treatmentList").append(`
+  function loadTreatment(doctorId) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: "get",
+        url: `http://localhost:9001/api/doctor/details/treatment/${doctorId}`,
+        contentType: "application/json",
+        success: function (response) {
+          // console.log(response);
+          let treatmentData = response.data;
+          let treatments = treatmentData.treatments;
+          treatments.forEach((treatment) => {
+            $("#treatmentList").append(`
                         <li>${treatment}</li>
                     `);
-        });
-        resolve();
-      },
-      error: function (error) {
-        console.error(error);
-        reject();
-      },
+          });
+          resolve();
+        },
+        error: function (error) {
+          console.error(error);
+          reject();
+        },
+      });
     });
-  });
-}
+  }
 
-function loadEducation(doctorId) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      type: "get",
-      url: `http://localhost:9001/api/doctor/details/education/${doctorId}`,
-      contentType: "application/json",
-      success: function (response) {
-        // console.log(response);
-        let educationData = response.data;
-        let educations = educationData.education;
-        educations.forEach((education) => {
-          $("#educationList").append(`
+  function loadEducation(doctorId) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: "get",
+        url: `http://localhost:9001/api/doctor/details/education/${doctorId}`,
+        contentType: "application/json",
+        success: function (response) {
+          // console.log(response);
+          let educationData = response.data;
+          let educations = educationData.education;
+          educations.forEach((education) => {
+            $("#educationList").append(`
                         <li>
                             <strong>${education.name}</strong><br>
                             ${education.major} (${education.year})<br>
                         </li>
                     `);
-        });
-        resolve();
-      },
-      error: function (error) {
-        console.error(error);
-        reject();
-      },
+          });
+          resolve();
+        },
+        error: function (error) {
+          console.error(error);
+          reject();
+        },
+      });
     });
-  });
-}
+  }
 
-function loadOfficeHistory(doctorId) {
-  return new Promise((resolve, reject) => {
-    $.ajax({
-      type: "get",
-      url: `http://localhost:9001/api/doctor/details/office-history/${doctorId}`,
-      contentType: "application/json",
-      success: function (response) {
-        // console.log(response);
-        let officeHistoryData = response.data;
-        let officeHistories = officeHistoryData.officeHistory;
-        officeHistories.forEach((officeHistory) => {
-          let today = new Date();
-          let startYear = new Date(officeHistory.startDate).getFullYear();
-          let endYear;
-          if (officeHistory.endDate === null) {
-            endYear = "sekarang";
-          } else {
-            endYear = new Date(officeHistory.endDate).getFullYear();
-          }
-          $("#officeHistoryList").append(`
+  function loadOfficeHistory(doctorId) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: "get",
+        url: `http://localhost:9001/api/doctor/details/office-history/${doctorId}`,
+        contentType: "application/json",
+        success: function (response) {
+          // console.log(response);
+          let officeHistoryData = response.data;
+          let officeHistories = officeHistoryData.officeHistory;
+          officeHistories.forEach((officeHistory) => {
+            let today = new Date();
+            let startYear = new Date(officeHistory.startDate).getFullYear();
+            let endYear;
+            if (officeHistory.endDate === null) {
+              endYear = "sekarang";
+            } else {
+              endYear = new Date(officeHistory.endDate).getFullYear();
+            }
+            $("#officeHistoryList").append(`
                         <li>
                             <strong>${officeHistory.name}</strong><br>
                             ${officeHistory.location}<br>
@@ -124,49 +124,49 @@ function loadOfficeHistory(doctorId) {
                             ${startYear} — ${endYear}
                         </li>
                     `);
-        });
-        resolve();
-      },
-      error: function (error) {
-        console.error(error);
-        reject();
-      },
+          });
+          resolve();
+        },
+        error: function (error) {
+          console.error(error);
+          reject();
+        },
+      });
     });
-  });
-}
+  }
 
-function loadOfficeLocation(doctorId) {
+  function loadOfficeLocation(doctorId) {
     return new Promise((resolve, reject) => {
-        $.ajax({
-            type: "get",
-            url: `http://localhost:9001/api/doctor/details/office-location/${doctorId}`,
-            contentType: "application/json",
-            success: function (response) {
-                let officeLocationData = response.data;
-                let officeLocations = officeLocationData.officeLocation;
-                let count = 1;
-                officeLocations.forEach(officeLocation => {
-                    let medicalFacilityId = officeLocation.medicalFacilityId;
-                    let price = 0;
-                    let scheduleList = ``;
-                    let accordionName = "accordion" + count;
-                    $.ajax({
-                        type: "get",
-                        url: `http://localhost:9001/api/doctor/details/office-location/price-start/${medicalFacilityId}/${doctorId}`,
-                        contentType: "application/json",
-                        success: function (response) {
-                            let priceData = response.data.priceStart;
-                            price += priceData;
-                            $.ajax({
-                                type: "get",
-                                url: `http://localhost:9001/api/doctor/details/office-location/schedule/${medicalFacilityId}/${doctorId}`,
-                                contentType: "application/json",
-                                success: function (response) {
-                                    let schedules = response.data.schedules;
-                                    schedules.forEach(schedule => {
-                                        scheduleList += `<li>${schedule.day}: ${schedule.startTime} - ${schedule.endTime}</li>`
-                                    });
-                                    $('#officeLocationList').append(`
+      $.ajax({
+        type: "get",
+        url: `http://localhost:9001/api/doctor/details/office-location/${doctorId}`,
+        contentType: "application/json",
+        success: function (response) {
+          let officeLocationData = response.data;
+          let officeLocations = officeLocationData.officeLocation;
+          let count = 1;
+          officeLocations.forEach(officeLocation => {
+            let medicalFacilityId = officeLocation.medicalFacilityId;
+            let price = 0;
+            let scheduleList = ``;
+            let accordionName = "accordion" + count;
+            $.ajax({
+              type: "get",
+              url: `http://localhost:9001/api/doctor/details/office-location/price-start/${medicalFacilityId}/${doctorId}`,
+              contentType: "application/json",
+              success: function (response) {
+                let priceData = response.data.priceStart;
+                price += priceData;
+                $.ajax({
+                  type: "get",
+                  url: `http://localhost:9001/api/doctor/details/office-location/schedule/${medicalFacilityId}/${doctorId}`,
+                  contentType: "application/json",
+                  success: function (response) {
+                    let schedules = response.data.schedules;
+                    schedules.forEach(schedule => {
+                      scheduleList += `<li>${schedule.day}: ${schedule.startTime} - ${schedule.endTime}</li>`
+                    });
+                    $('#officeLocationList').append(`
                                         <div>
                                             <div class="d-flex flex-row p-4">
                                                 <div class="w-100">
@@ -203,19 +203,20 @@ function loadOfficeLocation(doctorId) {
                                             </div>
                                         </div>
                                     `);
-                },
-              });
-            },
-          });
+                  },
+                });
+              },
+            });
 
-          count++;
-        });
-        resolve();
-      },
-      error: function (error) {
-        console.error(error);
-        reject();
-      },
+            count++;
+          });
+          resolve();
+        },
+        error: function (error) {
+          console.error(error);
+          reject();
+        },
+      });
     });
-  });
+  }
 }
