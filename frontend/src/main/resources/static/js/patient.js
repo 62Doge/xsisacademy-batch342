@@ -359,7 +359,7 @@ function openAddForm() {
             `);
             await loadBloodGroups();
             $('#savePatientButton').on('click', function () {
-                let isFormValid = false;
+                let isFormValid = true;
                 let nameField = $('#addPatientName').val();
                 let birthdayField = $('#addPatientBirthday').val();
                 let genderField = $("input[name='addPatientGender']").is(":checked");
@@ -380,7 +380,6 @@ function openAddForm() {
                 }
 
                 let userBirthday = new Date(birthdayField);
-                console.log(userBirthday);
                 let today = new Date();
                 today.setHours(0, 0, 0, 0);
                 if (userBirthday > today) {
