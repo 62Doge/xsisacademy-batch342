@@ -84,6 +84,10 @@ public class BloodGroupController {
             ApiResponse<BloodGroupResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Blood Group already exists", null);
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
         }
+        if (bloodGroupRequestDTO.getCode().length() > 5) {
+            ApiResponse<BloodGroupResponseDTO> characterLimitResponse = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Code input exceed character limit of 5", null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(characterLimitResponse);
+        }
         try {
             BloodGroupResponseDTO bloodGroupResponseDTOSaved = bloodGroupService.save(bloodGroupRequestDTO);
             ApiResponse<BloodGroupResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), bloodGroupResponseDTOSaved);
@@ -102,6 +106,10 @@ public class BloodGroupController {
             if (bloodGroupResponseDTO.isEmpty()) {
                 ApiResponse<BloodGroupResponseDTO> notFoundResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Blood Group not found", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
+            }
+            if (bloodGroupRequestDTO.getCode().length() > 5) {
+                ApiResponse<BloodGroupResponseDTO> characterLimitResponse = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Code input exceed character limit of 5", null);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(characterLimitResponse);
             }
             Optional<BloodGroup> existingBloodGroupCode = bloodGroupRepository.findByCodeIgnoreCaseAndIsDeleteFalse(bloodGroupRequestDTO.getCode());
             if (existingBloodGroupCode.isPresent() && !existingBloodGroupCode.get().getId().equals(id)) {

@@ -87,6 +87,8 @@ function addBloodGroup() {
             let errorMessage = error.responseJSON.message;
             if (errorMessage == "Blood Group already exists") {
                 $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Kode sudah digunakan. Silakan gunakan kode lain.</div>`);
+            } else if (errorMessage == "Code input exceed character limit of 5") {
+                $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Input kode melebihi batas karakter maksimum 5.</div>`);
             } else {
                 $('#addFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menyimpan Golongan Darah</div>`);
             }
@@ -165,6 +167,8 @@ function editBloodGroup(id) {
             let errorMessage = error.responseJSON.message;
             if (errorMessage == "Blood Group not found") {
                 $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Golongan darah tidak dapat ditemukan</div>`);
+            } else if (errorMessage == "Code input exceed character limit of 5") {
+                $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Input kode melebihi batas karakter maksimum 5.</div>`);
             } else if (errorMessage == "Blood Group already exists") {
                 $('#editFormValidation').html(`<div class="alert alert-danger" role="alert">Kode sudah digunakan. Silakan gunakan kode lain.</div>`);
             } else {

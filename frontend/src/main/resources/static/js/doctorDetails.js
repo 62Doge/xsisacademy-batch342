@@ -56,8 +56,8 @@ window.onload = function () {
           let treatments = treatmentData.treatments;
           treatments.forEach((treatment) => {
             $("#treatmentList").append(`
-                        <li>${treatment}</li>
-                    `);
+              <li>${treatment}</li>
+            `);
           });
           resolve();
         },
@@ -81,11 +81,11 @@ window.onload = function () {
           let educations = educationData.education;
           educations.forEach((education) => {
             $("#educationList").append(`
-                        <li>
-                            <strong>${education.name}</strong><br>
-                            ${education.major} (${education.year})<br>
-                        </li>
-                    `);
+              <li>
+                <strong>${education.name}</strong><br>
+                ${education.major} (${education.year})<br>
+              </li>
+            `);
           });
           resolve();
         },
@@ -117,13 +117,13 @@ window.onload = function () {
               endYear = new Date(officeHistory.endDate).getFullYear();
             }
             $("#officeHistoryList").append(`
-                        <li>
-                            <strong>${officeHistory.name}</strong><br>
-                            ${officeHistory.location}<br>
-                            ${officeHistory.specialization}<br>
-                            ${startYear} — ${endYear}
-                        </li>
-                    `);
+              <li>
+                <strong>${officeHistory.name}</strong><br>
+                ${officeHistory.location}<br>
+                ${officeHistory.specialization}<br>
+                ${startYear} — ${endYear}
+              </li>
+            `);
           });
           resolve();
         },
@@ -157,6 +157,7 @@ window.onload = function () {
               success: function (response) {
                 let priceData = response.data.priceStart;
                 price += priceData;
+                price = new Intl.NumberFormat('id-ID').format(price);
                 $.ajax({
                   type: "get",
                   url: `http://localhost:9001/api/doctor/details/office-location/schedule/${medicalFacilityId}/${doctorId}`,
@@ -167,42 +168,42 @@ window.onload = function () {
                       scheduleList += `<li>${schedule.day}: ${schedule.startTime} - ${schedule.endTime}</li>`
                     });
                     $('#officeLocationList').append(`
-                                        <div>
-                                            <div class="d-flex flex-row p-4">
-                                                <div class="w-100">
-                                                    <strong>${officeLocation.medicalFacilityName}</strong><br>
-                                                    ${officeLocation.serviceUnitName}<br>
-                                                    ${officeLocation.address}, ${officeLocation.subdistrict}, ${officeLocation.city}
-                                                </div>
-                                                <div class="text-end my-auto">
-                                                    Konsultasi<br>Mulai Dari<br>
-                                                    <strong><span>Rp${price}</span></strong>
-                                                </div>
-                                            </div>
-                                            <div class="card accordion-item">
-                                                <h2 class="accordion-header" id="headingOne">
-                                                    <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
-                                                        data-bs-target="#${accordionName}" aria-expanded="false"
-                                                        aria-controls="${accordionName}" style="border: 1px solid #e5e6e7;">
-                                                        Lihat Jadwal Praktek
-                                                    </button>
-                                                </h2>
-                                                <div id="${accordionName}" class="accordion-collapse collapse pt-2"
-                                                    data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body d-flex flex-row">
-                                                        <div class="w-100">
-                                                            <ul>
-                                                                ${scheduleList}
-                                                            </ul>
-                                                        </div>
-                                                        <div class="text-end my-auto">
-                                                            <button type="button" class="btn btn-primary appointment-button text-nowrap" data-doctor-id="${doctorId}" data-medical-facility-id="${medicalFacilityId}" >Buat Janji</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `);
+                    <div>
+                      <div class="d-flex flex-row p-4">
+                        <div class="w-100">
+                          <strong>${officeLocation.medicalFacilityName}</strong><br>
+                          ${officeLocation.serviceUnitName}<br>
+                          ${officeLocation.address}, ${officeLocation.subdistrict}, ${officeLocation.city}
+                        </div>
+                        <div class="text-end my-auto">
+                          Konsultasi<br>Mulai Dari<br>
+                          <strong><span>Rp${price}</span></strong>
+                        </div>
+                      </div>
+                      <div class="card accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                          <button type="button" class="accordion-button collapsed" data-bs-toggle="collapse"
+                            data-bs-target="#${accordionName}" aria-expanded="false"
+                            aria-controls="${accordionName}" style="border: 1px solid #e5e6e7;">
+                            Lihat Jadwal Praktek
+                          </button>
+                        </h2>
+                        <div id="${accordionName}" class="accordion-collapse collapse pt-2"
+                          data-bs-parent="#accordionExample">
+                          <div class="accordion-body d-flex flex-row">
+                            <div class="w-100">
+                              <ul>
+                                  ${scheduleList}
+                              </ul>
+                            </div>
+                            <div class="text-end my-auto">
+                              <button type="button" class="btn btn-primary appointment-button text-nowrap" data-doctor-id="${doctorId}" data-medical-facility-id="${medicalFacilityId}" >Buat Janji</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  `);
                   },
                 });
               },
