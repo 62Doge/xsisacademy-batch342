@@ -31,20 +31,20 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
         """)
     Boolean existsByNameAndParentId(@Param("name") String name, @Param("parentId") Long parentId);
 
-    @Query(value = """
-        SELECT l
-        FROM Location l
-        WHERE LOWER(l.name) = LOWER(:name)
-        AND l.isDelete = false
-        """)
+    // @Query(value = """
+    //     SELECT l
+    //     FROM Location l
+    //     WHERE LOWER(l.name) = LOWER(:name)
+    //     AND l.isDelete = false
+    //     """)
     Page<Location> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
 
-    @Query(value = """
-    SELECT l
-    FROM Location l
-    WHERE l.locationLevel.id = :locationLevelId
-    AND l.isDelete = false
-    """)
+    // @Query(value = """
+    // SELECT l
+    // FROM Location l
+    // WHERE l.locationLevel.id = :locationLevelId
+    // AND l.isDelete = false
+    // """)
     Page<Location> findByLocationLevelIdAndIsDeleteFalse(Pageable pageable, @Param("locationLevelId") Long locationLevelId);
 
     @Query(value = """
@@ -54,13 +54,14 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     """)
     Page<Location> findAllByIsDeleteFalse(Pageable pageable);
 
-    @Query(value = """
-    SELECT l
-    FROM Location l
-    WHERE l.locationLevel.id = :locationLevelId
-    AND LOWER(l.name) LIKE LOWER(CONCAT('%', :name, '%'))
-    AND l.isDelete = false
-    """)
+    //search minimum huruf, muncul dialog
+    // @Query(value = """
+    // SELECT l
+    // FROM Location l
+    // WHERE l.locationLevel.id = :locationLevelId
+    // AND LOWER(l.name) LIKE LOWER(CONCAT('%', :name, '%'))
+    // AND l.isDelete = false
+    // """)
     Page<Location> findByLocationLevelIdAndNameContainingIgnoreCaseAndIsDeleteFalse(
             Pageable pageable, @Param("locationLevelId") Long locationLevelId, @Param("name") String name);
 

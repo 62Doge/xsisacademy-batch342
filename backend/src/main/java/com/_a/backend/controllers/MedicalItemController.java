@@ -185,7 +185,7 @@ public class MedicalItemController {
     @GetMapping("/search/v2")
     public ResponseEntity<ApiResponse<PaginatedResponseDTO<MedicalItemResponseDTO>>> searchMedicalItemsVersionTwo(
             @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "8") int pageSize,
+            @RequestParam(defaultValue = "4") int pageSize,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection,
             @RequestParam(required = false) String categoryName,

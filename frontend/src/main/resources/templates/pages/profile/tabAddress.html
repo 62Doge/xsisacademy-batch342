@@ -159,13 +159,22 @@
       });
     });
 
-    function checkboxesDelete() {
+    function checkboxesDelete(element = null) {
       const deleteButton = document.getElementById('multiDeleteBtn');
       const checkboxes = document.querySelectorAll('.checkboxes');
 
-      addressIds = Array.from(checkboxes)
-        .filter(checkbox => checkbox.checked)
-        .map(checkbox => parseInt(checkbox.value));
+      let index = addressIds.indexOf(parseInt(element.value));
+      if (index !== -1) {
+        // Step 2: Remove the element using splice()
+        addressIds.splice(index, 1);
+      }
+      if (element.checked) {
+        addressIds.push(parseInt(element.value));
+      }
+      console.log(addressIds)
+      // addressIds = Array.from(checkboxes)
+      //   .filter(checkbox => checkbox.checked)
+      //   .map(checkbox => parseInt(checkbox.value));
 
       if (!addressIds.length) {
         deleteButton.classList.add("disabled");
@@ -188,6 +197,7 @@
 
           let tableData = ``;
           addressData.forEach((address) => {
+            const checkedBox = addressIds.includes(address.id) ? "checked" : "";
             let addressLocation = `${address.address}`;
             addressLocation += address.location ? `, ${address.location.name}` : "";
             if (address.location.parent !== null) {
@@ -196,8 +206,8 @@
             tableData += `
                 <tr>
                   <td>
-                    <input onclick="checkboxesDelete()" class="checkboxes form-check-input d-flex align-items-center" type="checkbox" value="${address.id}"
-                      aria-label="Checkbox for ${address.label}" onclick="">
+                    <input onclick="checkboxesDelete(this)" class="checkboxes form-check-input d-flex align-items-center" type="checkbox" value="${address.id}"
+                      aria-label="Checkbox for ${address.label}" ${checkedBox}>
                   </td>
                   <td>
                     <strong>${address.label}</strong><br>
@@ -222,7 +232,7 @@
             totalElements != 0 ? (currentPage - 1) * pageSize + 1 : 0;
           let currentLastData =
             totalElements != 0 ? currentFirstData + addressData.length - 1 : 0;
-            
+
           const existingNumberOfData = document.getElementById("numberOfData");
           if (existingNumberOfData) {
             existingNumberOfData.parentNode.removeChild(existingNumberOfData);
