@@ -1,5 +1,5 @@
 
-const id = 1;
+const id = 3;
 
 getData(id);
 function getData(id){
@@ -108,7 +108,9 @@ function addFormTreatment() {
         `);
       $('#saveTreatmentButton').on('click', function () {
         const treatment = $('#treatment').val();
+
         if(treatment.length > 0){
+          
           addTreatment();
         }
         else{
@@ -485,6 +487,38 @@ function showPengaturan(event,element) {
   $(element).addClass("active");
   $(".tab-pane").removeClass("active");
   $("#pengaturan").addClass("active");
+}
+
+function triggerImageUpload() {
+  document.getElementById('doctorImageUpload').click();
+}
+
+function uploadDoctorImage(event) {
+  const file = event.target.files[0];
+  const doctorId = 1;
+  
+  if (file) {
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("doctorId", doctorId);
+
+    $.ajax({
+      type: "POST",
+      url: `http://localhost:9001/api/doctor/upload-image/${doctorId}`,
+      data: formData,
+      contentType: false,
+      processData: false,
+      success: function (response) {
+        $("#uploadStatus").text("Gambar berhasil diunggah!");
+      },
+      error: function (error) {
+        console.error("Error uploading image:", error);
+        $("#uploadStatus").text("Gagal mengunggah gambar.");
+      }
+    });
+  } else {
+    $("#uploadStatus").text("Tidak ada gambar yang dipilih.");
+  }
 }
 
 
