@@ -82,7 +82,7 @@ public class CurrentDoctorSpecializationController {
   @PutMapping("/update/{id}")
   public ResponseEntity<?> updateCurrentDoctorSpecialization(@PathVariable Long id, @RequestBody CurrentDoctorSpecializationRequestDTO doctorSpecializationRequestDTO) {
       try {
-        Optional<CurrentDoctorSpecializationResponseDTO> currentDoctorSpecializationResponseDTO = currentDoctorSpecializationService.findById(id);
+        List<CurrentDoctorSpecializationResponseDTO> currentDoctorSpecializationResponseDTO = currentDoctorSpecializationService.findByDoctorId(id);
         if (currentDoctorSpecializationResponseDTO.isEmpty()) {
           ApiResponse<CurrentDoctorSpecializationResponseDTO> notFoundResponse =
             new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "current doctor specialization not found", null);
