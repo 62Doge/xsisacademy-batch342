@@ -50,6 +50,60 @@
     });
   });
 
+  function showUpdateConfirmationModal(oldValue, newValue, roleId) {
+    $("#deleteConfirmationModalBody").html(`
+        <p class="pb-0 mb-2 fs-5">Apakah anda yakin akan mengubah data berikut?:</p>
+        <p class="pb-0 mb-0">Nama: <span class="fw-bold">${oldValue.name}</span> => <span class="fw-bold">${newValue.name}</span></p>
+        <p class="pb-0 mb-0">Kode: <span class="fw-bold">${oldValue.code}</span> => <span class="fw-bold">${newValue.code}</span></p>
+        `);
+
+    $("#deleteConfirmationModalButton").data("mode", "update");
+    $("#deleteConfirmationModalButton").data("id", roleId);
+    $("#deleteConfirmationModalButton").text("Ya, ubah");
+
+    $("#deleteConfirmationModal").modal("show");
+
+  }
+
+  $('#deleteConfirmationModalButton').click(function (e) {
+    e.preventDefault();
+    const button = $(this);
+    const roleId = button.data("id");
+
+    const mode = button.data('mode');
+    if (mode == 'update') {
+      const roleCode = $("#updateRoleCode");
+      const roleName = $("#updateRoleName");
+
+      const dataJson = JSON.stringify({
+        name: roleName.val().trim(),
+        code: roleCode.val().trim(),
+      });
+      $.ajax({
+        type: "put",
+        url: ROLE_URL + "/" + roleId,
+        data: dataJson,
+        contentType: "application/json",
+        success(response) {
+          oldValue.name = roleName.val().trim();
+          oldValue.code = roleCode.val().trim();
+          loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
+          // $("#deleteConfirmationModal").modal("hide");
+          setAndShowSuccessModal("Berhasil memperbarui data!");
+          $("#baseModal").modal("hide");
+        },
+        error() {
+          $("#errorModal").modal("show");
+        },
+      });
+    } else if (mode == "search") {
+      loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
+
+    }
+    $("#deleteConfirmationModal").modal("hide");
+
+  })
+
   $(document).on("click", "#updateRoleBtn", function (e) {
     e.preventDefault();
     const button = $(this);
@@ -60,6 +114,10 @@
 
     const roleCode = $("#updateRoleCode");
     const roleName = $("#updateRoleName");
+    const newVal = {
+      name: roleName.val().trim(),
+      code: roleCode.val().trim(),
+    }
 
     if (!roleName.val().trim()) {
       errors["#updateNameError"] = "Nama role tidak boleh kosong.";
@@ -95,21 +153,23 @@
     button.addClass("disabled");
     cancelButton.addClass("disabled");
 
-    $.ajax({
-      type: "put",
-      url: ROLE_URL + "/" + roleId,
-      data: dataJson,
-      contentType: "application/json",
-      success(response) {
-        oldValue.name = roleName.val().trim();
-        oldValue.code = roleCode.val().trim();
-        loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
-        setAndShowSuccessModal("Berhasil memperbarui data!");
-      },
-      error() {
-        $("#errorModal").modal("show");
-      },
-    });
+    showUpdateConfirmationModal(oldValue, newVal, roleId);
+
+    // $.ajax({
+    //   type: "put",
+    //   url: ROLE_URL + "/" + roleId,
+    //   data: dataJson,
+    //   contentType: "application/json",
+    //   success(response) {
+    //     oldValue.name = roleName.val().trim();
+    //     oldValue.code = roleCode.val().trim();
+    //     loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
+    //     setAndShowSuccessModal("Berhasil memperbarui data!");
+    //   },
+    //   error() {
+    //     $("#errorModal").modal("show");
+    //   },
+    // });
     button.removeClass("disabled");
     cancelButton.removeClass("disabled");
   });

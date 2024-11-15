@@ -17,22 +17,31 @@ function renderTableData(dataObj) {
   const tableContainer = $("#role-table");
   tableContainer.html("");
 
-  dataObj.forEach((role) => {
+  if (dataObj.length < 1) {
     tableContainer.append(`
-            <tr data-id="${role.id}">
-                <td>${role.name}</td>
-                <td>${role.code}</td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-icon btn-outline-warning editRoleButton">
-                        <span class="tf-icons bx bxs-edit"></span>
-                    </button>
-                    <button type="button" class="btn btn-icon btn-outline-danger deleteButton">
-                        <span class="tf-icons bx bxs-trash"></span>
-                    </button>
-                </td>
-            </tr>
-                `);
-  });
+       <tr>
+       <td colspan="3" class="text-center fs-4">Data tidak ditemukan</td>
+       </tr>
+      `);
+
+  } else {
+    dataObj.forEach((role) => {
+      tableContainer.append(`
+              <tr data-id="${role.id}">
+                  <td>${role.name}</td>
+                  <td>${role.code}</td>
+                  <td class="text-center">
+                      <button type="button" class="btn btn-icon btn-outline-warning editRoleButton">
+                          <span class="tf-icons bx bxs-edit"></span>
+                      </button>
+                      <button type="button" class="btn btn-icon btn-outline-danger deleteButton">
+                          <span class="tf-icons bx bxs-trash"></span>
+                      </button>
+                  </td>
+              </tr>
+                  `);
+    });
+  }
 }
 
 function renderPlaceholder() {
@@ -109,9 +118,8 @@ function renderPagination(pageInfo) {
 
   if (totalPages > 3) {
     $("#paginationContainer").append(`
-    <li class="page-item prev ${
-      totalPages - 1 === currentPage ? "disabled" : ""
-    }">
+    <li class="page-item prev ${totalPages - 1 === currentPage ? "disabled" : ""
+      }">
         <button class="page-link nav-btn" data-page="${totalPages - 1}"><i
          class="tf-icon bx bx-chevrons-right"></i></button>
     </li>
@@ -187,17 +195,36 @@ $("#applyRowPerPage").click(function (e) {
   }
 });
 
+function showSearchConfirmation(query) {
+  $("#deleteConfirmationModalBody").html(`
+    <p class="pb-0 mb-2 fs-5">Apakah anda yakin akan mengubah mencari data dengan query <span class="fw-bold">${query}</span>?:</p>
+    `);
+
+  $("#deleteConfirmationModalButton").data("mode", "search");
+  $("#deleteConfirmationModalButton").text("Ya, cari");
+
+  $("#deleteConfirmationModal").modal("show");
+}
+
 let debounceTimer;
 $("#searchRole").on("input", function () {
   const query = $(this).val().trim();
 
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    if (query != searchQuery) {
-      searchQuery = query;
-      loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
-    }
-  }, 400);
+  // clearTimeout(debounceTimer);
+  // debounceTimer = setTimeout(() => {
+  if (query != searchQuery && query.length % 4 == 0 && query.length != 0) {
+    searchQuery = query;
+    // loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
+    showSearchConfirmation(searchQuery);
+
+    // show confirmation modal
+
+  } else if (query.length == 0) {
+    searchQuery = query;
+    loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
+
+  }
+  // }, 400);
 });
 
 function setBaseModal(modaltitle = "", modalBody = "", modalFooter = "") {

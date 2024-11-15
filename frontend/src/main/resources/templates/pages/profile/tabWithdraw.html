@@ -202,6 +202,13 @@
         e.preventDefault();
         let button = $(this);
         const customNominalVal = $("#inputCustomNominal").val();
+        console.log(customNominalVal.length);
+
+        if (!customNominalVal) {
+          $('#customNominalError').text('Nominal tidak boleh kosong!');
+          $("#customNominalError").show();
+          return;
+        }
 
         if (button.hasClass("btn-ok")) {
           resetRequestData();
@@ -250,7 +257,7 @@
                 <input type="text" maxlength="1" class="form-control text-center pin-input" data-id="pin6" />
             </div>
             <p id="inputPinError" class="text-danger fst-italic invisible">
-              PIN terdiri dari 6 angka!
+              PIN wajib diisi(terdiri dari 6 angka)!
             </p>
         </div>
     `;

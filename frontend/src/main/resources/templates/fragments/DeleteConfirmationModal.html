@@ -1,23 +1,12 @@
-<div
-  th:fragment="modal"
-  class="modal modal-top fade"
-  id="deleteConfirmationModal"
-  tabindex="-1"
-  data-bs-backdrop="static"
-  data-bs-keyboard="false"
->
+<div th:fragment="modal" class="modal modal-top fade" id="deleteConfirmationModal" tabindex="-1"
+  data-bs-backdrop="static" data-bs-keyboard="false" style="z-index: 9999999;">
   <div class="modal-dialog modal-dialog-centered">
     <form class="modal-content" style="border-radius: 10px">
       <div class="modal-header bg-danger">
         <h5 class="modal-title text-white" id="deleteConfirmationModalTitle">
           Konfirmasi Hapus
         </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" id="deleteConfirmationModalBody">
         <p>
@@ -26,19 +15,11 @@
         </p>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-secondary"
-          data-bs-dismiss="modal"
-          id="deleteConfirmationCancelModalButton"
-        >
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+          id="deleteConfirmationCancelModalButton">
           Batal
         </button>
-        <button
-          type="button"
-          class="btn btn-danger"
-          id="deleteConfirmationModalButton"
-        >
+        <button type="button" class="btn btn-danger" id="deleteConfirmationModalButton">
           Ya, Hapus
         </button>
       </div>

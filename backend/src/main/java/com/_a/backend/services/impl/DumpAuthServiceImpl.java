@@ -13,6 +13,6 @@ public class DumpAuthServiceImpl implements AuthService {
   UserRepository userRepository;
 
   public User getDetails() {
-    return userRepository.findById(3L).orElseThrow(() -> new RuntimeException("Unathenticated"));
+    return userRepository.findById(4L).orElseThrow(() -> new RuntimeException("Unathenticated"));
   }
 }

@@ -53,17 +53,18 @@ public class PasswordResetServiceImpl implements ResetPasswordService {
         .orElse(null);
 
     if (activeToken != null) {
-      LocalDateTime createdOn = activeToken.getCreatedOn();
-      if (createdOn != null
-          && LocalDateTime.now().isBefore(createdOn.plusMinutes(3))) {
-        Duration duration = Duration.between(LocalDateTime.now(), createdOn.plusMinutes(3));
-        long minutes = duration.toMinutes();
-        long seconds = duration.minusMinutes(minutes).toSeconds();
+      // LocalDateTime createdOn = activeToken.getCreatedOn();
+      // if (createdOn != null
+      // && LocalDateTime.now().isBefore(createdOn.plusMinutes(3))) {
+      // Duration duration = Duration.between(LocalDateTime.now(),
+      // createdOn.plusMinutes(3));
+      // long minutes = duration.toMinutes();
+      // long seconds = duration.minusMinutes(minutes).toSeconds();
 
-        throw new TokenRequestTooSoonException(
-            "Anda harus menunggu sebelum meminta token baru. Silakan coba lagi setelah "
-                + minutes + ":" + seconds + " (menit:detik)");
-      }
+      // throw new TokenRequestTooSoonException(
+      // "Anda harus menunggu sebelum meminta token baru. Silakan coba lagi setelah "
+      // + minutes + ":" + seconds + " (menit:detik)");
+      // }
 
       activeToken.setIsExpired(true);
       activeToken.setModifiedBy(user.getId());

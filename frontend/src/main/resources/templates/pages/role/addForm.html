@@ -71,6 +71,7 @@
       success(response) {
         $("#addRoleCode").val("");
         $("#addRoleName").val("");
+        $('#baseModal').modal('hide');
         loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
         setAndShowSuccessModal("Berhasil menyimpan data!");
       },

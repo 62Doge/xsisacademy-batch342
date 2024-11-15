@@ -14,7 +14,9 @@
         <p class="pb-0 mb-0 text-center fs-5">Tindakan ini tidak dapat dibatalkan.</p>
         `);
 
+        $("#deleteConfirmationModalButton").data("mode", "delete");
         $("#deleteConfirmationModalButton").data("id", data.id);
+        $("#deleteConfirmationModalButton").text("Ya, hapus");
         $("#deleteConfirmationModal").modal("show");
       },
 
@@ -27,26 +29,30 @@
   $(document).on("click", "#deleteConfirmationModalButton", function (e) {
     e.preventDefault();
     const button = $(this);
-    const cancelButton = $("#deleteConfirmationCancelModalButton");
 
-    const roleId = button.data("id");
-    button.addClass("disabled");
-    cancelButton.addClass("disabled");
-    $.ajax({
-      type: "delete",
-      url: ROLE_URL + "/soft-delete/" + roleId,
-      contentType: "application/json",
-      success: function (response) {
-        loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
-        $("#deleteConfirmationModal").modal("hide");
+    if (button.data("mode") == "delete") {
+      const button = $(this);
+      const cancelButton = $("#deleteConfirmationCancelModalButton");
 
-        setAndShowSuccessModal("Berhasil menghapus data!");
-      },
-      error() {
-        $("#errorModal").modal("show");
-      },
-    });
-    button.removeClass("disabled");
-    cancelButton.removeClass("disabled");
+      const roleId = button.data("id");
+      button.addClass("disabled");
+      cancelButton.addClass("disabled");
+      $.ajax({
+        type: "delete",
+        url: ROLE_URL + "/soft-delete/" + roleId,
+        contentType: "application/json",
+        success: function (response) {
+          loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
+          $("#deleteConfirmationModal").modal("hide");
+
+          setAndShowSuccessModal("Berhasil menghapus data!");
+        },
+        error() {
+          $("#errorModal").modal("show");
+        },
+      });
+      button.removeClass("disabled");
+      cancelButton.removeClass("disabled");
+    }
   });
 </script>
