@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" layout:decorate="~{layouts/main-without-search}">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
 
-  <body>
-    <th:block layout:fragment="pageAbove">
-      <th:block th:replace="~{fragments/auth/LoginForm::pageAbove}"></th:block>
-      <th:block
-        th:replace="~{fragments/Appointment/Core::pageAbove}"
-      ></th:block>
-    </th:block>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+</head>
 
-    <div layout:fragment="content">
-      <!-- hidden button for login form -->
-      <button class="d-none show-login-button">Login</button>
-      <!-- hidden button for login form -->
-      <h2 class="text-center text-primary mb-4">Doctor Search Results</h2>
-      <div class="row" id="doctorList">
-        <div class="col-6 col-md-4 mb-4">
+<body>
+  <th:block layout:fragment="pageAbove">
+    <th:block th:replace="~{fragments/auth/LoginForm::pageAbove}"></th:block>
+    <th:block th:replace="~{fragments/Appointment/Core::pageAbove}"></th:block>
+  </th:block>
+
+  <div layout:fragment="content">
+    <!-- hidden button for login form -->
+    <button class="d-none show-login-button">Login</button>
+    <!-- hidden button for login form -->
+    <h2 class="text-center text-primary mb-4">Doctor Search Results</h2>
+    <div class="row" id="doctorList">
+      <!-- <div class="col-6 col-md-4 mb-4">
           <div class="card shadow-sm border-0">
             <img
               src="https://via.placeholder.com/150"
@@ -43,8 +42,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-6 col-md-4 mb-4">
+        </div> -->
+      <!-- <div class="col-6 col-md-4 mb-4">
           <div class="card shadow-sm border-0">
             <img
               src="https://via.placeholder.com/150"
@@ -66,8 +65,8 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-6 col-md-4 mb-4">
+        </div> -->
+      <!-- <div class="col-6 col-md-4 mb-4">
           <div class="card shadow-sm border-0">
             <img
               src="https://via.placeholder.com/150"
@@ -89,16 +88,15 @@
               </div>
             </div>
           </div>
-        </div>
-        <script src="js/dumpFindDoctor.js"></script>
-      </div>
+        </div> -->
+      <script src="js/dumpFindDoctor.js"></script>
     </div>
+  </div>
 
-    <th:block layout:fragment="pageBottom">
-      <th:block th:replace="~{fragments/auth/LoginForm::pageBottom}"></th:block>
-      <th:block
-        th:replace="~{fragments/Appointment/Core::pageBottom}"
-      ></th:block>
-    </th:block>
-  </body>
+  <th:block layout:fragment="pageBottom">
+    <th:block th:replace="~{fragments/auth/LoginForm::pageBottom}"></th:block>
+    <th:block th:replace="~{fragments/Appointment/Core::pageBottom}"></th:block>
+  </th:block>
+</body>
+
 </html>
