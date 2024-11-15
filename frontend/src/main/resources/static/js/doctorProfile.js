@@ -1,3 +1,23 @@
+$(document).ready(function () {
+  const activeTab = localStorage.getItem("activeTab")||'tindakan';
+  const activeNavLink = localStorage.getItem("activeNavLink")||'nav_link_tindakan';
+  
+
+  if (activeTab) {
+      $(".tab-pane").removeClass("active");
+      $(`#${activeTab}`).addClass("active");
+
+      $(".nav-link").removeClass("active");
+      $(`[href="#${activeTab}"]`).addClass("active");
+  }
+
+  if(activeNavLink){
+    $('.nav-link').removeClass('active');
+    $(`#${activeNavLink}`).addClass('active');
+  }
+});
+
+
 
 const id = 3;
 
@@ -147,7 +167,10 @@ function addTreatment() {
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
+        localStorage.setItem("activeTab", "tindakan");
+        localStorage.setItem("activeNavLink", "nav_link_tindakan");
         window.location.reload();
+
       });
     }
   });
@@ -204,6 +227,8 @@ function removeTreatment(id) {
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
+        localStorage.setItem("activeTab", "tindakan");
+        localStorage.setItem("activeNavLink", "nav_link_spesialisasi");
         window.location.reload();
       });
     }
@@ -314,6 +339,8 @@ function addSpecialization() {
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
+        localStorage.setItem("activeTab", "spesialisasi");
+        localStorage.setItem("activeNavLink", "nav_link_spesialisasi");
         window.location.reload();
       });
     }
@@ -410,6 +437,8 @@ function editSpecialization(id) {
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
+        localStorage.setItem("activeTab", "spesialisasi");
+        localStorage.setItem("activeNavLink", "nav_link_spesialisasi");
         window.location.reload();
       });
     }
@@ -455,6 +484,8 @@ function showTindakan(event,element) {
   $(element).addClass("active");
   $(".tab-pane").removeClass("active");
   $("#tindakan").addClass("active");
+  localStorage.setItem("activeNavLink", "nav_link_tindakan");
+  localStorage.setItem("activeTab","tindakan");
 }
 
 function showSpesialisasi(event,element) {
@@ -463,6 +494,8 @@ function showSpesialisasi(event,element) {
   $(element).addClass("active");
   $(".tab-pane").removeClass("active");
   $("#spesialisasi").addClass("active");
+  localStorage.setItem("activeNavLink", "nav_link_spesialisasi");
+  localStorage.setItem("activeTab","spesialisasi");
 }
 
 function showAktifitas(event,element) {
