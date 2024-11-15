@@ -34,7 +34,7 @@ public class LocationLevelServiceImpl implements Services<LocationLevelRequestDT
         sort = sortDirection.equalsIgnoreCase("desc") ? sort.descending() : sort.ascending();
 
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<LocationLevel> locationLevels = locationLevelRepository.findAllByIsDeleteFalse(pageable);
+        Page<LocationLevel> locationLevels = locationLevelRepository.getLocationLevelWithCreatedOn(pageable);
         Page<LocationLevelResponseDTO> locationLevelResponseDTOS =
                 locationLevels.map(locationLevel -> modelMapper.map(locationLevel, LocationLevelResponseDTO.class));
         return locationLevelResponseDTOS;

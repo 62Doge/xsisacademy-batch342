@@ -1,6 +1,7 @@
 package com._a.backend.services.impl;
 
 import com._a.backend.dtos.requests.EmailRequestDTO;
+import com._a.backend.dtos.requests.PasswordRegistRequestDTO;
 import com._a.backend.dtos.requests.RegistrationRequestDTO;
 import com._a.backend.dtos.requests.VerifyOtpRequestDto;
 import com._a.backend.entities.*;
@@ -41,7 +42,7 @@ public class RegistrationServiceImpl {
     public void registration(RegistrationRequestDTO registrationRequestDTO) {
         Biodata biodata = new Biodata();
         biodata.setFullname(registrationRequestDTO.getFullName());
-        biodata.setMobilePhone(registrationRequestDTO.getMobilePhone());
+        biodata.setMobilePhone("+62" + registrationRequestDTO.getMobilePhone());
         biodataRepository.save(biodata);
 
         User user = new User();
@@ -57,7 +58,7 @@ public class RegistrationServiceImpl {
 
     public void sendOtp(EmailRequestDTO emailRequestDTO) throws Exception {
         if (checkEmail(emailRequestDTO)) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new IllegalArgumentException("Email sudah terdaftar");
         }
 
         String otp = OtpGenerator.generate();
@@ -72,8 +73,8 @@ public class RegistrationServiceImpl {
                 long seconds = duration.minusMinutes(minutes).toSeconds();
 
                 throw new TokenRequestTooSoonException(
-                        "You need to wait before requesting a new token. Please try again after "
-                                + minutes + ":" + seconds + " (minutes:seconds)");
+                        "Anda harus menunggu sebelum meminta token baru. Silakan coba lagi setelah "
+                                + minutes + ":" + seconds + " (menit:detik)");
             }
 
             activeToken.setIsExpired(true);
@@ -102,20 +103,19 @@ public class RegistrationServiceImpl {
 
         if (token == null) {
             if (isExpiredTokenExists(requestDto)) {
-                throw new InvalidTokenException("Your OTP has expired");
+                throw new InvalidTokenException("Kode OTP kadaluarsa.");
             } else {
-                throw new InvalidTokenException("Your OTP is incorrect");
+                throw new InvalidTokenException("Kode OTP salah.");
             }
         }
     }
 
-    public void confirmPassword(RegistrationRequestDTO registrationRequestDTO) throws Exception{
-        if (!registrationRequestDTO.getPassword().equals(registrationRequestDTO.getConfirmPassword())) {
-            throw new NewPasswordConfirmationException("Passwords do not match");
+    public void confirmPassword(PasswordRegistRequestDTO passwordRegistRequestDTO) throws Exception{
+        if (!passwordRegistRequestDTO.getPassword().equals(passwordRegistRequestDTO.getConfirmPassword())) {
+            throw new NewPasswordConfirmationException("Password tidak sama dengan konfirmasi password.");
         }
-        if (!isValidPassword(registrationRequestDTO.getPassword())) {
-            throw new InvalidPasswordException("Password does not meet the standard (minimum 8 characters, " +
-                    "must contain an uppercase letter, a lowercase letter, a number, and a special character).");
+        if (!isValidPassword(passwordRegistRequestDTO.getPassword())) {
+            throw new InvalidPasswordException("Password tidak memenuhi standar (minimal 8 karakter, harus mengandung huruf besar, huruf kecil, angka, dan special character)");
         }
     }
 
@@ -132,7 +132,7 @@ public class RegistrationServiceImpl {
     }
 
     public boolean checkEmail(EmailRequestDTO emailRequestDTO) {
-        return userRepository.existsByEmail(emailRequestDTO.getEmail());
+        return userRepository.existsByEmailContainingIgnoreCase(emailRequestDTO.getEmail());
     }
 
     private boolean isAdminRole(Long roleId) {

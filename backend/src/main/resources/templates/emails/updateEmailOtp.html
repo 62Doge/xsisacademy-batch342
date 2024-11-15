@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            color: #333;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="~{emails/fragments/Header}"></th:block>
+<div class="container">
+    <h2>Update Email</h2>
+    <p>Hi, <span th:text="${email}"></span></p>
+    <p>
+        Kami menerima permintaan untuk update Email. Gunakan OTP di
+        bawah ini untuk melanjutkan prosesnya:
+    </p>
+    <h3 th:text="${otp}"></h3>
+    <p>Jika Anda tidak meminta ini, harap abaikan email ini</p>
+    <p>Best regards,<br />HaloDog</p>
+</div>
+<th:block th:replace="~{emails/fragments/Footer}"></th:block>
+</body>
+</html>

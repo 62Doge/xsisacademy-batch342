@@ -16,6 +16,7 @@ public class RegistrationRequestDTO {
     private String password;
     @NotBlank
     private String confirmPassword;
+    @NotBlank(message = "Full name cannot be empty")
     private String fullName;
     @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15")
     private String mobilePhone;

@@ -1,6 +1,7 @@
 package com._a.backend.controllers;
 
 import com._a.backend.dtos.requests.EmailRequestDTO;
+import com._a.backend.dtos.requests.PasswordRegistRequestDTO;
 import com._a.backend.dtos.requests.RegistrationRequestDTO;
 import com._a.backend.dtos.requests.VerifyOtpRequestDto;
 import com._a.backend.payloads.ApiResponse;
@@ -19,13 +20,13 @@ public class RegistrationController {
     private RegistrationServiceImpl registrationService;
 
 
-    @PostMapping("/registration")
+    @PostMapping("")
     public ResponseEntity<ApiResponse<RegistrationRequestDTO>> registration(@RequestBody @Valid RegistrationRequestDTO registrationRequestDTO) {
         try {
             registrationService.registration(registrationRequestDTO);
 
             ApiResponse<RegistrationRequestDTO> successResponse =
-                    new ApiResponse<>(HttpStatus.CREATED.value(), "Success creating account", null);
+                    new ApiResponse<>(HttpStatus.CREATED.value(), "Berhasil mendaftarkan akun", null);
             return ResponseEntity.status(HttpStatus.CREATED).body(successResponse);
         }catch (Exception e){
             ApiResponse<RegistrationRequestDTO> errorResponse =
@@ -38,7 +39,7 @@ public class RegistrationController {
     public ResponseEntity<?> verifyEmail(@Valid @RequestBody EmailRequestDTO emailRequestDTO) throws Exception {
         registrationService.sendOtp(emailRequestDTO);
         ApiResponse<?> successResponse =
-                new ApiResponse<>(HttpStatus.OK.value(), "OTP has been send", null);
+                new ApiResponse<>(HttpStatus.OK.value(), "OTP telah terkirim", null);
         return ResponseEntity.ok(successResponse);
     }
 
@@ -46,15 +47,15 @@ public class RegistrationController {
     public ResponseEntity<?> verifyOtp(@Valid @RequestBody VerifyOtpRequestDto verifyOtpRequestDto) throws Exception{
         registrationService.verifyOtp(verifyOtpRequestDto);
 
-        ApiResponse<?> successResponse =  new ApiResponse<>(HttpStatus.OK.value(), "Verification successful! You may proceed to the next step.", null);
+        ApiResponse<?> successResponse =  new ApiResponse<>(HttpStatus.OK.value(), "Verifikasi berhasil, silahkan lanjut ke step berikutnya.", null);
         return ResponseEntity.ok(successResponse);
     }
 
     @PostMapping("/verify-password")
-    public ResponseEntity<?> verifyPassword(@Valid @RequestBody RegistrationRequestDTO registrationRequestDTO) throws Exception {
-       registrationService.confirmPassword(registrationRequestDTO);
+    public ResponseEntity<?> verifyPassword(@Valid @RequestBody PasswordRegistRequestDTO passwordRegistRequestDTO) throws Exception {
+       registrationService.confirmPassword(passwordRegistRequestDTO);
 
-       ApiResponse<?> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Password has been set", null);
+       ApiResponse<?> successResponse = new ApiResponse<>(HttpStatus.OK.value(), "Password berhasil di buat.", null);
        return ResponseEntity.ok(successResponse);
     }
 

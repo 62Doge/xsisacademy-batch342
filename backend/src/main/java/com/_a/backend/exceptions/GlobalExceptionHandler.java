@@ -76,6 +76,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ApiResponse<Map<String, String>>> handlePasswordMismatchException(
+            PasswordMismatchException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("password", ex.getMessage());
+
+        ApiResponse<Map<String, String>> response = new ApiResponse<>(HttpStatus.UNAUTHORIZED.value(),
+                "Password does not match", errors);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+
     @ExceptionHandler(NewPasswordConfirmationException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleNewPasswordConfirmationException(
             NewPasswordConfirmationException ex) {
