@@ -23,11 +23,19 @@ document.addEventListener("DOMContentLoaded", (event) => {
 function checkParams(paramObject) {
   let errorMessages = [];
   if (!paramObject.keyword.length) {
-    errorMessages.push("Tidak dapat mencari obat dan alat kesehatan tanpa keyword.");
+    errorMessages.push(
+      "Tidak dapat mencari obat dan alat kesehatan tanpa keyword."
+    );
   }
 
-  if (paramObject.minPrice.length && paramObject.maxPrice.length && parseInt(paramObject.minPrice) > parseInt(paramObject.maxPrice)) {
-    errorMessages.push("Tidak dapat mencari obat dan alat kesehatan saat harga minimum lebih besar dari harga maksimum.");
+  if (
+    paramObject.minPrice.length &&
+    paramObject.maxPrice.length &&
+    parseInt(paramObject.minPrice) > parseInt(paramObject.maxPrice)
+  ) {
+    errorMessages.push(
+      "Tidak dapat mencari obat dan alat kesehatan saat harga minimum lebih besar dari harga maksimum."
+    );
   }
 
   if (errorMessages.length > 0) {
@@ -69,6 +77,16 @@ function setResultText(paramObject) {
     resultText += "Hanya cari obat bebas(tanpa resep)";
   } else {
     resultText += "Cari semua obat (termasuk obat keras)";
+  }
+  if (paramObject.minPrice.length) {
+    if (!firstParam) resultText += ", ";
+    firstParam = false;
+    resultText += `Harga Minimum ${paramObject.minPrice}`;
+  }
+  if (paramObject.maxPrice.length) {
+    if (!firstParam) resultText += ", ";
+    firstParam = false;
+    resultText += `Harga Maksimum ${paramObject.maxPrice}`;
   }
   $("#searchResultText").text(resultText);
 }
@@ -120,9 +138,13 @@ function populateMedicalItemCards() {
                     item.packaging
                   }</p>
                   <p class="text-muted price-range" style="font-size:0.875rem;color:#999;margin-bottom:1rem;margin-left:1rem;">Rp ${item.priceMin.toLocaleString()} - Rp ${item.priceMax.toLocaleString()}</p>
-				  <p class="card-text" style="font-size:0.875rem;color:#777;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;">${item.indication}</p>
+				  <p class="card-text" style="font-size:0.875rem;color:#777;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;">${
+            item.indication
+          }</p>
                 </div>
-                <img src="${item.imagePath}" alt="${item.name}" style="width: 100px; height: 100px; object-fit: cover; margin-left: 1rem;">
+                <img src="${item.imagePath}" alt="${
+      item.name
+    }" style="width: 100px; height: 100px; object-fit: cover; margin-left: 1rem;">
                 </div>
               <div class="card-footer mt-0 pt-0 d-flex justify-content-between align-items-center">
                     ${

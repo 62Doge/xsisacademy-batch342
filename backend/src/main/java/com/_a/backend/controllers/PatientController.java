@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com._a.backend.dtos.requests.PatientRequestDTO;
+import com._a.backend.dtos.responses.PatientChatNumberResponseDTO;
 import com._a.backend.dtos.responses.PatientResponseDTO;
 import com._a.backend.entities.CustomerMember;
 import com._a.backend.payloads.ApiResponse;
@@ -139,6 +140,26 @@ public class PatientController {
         }
     }
 
+    @GetMapping("/data/chat-number/{customerMemberId}")
+    public ResponseEntity<?> getChatNumber(@PathVariable Long customerMemberId) {
+        try {
+            PatientChatNumberResponseDTO responseDTO = patientService.getChatNumber(customerMemberId);
+            ApiResponse<PatientChatNumberResponseDTO> successResponse = new ApiResponse<>(HttpStatus.OK.value(),
+                    HttpStatus.OK.getReasonPhrase(), responseDTO);
+            return ResponseEntity.ok(successResponse);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ApiResponse<PatientChatNumberResponseDTO> errorResponse = new ApiResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Failed to fetch patient number of chat", null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).body(errorResponse);
+        }
+    }
+
+    // @GetMapping("")
+    // public ResponseEntity<?> getAppointmentNumber(@RequestParam String param) {
+    //     return new String();
+    // }
+    
     @PostMapping("")
     public ResponseEntity<?> savePatient(@RequestBody PatientRequestDTO patientRequestDTO) {
         try {

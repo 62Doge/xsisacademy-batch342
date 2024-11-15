@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class SearchTextRequestDTO {
-  private String searchText;
+  private String searchText = "";
 }

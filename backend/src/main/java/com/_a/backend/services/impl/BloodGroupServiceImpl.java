@@ -58,6 +58,13 @@ public class BloodGroupServiceImpl implements Services<BloodGroupRequestDTO, Blo
         return Optional.empty();
     }
 
+    public List<BloodGroupResponseDTO> findByCode(String query) {
+        List<BloodGroup> bloodGroups = bloodGroupRepository.findByCodeContainingIgnoreCaseAndIsDeleteFalse(query);
+        List<BloodGroupResponseDTO> responseDTOs = bloodGroups.stream().map(
+            bloodGroup -> modelMapper.map(bloodGroup, BloodGroupResponseDTO.class)).toList();
+        return responseDTOs;
+    }
+
     @Override
     public BloodGroupResponseDTO save(BloodGroupRequestDTO bloodGroupRequestDTO) {
         BloodGroup bloodGroup = new BloodGroup();

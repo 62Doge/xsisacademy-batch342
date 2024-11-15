@@ -57,4 +57,5 @@ public interface CustomerMemberRepository extends JpaRepository<CustomerMember, 
                         and cm.isDelete = false
                                 """)
         List<CustomerMemberSummaryResponseDTO> findCustomerMembersByUserBiodataId(Long biodataId);
+
 }

@@ -81,9 +81,17 @@ public interface MedicalItemRepository extends JpaRepository<MedicalItem, Long> 
         WHERE (:categoryName IS NULL OR LOWER(cat.name) LIKE LOWER(CONCAT('%', :categoryName , '%'))) 
         AND (:keyword IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword , '%')) OR LOWER(m.indication) LIKE LOWER(CONCAT('%', :keyword , '%'))) 
         AND (:segmentationName IS NULL OR LOWER(seg.name) LIKE LOWER(CONCAT('%', :segmentationName , '%'))) 
-        AND (:minPrice IS NULL OR m.priceMin >= :minPrice) 
-        AND (:maxPrice IS NULL OR m.priceMax <= :maxPrice) 
-        AND (m.isDelete = FALSE)         
+        AND CASE
+            WHEN :minPrice IS NOT NULL AND :maxPrice IS NOT NULL 
+                THEN m.priceMin <= :maxPrice AND m.priceMax >= :minPrice
+            WHEN :minPrice IS NOT NULL AND :maxPrice IS NULL
+                THEN :minPrice >= m.priceMin AND :minPrice <= m.priceMax
+            WHEN :maxPrice IS NOT NULL AND :minPrice IS NULL
+                THEN :maxPrice <= m.priceMax AND :maxPrice >= m.priceMin
+            ELSE
+                (:maxPrice IS NULL AND :minPrice IS NULL) 
+            END
+        AND (m.isDelete = FALSE)
         """)
     Page<MedicalItem> searchMedicalItemsVersionTwo(
             Pageable pageable,

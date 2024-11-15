@@ -77,12 +77,29 @@ public class BloodGroupController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/code/{query}")
+    public ResponseEntity<?> getCodeByQuery(@PathVariable String query) {
+        try {
+            List<BloodGroupResponseDTO> responseDTOs = bloodGroupService.findByCode(query);
+            ApiResponse<List<BloodGroupResponseDTO>> successResponse = new ApiResponse<>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), responseDTOs);
+                return ResponseEntity.status(HttpStatus.OK).body(successResponse);
+        } catch (Exception e) {
+            ApiResponse<List<BloodGroupResponseDTO>> errorResponse = new ApiResponse<List<BloodGroupResponseDTO>>(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), null);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     
     @PostMapping("")
     public ResponseEntity<?> createBloodGroup(@Valid @RequestBody BloodGroupRequestDTO bloodGroupRequestDTO) {
         if (bloodGroupRepository.existsByCodeIgnoreCaseAndIsDeleteFalse(bloodGroupRequestDTO.getCode())) {
             ApiResponse<BloodGroupResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "Blood Group already exists", null);
             return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
+        }
+        if (bloodGroupRequestDTO.getCode().length() > 5) {
+            ApiResponse<BloodGroupResponseDTO> characterLimitResponse = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Code input exceed character limit of 5", null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(characterLimitResponse);
         }
         try {
             BloodGroupResponseDTO bloodGroupResponseDTOSaved = bloodGroupService.save(bloodGroupRequestDTO);
@@ -102,6 +119,10 @@ public class BloodGroupController {
             if (bloodGroupResponseDTO.isEmpty()) {
                 ApiResponse<BloodGroupResponseDTO> notFoundResponse = new ApiResponse<>(HttpStatus.NOT_FOUND.value(), "Blood Group not found", null);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundResponse);
+            }
+            if (bloodGroupRequestDTO.getCode().length() > 5) {
+                ApiResponse<BloodGroupResponseDTO> characterLimitResponse = new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Code input exceed character limit of 5", null);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(characterLimitResponse);
             }
             Optional<BloodGroup> existingBloodGroupCode = bloodGroupRepository.findByCodeIgnoreCaseAndIsDeleteFalse(bloodGroupRequestDTO.getCode());
             if (existingBloodGroupCode.isPresent() && !existingBloodGroupCode.get().getId().equals(id)) {

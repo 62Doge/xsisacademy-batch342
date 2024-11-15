@@ -1,4 +1,8 @@
 <script th:fragment="script">
+  let oldValue = {
+    name: null,
+    code: null,
+  };
   $(document).on("click", ".editRoleButton", function (e) {
     e.preventDefault();
     const button = $(this);
@@ -9,25 +13,31 @@
       contentType: "application/json",
       success(response) {
         const data = response.data;
+        oldValue.name = data.name;
+        oldValue.code = data.code;
         setBaseModal(
           "Update Role",
           `
   <form>
       <div class="mb-3">
           <label for="roleName" class="form-label">Nama*</label>
-          <input value="${data.name}" type="text" class="form-control save-role" id="roleName" placeholder="Nama Role">
+          <input value="${data.name}" type="text" class="form-control save-role" id="updateRoleName" placeholder="Nama Role">
+          <div id="updateNameError" class="invalid-feedback"></div>
+
       </div>
       <div class="mb-1s">
           <label for="roleCode" class="form-label">Kode*</label>
-          <input value="${data.code}" type="text" class="form-control save-role" id="roleCode" placeholder="Kode Role">
+          <input value="${data.code}" type="text" class="form-control save-role" id="updateRoleCode" placeholder="Kode Role">
+          <div id="updateCodeError" class="invalid-feedback"></div>
+
       </div>
   </form>
   `,
           `
-  <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+  <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal" id="cancelUpdateButton">
       Batal
   </button>
-  <button data-id="${data.id}" id="updateRoleBtn" type="button" class="btn btn-primary disabled">Simpan</button>
+  <button data-id="${data.id}" id="updateRoleBtn" type="button" class="btn btn-primary">Simpan</button>
   `
         );
 
@@ -43,15 +53,47 @@
   $(document).on("click", "#updateRoleBtn", function (e) {
     e.preventDefault();
     const button = $(this);
+    const cancelButton = $("#cancelUpdateButton");
     const roleId = button.data("id");
+    // validation
+    const errors = {};
 
-    const roleCode = $("#roleCode");
-    const roleName = $("#roleName");
+    const roleCode = $("#updateRoleCode");
+    const roleName = $("#updateRoleName");
+
+    if (!roleName.val().trim()) {
+      errors["#updateNameError"] = "Nama role tidak boleh kosong.";
+    }
+
+    if (!roleCode.val().trim()) {
+      errors["#updateCodeError"] = "Kode role tidak boleh kosong.";
+    }
+
+    if (
+      roleName.val().trim() === oldValue.name &&
+      roleCode.val().trim() === oldValue.code
+    ) {
+      errors["#updateNameError"] = "Tidak ada nilai berubah.";
+      errors["#updateCodeError"] = "Tidak ada nilai berubah.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      for (const [selector, message] of Object.entries(errors)) {
+        $(selector).text(message).show();
+
+        setTimeout(() => {
+          $(selector).hide();
+        }, 3000);
+      }
+      return;
+    }
+
     const dataJson = JSON.stringify({
       name: roleName.val().trim(),
       code: roleCode.val().trim(),
     });
     button.addClass("disabled");
+    cancelButton.addClass("disabled");
 
     $.ajax({
       type: "put",
@@ -59,14 +101,16 @@
       data: dataJson,
       contentType: "application/json",
       success(response) {
+        oldValue.name = roleName.val().trim();
+        oldValue.code = roleCode.val().trim();
         loadSearchResult(currentPage, rowPerPage, sortDirection, searchQuery);
         setAndShowSuccessModal("Berhasil memperbarui data!");
       },
       error() {
-        button.removeClass("disabled");
-
         $("#errorModal").modal("show");
       },
     });
+    button.removeClass("disabled");
+    cancelButton.removeClass("disabled");
   });
 </script>
