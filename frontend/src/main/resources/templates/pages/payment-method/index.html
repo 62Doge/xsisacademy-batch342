@@ -81,6 +81,13 @@
                             </div>
                         </li>
                     </ul>
+                    <select name="pageSize" id="pageSize" class="form-select" onchange="setPageSize(this.value)">
+                        <option value="" hidden selected="true" disabled="true">Data Per Halaman</option>
+                        <option value="1">1</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                    </select>
                 </div>
             </div>
             <div class="card">

@@ -1,0 +1,53 @@
+<span id="modal-description">Masukkan e-mail anda kami akan melakukann pengecekan e-mail.</span>
+<div id="emailForm" class="mb-3">
+    <label for="email" class="form-label">Masukkan Email</label>
+    <input type="email" class="form-control" id="email" placeholder="E-Mail">
+    <div id="emailError" class="invalid-feedback" style="display:none;"></div> <!-- Email error message -->
+</div>
+
+<div id="otpForm" style="display: none;"> <!-- OTP form initially hidden -->
+    <label for="otp" class="form-label">Masukkan OTP</label>
+    <input type="text" class="form-control" id="otp" placeholder="Kode OTP">
+    <div id="otpError" class="invalid-feedback" style="display:none;"></div> <!-- OTP error message -->
+</div>
+
+<div id="loadingSpinner" class="text-center" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Harap tunggu..</span>
+    </div>
+    <p>Memproses mengirim OTP...</p>
+</div>
+
+<div id="passwordForm" style="display: none;"> <!-- Password form initially hidden -->
+    <label for="password" class="form-label">Masukkan Password</label>
+    <input type="password" class="form-control" id="password" placeholder="Password">
+    <div id="passwordError" class="invalid-feedback" style="display:none;"></div> <!-- Password error message -->
+</div>
+
+<div id="confirmPasswordForm" style="display: none;"> <!-- Confirm Password form initially hidden -->
+    <label for="confirmPassword" class="form-label">Masukkan Password</label>
+    <input type="password" class="form-control" id="confirmPassword" placeholder="Password">
+    <div id=confirmPasswordError class="invalid-feedback" style="display:none;"></div> <!-- Confirm Password error message -->
+</div>
+
+<div id="fullNameForm" class="mb-3" style="display: none;">
+    <label for="fullName" class="form-label">Masukkan Email</label>
+    <input type="text" class="form-control" id="fullName" placeholder="Nama lengkap">
+    <div id="fullNameError" class="invalid-feedback" style="display:none;"></div> <!-- Email error message -->
+</div>
+
+<div id="mobilePhoneForm" class="mb-3" style="display: none;">
+    <label for="mobilePhone" class="form-label">Nomor Handphone*</label>
+    <div class="input-group">
+        <span class="input-group-text" id="countryCode">+62</span>
+        <input type="text" class="form-control" id="mobilePhone" placeholder="8123456789">
+        <div id="mobilePhoneError" class="invalid-feedback"></div>
+    </div>
+</div>
+
+<div id="roleForm" class="mb-3"  style="display: none;">
+    <label for="role" class="form-label">Pilih Role</label>
+    <select name="role" id="role">
+
+    </select>
+</div>

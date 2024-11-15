@@ -57,7 +57,9 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane fade" id="navs-top-profile" role="tabpanel">
-            <p>profile detail</p>
+              <th:block
+                      th:replace="~{pages/profile/tabProfile::profileContent}"
+              ></th:block>
           </div>
 
           <div
@@ -93,6 +95,9 @@
       <th:block
         th:replace="~{pages/profile/tabAddress::addressScript}"
       ></th:block>
+      <th:block
+              th:replace="~{pages/profile/tabProfile::profileScript}"
+      ></th:block>
     </th:block>
 
     <th:block layout:fragment="pageAbove">
@@ -101,7 +106,6 @@
       <th:block
         th:replace="~{fragments/BaseModal::modal(class='modal-sm', modalBackdrop='static', modalKeyboard='false')}"
       ></th:block>
-
       <th:block
         th:replace="~{fragments/ErrorModal::modal(class='modal-sm')}"
       ></th:block>

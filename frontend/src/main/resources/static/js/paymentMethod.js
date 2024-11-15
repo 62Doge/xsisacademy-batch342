@@ -222,6 +222,7 @@ function customPageSize() {
     } else {
         loadData();
     }
+
 }
 
 function openAddForm() {
@@ -247,7 +248,7 @@ function savePaymentMethod() {
     let name = $('#paymentMethodName').val().trim();
 
     if (!name.trim()) {
-        alert("Nama cara pembayaran harus diisi.");
+        $('#paymentMethodNameError').text("Nama level lokasi wajib diisi.").show();
         return;
     }
 
@@ -258,11 +259,12 @@ function savePaymentMethod() {
         data: JSON.stringify(jsonData),
         contentType: "application/json",
         success: function (response) {
+            setAndShowSuccessModal("Berhasil menyimpan data!");
             location.reload();
         },
         error: function (error) {
             if (error.status === 409) {
-                alert("Nama cara pembayaran sudah ada.");
+                $('#paymentMethodNameError').text("Nama cara pembayaran sudah ada.").show();
             } else {
                 alert("Failed to save Payment Method. Please try again later.");
             }
@@ -313,7 +315,7 @@ function updatePaymentMethod(id) {
     let name = $('#paymentMethodName').val();
 
     if (!name.trim()) {
-        alert("Nama cara pembayaran harus diisi.");
+        $('#paymentMethodNameError').text("Nama level lokasi wajib diisi.").show();
         return;
     }
 
@@ -324,12 +326,13 @@ function updatePaymentMethod(id) {
         data: JSON.stringify(jsonData),
         contentType: "application/json",
         success: function (response) {
+            setAndShowSuccessModal("Berhasil mengupdate data!");
             $('#baseModal').modal('hide');
             loadData();
         },
         error: function (error) {
-            if (error.status === 403) {
-                alert("Nama cara pembayaran sudah ada.");
+            if (error.status === 400) {
+                $('#paymentMethodNameError').text("Nama cara pembayaran sudah ada.").show();
             } else {
                 alert("Failed to update Payment Method. Please try again later.");
             }
@@ -387,6 +390,11 @@ function deletePaymentMethod(id) {
             console.log(error);
         }
     });
+}
+
+function setAndShowSuccessModal(modalBody) {
+    $("#successModalBody").html(modalBody);
+    $("#successModal").modal("show");
 }
 
 

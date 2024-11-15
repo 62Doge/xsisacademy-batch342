@@ -173,6 +173,11 @@ function moveToPage(pageNumber) {
     }
 }
 
+function setAndShowSuccessModal(modalBody) {
+    $("#successModalBody").html(modalBody);
+    $("#successModal").modal("show");
+}
+
 function nextPage() {
     if (currentPage + 1 <= totalPages) {
         currentPage++;
@@ -208,6 +213,7 @@ function setPageSize(query) {
 
 function setPageOrder() {
     sortDir = $('input[name="orderTypeRadio"]:checked').val();
+    // sortBy = $('input[name="orderTypeRadio"]:checked').val();
     if (currentSearchQuery) {
         searchLocationLevel(currentSearchQuery);
     } else {
@@ -250,7 +256,7 @@ function saveLocationLevel() {
     let abbreviation = $('#locationLevelAbbreviation').val();
 
     if (!name.trim()) {
-        alert("Location Level name required");
+        $('#locationLevelNameError').text("Nama level lokasi wajib diisi.").show();
         return;
     }
 
@@ -261,11 +267,13 @@ function saveLocationLevel() {
         data: JSON.stringify(jsonData),
         contentType: "application/json",
         success: function (response) {
+            setAndShowSuccessModal("Berhasil menyimpan data!");
             location.reload();
         },
         error: function (error) {
             if (error.status === 409) {
-                alert("Location Level name already exists.");
+                // alert("Location Level name already exists.");
+                $('#locationLevelNameError').text("Nama level lokasi sudah ada.").show();
             } else {
                 alert("Failed to save Location Level. Please try again later.");
             }
@@ -318,7 +326,7 @@ function updateLocationLevel(id) {
     let abbreviation = $('#locationLevelAbbreviation').val();
 
     if (!name.trim()) {
-        alert("Nama Level Lokasi harus diisi");
+        $('#locationLevelNameError').text("Nama level lokasi wajib diisi.").show();
         return;
     }
 
@@ -329,12 +337,15 @@ function updateLocationLevel(id) {
         data: JSON.stringify(jsonData),
         contentType: "application/json",
         success: function (response) {
+            setAndShowSuccessModal("Berhasil mengupdate data!");
             $('#baseModal').modal('hide');
             loadData();
         },
         error: function (error) {
             if (error.status === 409) {
-                alert("Location Level name already exists.");
+                $('#locationLevelNameError').text("Nama level lokasi sudah ada.").show();
+            } else if (error.status === 400) {
+                $('#locationLevelNameError').text("Nama level lokasi sudah ada.").show();
             } else {
                 alert("Failed to update Location Level. Please try again later.");
             }

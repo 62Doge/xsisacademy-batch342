@@ -1,0 +1,403 @@
+<div class="container m-0 p-0 mt-5" th:fragment="profileContent">
+    <div class="row g-2">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="m-0"><strong>Data Pribadi</strong></h5>
+                    <button onclick="openEditPersonalDataForm()" type="button" class="btn btn-sm text-primary d-flex align-items-center" id="addAddressBtn">
+                        <i class='bx bx-pencil me-1'></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" id="fullName" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dob" class="form-label">Tanggal Lahir</label>
+                        <input type="text" class="form-control" id="dob" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mobilePhone" class="form-label">Nomor HandPhone</label>
+                        <input type="text" class="form-control" id="mobilePhone" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="m-0"><strong>Data Akun</strong></h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label for="email" class="form-label">Email</label>
+                            <button onclick="openUpdateEmailForm()" type="button" class="btn btn-sm text-primary p-0 d-flex align-items-center">
+                                <i class='bx bx-pencil'></i>
+                            </button>
+                        </div>
+                        <input type="text" class="form-control" id="email" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label for="password" class="form-label">Password</label>
+                            <button onclick="openVerifyPasswordModal()" type="button" class="btn btn-sm text-primary p-0 d-flex align-items-center">
+                                <i class='bx bx-pencil'></i>
+                            </button>
+                        </div>
+                        <input type="password" class="form-control" id="password" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:fragment="profileScript">
+<script>
+    const userId = 8;
+    $(document).ready(function () {
+
+        $.ajax({
+            url: `http://localhost:9001/api/customer/biodata-profile/${userId}`,
+            type: 'GET',
+            contentType: "application/json",
+            success: function (response) {
+                console.log(response);
+                console.log("test");
+                if (response && response.status === 200 && response.data) {
+                    const data = response.data;
+
+                    $('#fullName').val(data.fullName);
+                    $('#dob').val(data.dob);
+                    $('#mobilePhone').val(data.mobilePhone);
+                    $('#email').val(data.email);
+                    $('#password').val("********");
+                }
+            },
+            error: function (xhr) {
+                console.error("Gagal mendapatkan data", xhr);
+            }
+        });
+    });
+
+    function openEditPersonalDataForm() {
+        $.ajax({
+            type: "GET",
+            url: `http://localhost:9001/api/customer/biodata-profile/personal-data/${userId}`,
+            contentType: "application/json",
+            success: function (response) {
+                let data = response.data;
+                console.log(data);
+
+                $.ajax({
+                    type: "get",
+                    url: "/profile/editPersonalDataForm",
+                    contentType: "html",
+                    success: function (editForm) {
+                        $('#baseModal').modal('show');
+                        $('#baseModalTitle').html(`<strong>Edit Data Pribadi</strong>`);
+                        $('#baseModalBody').html(editForm);
+
+                        $('#fullname').val(data.fullName);
+                        $('#dob').val(new Date(data.dob).toISOString().substring(0, 10));
+
+                        const fullPhoneNumber = data.mobilePhone;
+                        const countryCode = fullPhoneNumber.substring(0, 3);
+                        const phoneNumber = fullPhoneNumber.substring(3);
+
+                        $('#countryCode').text(countryCode);
+                        $('#mobilePhone').val(phoneNumber);
+
+                        $('#baseModalFooter').html(`
+                        <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
+                            Batal
+                        </button>
+                        <button onclick="updatePersonalData(${userId})" type="button" class="btn btn-primary">
+                            Simpan
+                        </button>
+                    `);
+                    }
+                });
+            },
+            error: function (error) {
+                console.error("Failed to load personal data:", error);
+            }
+        });
+    }
+
+    function updatePersonalData(userId) {
+        const fullName = $('#fullname').val();
+        const dob = $('#dob').val();
+
+        const phoneNumber = $('#mobilePhone').val();
+
+        const personalDataRequestDTO = {
+            fullName: fullName,
+            dob: dob,
+            mobilePhone: phoneNumber,
+        };
+
+
+        $.ajax({
+            url: `http://localhost:9001/api/customer/biodata-profile/personal-data/update/${userId}`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(personalDataRequestDTO),
+            success: function(response) {
+                alert("Data pribadi berhasil diperbarui!");
+                $('#baseModal').modal('hide');
+                location.reload();
+            },
+            error: function(xhr) {
+                if (xhr.status === 400) {
+                    const response = xhr.responseJSON;
+
+
+                    $('#dobError').text(response.message).show();
+                    if (response.data) {
+                        if (response.data.fullName) {
+                            $('#fullNameError').text(response.data.fullName);
+                            // alert("Validation error: " + response.data.fullName);
+                            $('#fullNameError').text("Nama wajib diisi.").show();
+                        }
+                        if (response.data.dob) {
+                            $('#dobError').text(response.data.dob);
+                            // alert("Validation error: " + response.data.dob);
+                            $('#dobError').text("Coba message").show();
+                        }
+                        if (response.data.mobilePhone) {
+                            $('#mobilePhoneError').text(response.data.mobilePhone);
+                            // alert("Validation error: " + response.data.mobilePhone);
+                            $('#mobilePhoneError').text(response.data.mobilePhone).show();
+                        }
+                    }
+
+                } else {
+                    console.error("Error updating personal data:", xhr);
+                    alert("Terjadi kesalahan saat memperbarui data. Silakan coba lagi.");
+                }
+            }
+        });
+    }
+
+    function openUpdateEmailForm(){
+        $.ajax({
+            type: "get",
+            url: "/profile/editEmailForm",
+            contentType: "html",
+            success: function (editEmailForm){
+                $('#baseModal').modal('show');
+                $('#baseModalTitle').html(`<strong>Ubah E-Mail</strong>`);
+                $('#baseModalBody').html(editEmailForm);
+                $('#baseModalFooter').html(`
+                <button onclick="sendOtpForEmailUpdate()" type="button" class="btn btn-primary">Ubah E-Mail</button>
+            `);
+            }
+        })
+    }
+
+    function sendOtpForEmailUpdate() {
+        const newEmail = $('#email').val();
+
+        $('#loadingSpinner').show();
+        $.ajax({
+            url: `http://localhost:9001/api/customer/biodata-profile/email/send-otp`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ email: newEmail }),
+            success: function(response) {
+                alert("OTP telah dikirim ke email Anda. Silakan periksa email Anda.");
+
+
+                $('#emailForm').hide();
+                $('#otpForm').show();
+
+                $('#baseModalFooter').html(`
+                <button onclick="verifyOtpAndUpdateEmail('${newEmail}')" type="button" class="btn btn-primary">Verifikasi OTP & Ubah Email</button>
+            `);
+            },
+            error: function(xhr) {
+                const response = xhr.responseJSON;
+                if (xhr.status === 400) {
+                    if (response && response.message === "Email sudah terdaftar") {
+                        $('#emailError').text("Email sudah terdaftar, gunakan e-mail yang berbeda.").show();
+                    } else if (response && response.message === "Validation error"){
+                        $('#emailError').text("Pastikan e-mail sudah valid.").show();
+                    }
+                } else if (xhr.status === 429){
+                    $('#emailError').text(response.message).show();
+                }
+                else {
+                    alert("An error occurred. Please try again later.");
+                }
+            },
+            complete: function() {
+                $('#loadingSpinner').hide();
+            }
+        });
+    }
+
+    function verifyOtpAndUpdateEmail(newEmail) {
+        const otp = $('#otp').val();
+
+        $.ajax({
+            url: `http://localhost:9001/api/customer/biodata-profile/email/verify-otp/${userId}`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ email: newEmail, otp: otp }),
+            success: function(response) {
+                alert("OTP valid! Email berhasil diperbarui.");
+                $('#email').val(newEmail);
+
+
+                $('#otpForm').hide();
+                $('#baseModal').modal('hide');
+                location.reload();
+                $.ajax({
+                    type: "get",
+                    url: "",
+                    contentType: "html",
+                    success: function (data){
+                        if (data.redirect) {
+                            // data.redirect contains the string URL to redirect to
+                            window.location.href = data.redirect;
+                        }
+                    }
+                })
+            },
+            error: function(xhr) {
+                if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message) {
+                    $('#otpError').text(xhr.responseJSON.message).show();
+                } else if (xhr.status ===  404) {
+                    $('#otpError').text("Pastikan OTP sudah valid.").show();
+                } else {
+                    alert("Terjadi kesalahan saat memverifikasi OTP. Silakan coba lagi.");
+                }
+            }
+        });
+    }
+
+    function openVerifyPasswordModal() {
+        $.ajax({
+            type: "get",
+            url: "/profile/editPasswordForm",
+            contentType: "html",
+            success: function (editEmailForm){
+                $('#baseModal').modal('show');
+                $('#baseModalTitle').html(`<strong>Konfirmasi Password</strong>`);
+                $('#baseModalBody').html(editEmailForm);
+                $('#baseModalFooter').html(`
+                <button onclick="confirmationPassword()" type="button" class="btn btn-primary">Konfirmasi Password</button>
+            `);
+            }
+        })
+    }
+
+    function confirmationPassword() {
+        const oldPassword = $('#oldPassword').val();
+        const confirmOldPassword = $('#confirmOldPassword').val();
+
+        if (oldPassword !== confirmOldPassword) {
+            $('#confirmOldPasswordError').text("Konfirmasi password lama tidak cocok.").show();
+            return;
+        } else {
+            $('#confirmOldPasswordError').hide();
+        }
+
+        $.ajax({
+            url: `http://localhost:9001/api/customer/biodata-profile/confirm-password/${userId}`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                password: oldPassword,
+                confirmPassword: confirmOldPassword
+            }),
+            success: function(response) {
+                $('#oldPasswordError').hide();
+                $('#confirmOldPasswordError').hide();
+
+
+                $.ajax({
+                    before: function (){
+                        $("#baseModal").modal('show');
+                    },
+                    type: "get",
+                    url: "/profile/newPasswordForm",
+                    contentType: "html",
+                    success: function(newPasswordForm) {
+                        $('#baseModal').modal('show');
+                        $('#baseModalTitle').html(`<strong>Masukkan Password Baru</strong>`);
+                        $('#baseModalBody').html(newPasswordForm);
+                        $('#baseModalFooter').html(`
+                        <button onclick="updatePassword()" type="button" class="btn btn-primary">Ubah Password</button>
+                    `);
+                    },
+                    error: function(xhr) {
+                        console.error("Failed to load new password form:", xhr);
+                        alert("Terjadi kesalahan saat memuat formulir password baru.");
+                    }
+                });
+            },
+            error: function(xhr) {
+                if (xhr.status === 401) {
+                    $('#oldPasswordError').text("Password lama salah.").show();
+                } else {
+                    alert("Terjadi kesalahan saat memverifikasi password.");
+                }
+                $('#baseModal').modal('show');
+                setTimeout(() => {
+                }, 1000)
+            }
+
+        });
+    }
+
+    function updatePassword() {
+        const newPassword = $('#newPassword').val();
+        const confirmNewPassword = $('#confirmNewPassword').val();
+
+        if (newPassword !== confirmNewPassword) {
+            $('#confirmNewPasswordError').text("Password baru tidak cocok.").show();
+            return;
+        } else {
+            $('#confirmNewPasswordError').hide();
+        }
+
+        $.ajax({
+            url: `http://localhost:9001/api/customer/biodata-profile/update-password/${userId}`,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ password: newPassword, confirmPassword: confirmNewPassword }),
+            success: function(response) {
+                alert("Password berhasil diubah.");
+                $('#baseModal').modal('hide');
+                $('#newPassword').val('');
+                $('#confirmNewPassword').val('');
+            },
+            error: function(xhr) {
+                if (xhr.status === 400) {
+                    const response = xhr.responseJSON;
+                    $('#newPasswordError').text(response.data.password).show();
+                    $('#confirmNewPasswordError').text(response.data.password).show();
+                } else {
+                    alert("Terjadi kesalahan saat memverifikasi password.");
+                }
+            },
+            complete: function (){
+                // $('#newPasswordError').hide().text("");
+                // $('#confirmNewPasswordError').hide().text("");
+            }
+        });
+    }
+
+
+</script>
+</th:block>
+
+<th:block th:fragment="style">
+    <style>
+        .action-buttons {
+            text-align: right;
+        }
+    </style>
+</th:block>
