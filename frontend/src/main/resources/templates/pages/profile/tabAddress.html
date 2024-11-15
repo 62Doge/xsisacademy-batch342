@@ -281,6 +281,11 @@
           errorId: "addressAddressError",
           message: "Alamat is required",
         },
+        {
+          id: "addressPostalCode",
+          errorId: "addressPostalCodeError",
+          message: ""
+        }
       ];
 
       let isValid = true;
@@ -290,12 +295,19 @@
         const error = document.getElementById(field.errorId);
         error.textContent = "";
 
-        if (!input.value.trim()) {
+        if (!input.value.trim() && field.id !== "addressPostalCode") {
           input.classList.add("is-invalid");
           error.textContent = field.message;
           isValid = false;
         } else {
           input.classList.remove("is-invalid");
+          if (field.id === "addressRecipientPhoneNumber" || field.id === "addressPostalCode") {
+            if (input.value && !input.value.match(/\d/g)) {
+              input.classList.add("is-invalid");
+              error.textContent = "Input harus berupa angka!"
+              isValid = false;
+            }
+          }
         }
       });
 
@@ -336,6 +348,7 @@
         <div class="mb-3">
             <label class="form-label" for="addressPostalCode">Kode Pos</label>
             <input name="postalCode" type="text" class="form-control" id="addressPostalCode">
+            <span id="addressPostalCodeError" class="text-danger"></span>
         </div>
         <div class="mb-3">
             <label for="addressAddress" class="form-label">Alamat*</label>
