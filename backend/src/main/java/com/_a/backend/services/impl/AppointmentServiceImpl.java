@@ -100,9 +100,10 @@ public class AppointmentServiceImpl implements AppointmentService {
     DoctorOfficeSchedule doctorOfficeSchedule = doctorOfficeScheduleRepository
         .findById(requestDTO.getDoctorOfficeScheduleId())
         .orElseThrow(() -> new IdNotFoundException("Doctor office schedule not found"));
-    DoctorOfficeTreatment doctorOfficeTreatment = doctorOfficeTreatmentRepository
-        .findById(requestDTO.getDoctorOfficeTreatmentId())
-        .orElseThrow(() -> new IdNotFoundException("Doctor office treatment not found"));
+    // DoctorOfficeTreatment doctorOfficeTreatment = doctorOfficeTreatmentRepository
+    // .findById(requestDTO.getDoctorOfficeTreatmentId())
+    // .orElseThrow(() -> new IdNotFoundException("Doctor office treatment not
+    // found"));
 
     Long userId = authService.getDetails().getId();
 
@@ -115,7 +116,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     appointment.setCustomerId(customer.getId());
     appointment.setDoctorOfficeId(doctorOffice.getId());
     appointment.setDoctorOfficeScheduleId(doctorOfficeSchedule.getId());
-    appointment.setDoctorOfficeTreatmentId(doctorOfficeTreatment.getId());
+    appointment.setDoctorOfficeTreatmentId(requestDTO.getDoctorOfficeTreatmentId());
     appointment.setCreatedBy(userId);
 
     AppointmentResponseDTO responseDTO = new AppointmentResponseDTO(appointmentRepository.save(appointment));
