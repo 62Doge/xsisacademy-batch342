@@ -7,6 +7,7 @@ import java.util.Optional;
 import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
 import com._a.backend.dtos.requests.AppointmentRequestDTO;
 import com._a.backend.dtos.responses.AppointmentCustomerDocterOfficeScheduleResponseDTO;
+import com._a.backend.dtos.responses.AppointmentHeaderResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
 import com._a.backend.dtos.responses.DoctorOfficeScheduleResponseDTO;
@@ -29,4 +30,6 @@ public interface AppointmentService {
   List<AppointmentResponseDTO> findByOfficeId(Long id);
 
   List<AppointmentCustomerDocterOfficeScheduleResponseDTO> getAllCustomerDoctorOfficeScheduleByUserId();
+
+  AppointmentHeaderResponseDTO getHeader(Long doctorId);
 }

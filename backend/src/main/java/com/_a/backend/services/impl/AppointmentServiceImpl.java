@@ -11,8 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com._a.backend.dtos.projections.AppointmentExceededDateProjectionDTO;
+import com._a.backend.dtos.projections.DoctorDetailsHeaderProjectionDto;
+import com._a.backend.dtos.projections.DoctorDetailsMOEProjectionDto;
 import com._a.backend.dtos.requests.AppointmentRequestDTO;
 import com._a.backend.dtos.responses.AppointmentCustomerDocterOfficeScheduleResponseDTO;
+import com._a.backend.dtos.responses.AppointmentHeaderResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilitiesResponseDTO;
 import com._a.backend.dtos.responses.AppointmentMedicalFacilityItemResponseDTO;
 import com._a.backend.dtos.responses.AppointmentResponseDTO;
@@ -21,13 +24,13 @@ import com._a.backend.entities.Appointment;
 import com._a.backend.entities.Customer;
 import com._a.backend.entities.DoctorOffice;
 import com._a.backend.entities.DoctorOfficeSchedule;
-import com._a.backend.entities.DoctorOfficeTreatment;
 import com._a.backend.exceptions.IdNotFoundException;
 import com._a.backend.repositories.AppointmentRepository;
 import com._a.backend.repositories.CustomerRepository;
 import com._a.backend.repositories.DoctorOfficeRepository;
 import com._a.backend.repositories.DoctorOfficeScheduleRepository;
 import com._a.backend.repositories.DoctorOfficeTreatmentRepository;
+import com._a.backend.repositories.DoctorRepository;
 import com._a.backend.services.AppointmentService;
 import com._a.backend.services.AuthService;
 
@@ -54,6 +57,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
   @Autowired
   ModelMapper modelMapper;
+
+  @Autowired
+  DoctorRepository doctorRepository;
 
   @Override
   public AppointmentMedicalFacilitiesResponseDTO getMedicalFacilitiesByDoctorId(Long id) {
@@ -159,5 +165,14 @@ public class AppointmentServiceImpl implements AppointmentService {
         .stream()
         .map(appointment -> new AppointmentCustomerDocterOfficeScheduleResponseDTO(appointment))
         .toList();
+  }
+
+  @Override
+  public AppointmentHeaderResponseDTO getHeader(Long doctorId) {
+    DoctorDetailsHeaderProjectionDto projection = doctorRepository.getHeader(doctorId);
+    DoctorDetailsMOEProjectionDto monthOfExperience = doctorRepository.getMonthOfExperience(doctorId);
+
+    return new AppointmentHeaderResponseDTO(projection.getName(), projection.getSpecialization(),
+        monthOfExperience.getMonthOfExperience());
   }
 }
