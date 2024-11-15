@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com._a.backend.dtos.requests.DoctorTreatmentRequestDTO;
 import com._a.backend.dtos.responses.DoctorTreatmentResponseDTO;
 import com._a.backend.payloads.ApiResponse;
+import com._a.backend.repositories.DoctorTreatmentRepository;
 import com._a.backend.services.impl.DoctorTreatmentServiceImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,6 +34,9 @@ public class DoctorTreatmentController {
   
   @Autowired
   private DoctorTreatmentServiceImpl doctorTreatmentService;
+
+  @Autowired
+  private DoctorTreatmentRepository doctorTreatmentRepository;
 
   @GetMapping("")
   public ResponseEntity<?> getAllDoctorTreatment() {
@@ -90,6 +94,10 @@ public class DoctorTreatmentController {
   
   @PostMapping("")
   public ResponseEntity<?> saveDoctorTreatment(@RequestBody DoctorTreatmentRequestDTO doctorTreatmentRequestDTO) {
+      if(doctorTreatmentRepository.existsByNameIgnoreCaseAndIsDeleteFalse(doctorTreatmentRequestDTO.getName())){
+        ApiResponse<DoctorTreatmentResponseDTO> alreadyExistResponse = new ApiResponse<>(HttpStatus.CONFLICT.value(), "doctor treatment already exist", null);
+        return ResponseEntity.status(HttpStatus.CONFLICT.value()).body(alreadyExistResponse);
+      }
       try {
         DoctorTreatmentResponseDTO doctorTreatmentResponseDTO = doctorTreatmentService.save(doctorTreatmentRequestDTO);
         ApiResponse<DoctorTreatmentResponseDTO> successResponse =

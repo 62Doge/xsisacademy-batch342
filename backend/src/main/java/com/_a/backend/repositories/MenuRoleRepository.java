@@ -46,6 +46,7 @@ public interface MenuRoleRepository extends JpaRepository<MenuRole, Long> {
         SELECT mr 
         FROM MenuRole mr 
         WHERE mr.roleId = :roleId
+        AND mr.isDelete = FALSE
         """)
     List<MenuRole> findByRoleId(@Param("roleId") Long roleId);
 }
