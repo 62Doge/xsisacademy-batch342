@@ -21,4 +21,10 @@ public class SetMenuAccessController {
         return view;
     }
 
+    @GetMapping("/modal")
+    public ModelAndView formmodal() {
+        ModelAndView view = new ModelAndView("pages/set-menu-access/modal");
+        return view;
+    }
+
 }

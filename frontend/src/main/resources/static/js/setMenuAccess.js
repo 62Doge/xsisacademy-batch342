@@ -169,12 +169,29 @@ function applyRowPerPage(event) {
   }
 }
 
-$('#searchRole').on("input", function () {
-  const query = $(this).val().trim();
+$('#searchRole').on("keyup", function (e) {
+  if (e.key === "Enter") {
+    const query = $(this).val().trim();
 
-  if(query != searchQuery) {
-    searchQuery = query;
-    loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
+    if (query != searchQuery) {
+      searchQuery = query;
+      const data = loadSearchResult(0, rowPerPage, sortDirection, searchQuery);
+      console.log(data);
+      
+
+      $.ajax({
+        type: "get",
+        url: "/set-menu-access/modal",
+        contentType: "html",
+        success: function (modal) {
+          $('#baseModal').modal('show');
+          $('#baseModalTitle').html('<strong class="fs-2">Konfirmasi</strong>');
+          $('#baseModalBody').html(modal);
+          const dataHtml = data.length ? data.map(role => `<p>${role.name} (${role.code})</p>`).join('') : '<p>Data tidak ditemukan</p>';
+          $('#modalKonfirmasi').html(`<p class="fs-4">data yang anda cari sebagi berikut:</p>${dataHtml}`);
+        }
+      });
+    }
   }
 });
 
@@ -307,33 +324,59 @@ function openSetMenuAccessModal(roleId) {
   });
 
   function saveMenuAccess(roleId) {
+    let menuNames = [];
+    $('#accessTree .form-check-input:checked').each(function () {
+      menuNames.push($(this).next('label').text());
+    });
+
     let menuIds = [];
     $('#accessTree .form-check-input:checked').each(function () {
       menuIds.push($(this).val());
     });
-    $.ajax({
-      type: "POST",
-      url: `http://localhost:9001/api/transaction/menu-role/save-menu-access/${roleId}`,
-      data: JSON.stringify(menuIds),
-      contentType: "application/json",
-      success: function (response) {
-        $('#baseModalTitle').html(`<strong class="fs-2">Sukses</strong>`);
-        $('#baseModalBody').html(`<p class="text-center fs-3">Akses menu berhasil Atur</p>`);
-        $('#baseModalFooter').html("");
-    },
-    error: function (error) {
-      console.log(error);
-    },
-    complete: function () {
-      $('#baseModal').on('hidden.bs.modal', function () {
-        window.location.reload();
-      });
-    }
-  });
-  }
 
-  
-  
+    $.ajax({
+      type: "get",
+      url: "/set-menu-access/modal",
+      contentType: "html",
+      success: function (modal) {
+        $('#baseModal').modal('show');
+        $('#baseModalTitle').html('<strong class="fs-2">Konfirmasi</strong>');
+        $('#baseModalBody').html(modal);
+        $('#modalKonfirmasi').html(`<p class="fs-4">Anda akan memberikan akses menu berikut:</p><p>${menuNames.join(', ')}</p>`);
+        $('#baseModalFooter').html(`
+          <button data-bs-dismiss="modal" type="button" class="btn btn-warning" data-bs-dismiss="modal">
+            Batal
+          </button>
+          <button id="submitMenuAccess" type="button" class="btn btn-primary">Simpan</button>
+        `);
+
+        $('#submitMenuAccess').off('click').on('click', function () {
+          $.ajax({
+            type: "POST",
+            url: `http://localhost:9001/api/transaction/menu-role/save-menu-access/${roleId}`,
+            data: JSON.stringify(menuIds),
+            contentType: "application/json",
+            success: function (response) {
+              $('#baseModalTitle').html(`<strong class="fs-2">Sukses</strong>`);
+              $('#baseModalBody').html(`<p class="text-center fs-3">Akses menu berhasil Atur</p>`);
+              $('#baseModalFooter').html("");
+            },
+            error: function (error) {
+              console.log(error);
+            },
+            complete: function () {
+              $('#baseModal').on('hidden.bs.modal', function () {
+                window.location.reload();
+              });
+            }
+          });
+        });
+      }
+    });
+  }
 }
+
+
+    
 
 
