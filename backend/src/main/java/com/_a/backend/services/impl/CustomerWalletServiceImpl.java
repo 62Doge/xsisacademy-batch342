@@ -1,5 +1,7 @@
 package com._a.backend.services.impl;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +64,7 @@ public class CustomerWalletServiceImpl implements CustomerWalletService {
 
     walletRepository.incrementPinAttemptByUserId(walletSummaryResponseDto.getId());
     if (walletSummaryResponseDto.getPinAttempt() + 1 >= MAX_PIN_ATTEMPTS) {
-      walletRepository.blockWallet(walletSummaryResponseDto.getId());
+      walletRepository.blockWallet(walletSummaryResponseDto.getId(), LocalDateTime.now());
       return new ApiResponse<Void>(403, "Akun anda diblokir karena melakukan banyak percobaan dengan PIN yang salah",
           null);
     }
