@@ -1,5 +1,5 @@
 let IS_USER_LOGGED = false;
-let USER_LOGGED_ID = -1;
+let USER_LOGGED_ID = 3;
 let ADMIN_LOGGED_ID = 0;
 
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     // mengaktifkan semua elemen dalam "col-md-8"
     $(".col-md-8 *").prop("disabled", false).css("pointer-events", "");
+
+    $('#profile-image-upload').removeClass('d-none');
   } else {
     IS_USER_LOGGED = false;
     $("#sidebarToggle").addClass("d-none"); // Menyembunyikan tombol sidebar
@@ -23,6 +25,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     // Menonaktifkan semua elemen dalam "col-md-8"
     $(".col-md-8 *").prop("disabled", true).css("pointer-events", "none");
+
+    $('#profile-image-upload').addClass('d-none');
     
   }
 

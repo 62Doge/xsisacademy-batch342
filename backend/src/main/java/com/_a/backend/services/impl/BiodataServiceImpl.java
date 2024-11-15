@@ -1,5 +1,8 @@
 package com._a.backend.services.impl;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -11,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com._a.backend.dtos.requests.BiodataRequestDTO;
 import com._a.backend.dtos.responses.BiodataResponseDTO;
@@ -27,6 +31,8 @@ public class BiodataServiceImpl implements Services<BiodataRequestDTO, BiodataRe
     BiodataRepository biodataRepository;
     @Autowired
     ModelMapper modelMapper;
+
+    private final String uploadDirectory = "/assets/img/doctorphotos/";
 
     @Override
     public Page<BiodataResponseDTO> getAll(int pageNo, int pageSize, String sortBy, String sortDirection) {
@@ -75,6 +81,34 @@ public class BiodataServiceImpl implements Services<BiodataRequestDTO, BiodataRe
         Biodata updatedBiodata = biodataRepository.save(biodata);
 
         return modelMapper.map(updatedBiodata, BiodataResponseDTO.class);
+    }
+
+    public BiodataResponseDTO uploadImage(Long biodataId, MultipartFile image) {
+        try {
+            // Menentukan direktori untuk menyimpan gambar
+            Path uploadPath = Paths.get(uploadDirectory);
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+
+            // Menyimpan file ke direktori
+            String fileName = image.getOriginalFilename();
+            Path filePath = uploadPath.resolve(fileName);
+            Files.copy(image.getInputStream(), filePath);
+
+            // Menyimpan path gambar ke dalam entity Biodata
+            Optional<Biodata> optionalBiodata = biodataRepository.findById(biodataId);
+            if (optionalBiodata.isPresent()) {
+                Biodata biodata = optionalBiodata.get();
+                biodata.setImagePath(uploadDirectory + fileName);
+                biodataRepository.save(biodata);
+                return modelMapper.map(biodata, BiodataResponseDTO.class);
+            } else {
+                throw new RuntimeException("Biodata not found");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload image", e);
+        }
     }
 
 }

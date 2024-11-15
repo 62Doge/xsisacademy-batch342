@@ -41,11 +41,13 @@
         <div class="row">
           <div class="col-md-4">
             <div class="container-fluid text-center">
-              <div>
-                <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" style="margin-left: 150px;">
+              <div id="profile-image-upload">
+                <input type="file" id="doctorImageUpload" accept="image/*" style="display: none;" onchange="uploadDoctorImage(event)">
+                <button type="button" class="btn btn-sm btn-icon btn-outline-secondary" style="margin-left: 150px;" onclick="triggerImageUpload()">
                   <i class="bx bxs-pencil"></i>
                 </button>
               </div>
+              <div id="uploadStatus" style="margin-left: 150px; color: green;"></div>
               <div id="doctor-image">
 
               </div><br>

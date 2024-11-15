@@ -68,6 +68,7 @@ public class BankController {
             return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
     @GetMapping("/active/data")
     public ResponseEntity<?> getAllActiveBanks() {
         try {

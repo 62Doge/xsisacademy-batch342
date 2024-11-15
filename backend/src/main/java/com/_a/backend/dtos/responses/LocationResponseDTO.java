@@ -1,13 +1,5 @@
 package com._a.backend.dtos.responses;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 @Data
@@ -18,14 +10,14 @@ public class LocationResponseDTO {
     private LocationResponseDTO parent;
     // private List<LocationChildResponseDTO> childs;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    @JsonBackReference
-    private List<LocationChildResponseDTO> childs;
+    // @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    // @JsonBackReference
+    // private List<LocationChildResponseDTO> childs;
 
-    @JsonProperty("childLocationLevelIds") // This makes it appear in JSON as "childIds"
-    public List<Long> getChildLocationLevelIds() {
-        return childs.stream().map(LocationChildResponseDTO::getLocationLevelId).collect(Collectors.toList());
-    }
+    // @JsonProperty("childLocationLevelIds") // This makes it appear in JSON as "childIds"
+    // public List<Long> getChildLocationLevelIds() {
+    //     return childs.stream().map(LocationChildResponseDTO::getLocationLevelId).collect(Collectors.toList());
+    // }
 
     private Long locationLevelId;
     private LocationLevelResponseDTO locationLevel;

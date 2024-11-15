@@ -6,6 +6,4 @@ import lombok.Data;
 public class BiodataRequestDTO {
     private String fullname;
     private String mobilePhone;
-    private byte[] image;
-    private String imagePath;
 }

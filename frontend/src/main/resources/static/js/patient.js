@@ -126,7 +126,7 @@ function loadData() {
         url: `http://localhost:9001/api/patient/active?page=${currentPage - 1}&size=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
         contentType: "application/json",
         success: function (response) {
-            console.log(response);
+            // console.log(response);
             let patientData = response.data.content;
             totalPages = response.data.totalPages;
 
@@ -144,28 +144,40 @@ function loadData() {
                     patientRelation += "Anak";
                 }
                 let patientAge = calculateAge(patient.dob);
-                $('#patientTable').append(`
-                    <tr>
-                        <td>
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="selectedPatient" value="${patient.id}">
-                            </div>
-                        </td>
-                        <td>
-                            <strong>${patient.fullName}</strong><br>
-                            ${patientRelation}, ${patientAge} tahun<br>
-                            <span class="text-muted">9 Chat Online, 5 Janji Online</span>
-                        </td>
-                        <td>
-                            <button onclick="openEditForm(${patient.id})" type="button" class="btn btn-icon btn-outline-warning">
-                                <span class="tf-icons bx bxs-edit"></span>
-                            </button>
-                            <button onclick="openDeleteModal(${patient.id})" type="button" class="btn btn-icon btn-outline-danger">
-                                <span class="tf-icons bx bxs-trash"></span>
-                            </button>
-                        </td>
-                    </tr>
-                `);
+                $.ajax({
+                    type: "get",
+                    url: `http://localhost:9001/api/patient/data/chat-number/${patient.id}`,
+                    contentType: "application/json",
+                    success: function (response) {
+                        console.log(response);
+                        
+                        let chatNumberData = response.data;
+                        let chatNumber = chatNumberData.chatNumber;
+                        $('#patientTable').append(`
+                            <tr>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="selectedPatient" value="${patient.id}">
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong>${patient.fullName}</strong><br>
+                                    ${patientRelation}, ${patientAge} tahun<br>
+                                    <span class="text-muted">${chatNumber} Chat Online, 11 Janji Dokter</span>
+                                </td>
+                                <td>
+                                    <button onclick="openEditForm(${patient.id})" type="button" class="btn btn-icon btn-outline-warning">
+                                        <span class="tf-icons bx bxs-edit"></span>
+                                    </button>
+                                    <button onclick="openDeleteModal(${patient.id})" type="button" class="btn btn-icon btn-outline-danger">
+                                        <span class="tf-icons bx bxs-trash"></span>
+                                    </button>
+                                </td>
+                            </tr>
+                        `);
+                    }
+                });
+                
             });
 
             $('#pageList').empty();
@@ -362,6 +374,16 @@ function openAddForm() {
 
                 if (!birthdayField) {
                     $('#addBirthdayValidation').html("Tanggal lahir tidak boleh kosong");
+                    isFormValid = false;
+                } else {
+                    $('#addBirthdayValidation').html("");
+                }
+
+                let userBirthday = new Date(birthdayField);
+                let today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (userBirthday > today) {
+                    $('#addBirthdayValidation').html("Tanggal lahir tidak valid");
                     isFormValid = false;
                 } else {
                     $('#addBirthdayValidation').html("");

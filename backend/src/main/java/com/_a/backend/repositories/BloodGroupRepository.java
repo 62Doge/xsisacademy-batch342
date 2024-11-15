@@ -14,6 +14,8 @@ public interface BloodGroupRepository extends JpaRepository<BloodGroup, Long> {
 
     Optional<BloodGroup> findByCodeIgnoreCaseAndIsDeleteFalse(String code);
 
+    List<BloodGroup> findByCodeContainingIgnoreCaseAndIsDeleteFalse(String code);
+
     Boolean existsByCodeIgnoreCaseAndIsDeleteFalse(String code);
 
     @Query(value = "select * from m_blood_group where is_delete = false", nativeQuery = true)

@@ -1,6 +1,7 @@
 package com._a.backend.services.impl;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -90,18 +91,18 @@ public class CurrentDoctorSpecializationServiceImpl
   @Override
   public CurrentDoctorSpecializationResponseDTO update(
       CurrentDoctorSpecializationRequestDTO currentDoctorSpecializationRequestDTO, Long id) {
-    Optional<CurrentDoctorSpecialization> optionalCurrentDoctorSpecialization = currentDoctorSpecializationRepository
-        .findById(id);
-    if (optionalCurrentDoctorSpecialization.isPresent()) {
-      CurrentDoctorSpecialization currentDoctorSpecialization = optionalCurrentDoctorSpecialization.get();
-      currentDoctorSpecialization.setModifiedBy(dumpAuthServiceImpl.getDetails().getId());
-      modelMapper.map(currentDoctorSpecializationRequestDTO, currentDoctorSpecialization);
-      CurrentDoctorSpecialization updatedCurrentDoctorSpecialization = currentDoctorSpecializationRepository.save(currentDoctorSpecialization);
-      return modelMapper.map(updatedCurrentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
+    List<CurrentDoctorSpecialization> currentDoctorSpecializations = currentDoctorSpecializationRepository.findByDoctorId(id);
+    if (currentDoctorSpecializations.isEmpty()) {
+        throw new NoSuchElementException("Specialization for the doctor not found");
     }
-    throw new RuntimeException("Current Doctor Specialization not found");
+    CurrentDoctorSpecialization currentDoctorSpecialization = currentDoctorSpecializations.get(0);
+    currentDoctorSpecialization.setModifiedBy(dumpAuthServiceImpl.getDetails().getId());
+    modelMapper.map(currentDoctorSpecializationRequestDTO, currentDoctorSpecialization);
+    CurrentDoctorSpecialization updatedCurrentDoctorSpecialization = currentDoctorSpecializationRepository.save(currentDoctorSpecialization);
+    return modelMapper.map(updatedCurrentDoctorSpecialization, CurrentDoctorSpecializationResponseDTO.class);
+    
   }
-
+ 
   @Override
   public void deleteById(Long id) {
     currentDoctorSpecializationRepository.deleteById(id);

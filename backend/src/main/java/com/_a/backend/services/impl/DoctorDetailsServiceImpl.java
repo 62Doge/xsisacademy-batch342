@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com._a.backend.dtos.projections.DoctorDetailsEducationProjectionDto;
 import com._a.backend.dtos.projections.DoctorDetailsHeaderProjectionDto;
+import com._a.backend.dtos.projections.DoctorDetailsImageProjectionDto;
 import com._a.backend.dtos.projections.DoctorDetailsOfficeHistoryProjectionDto;
 import com._a.backend.dtos.projections.DoctorDetailsOfficeLocationProjectionDto;
 import com._a.backend.dtos.projections.DoctorDetailsPriceStartProjectionDto;
@@ -34,10 +35,12 @@ public class DoctorDetailsServiceImpl implements DoctorDetailsService {
     public DoctorDetailsHeaderResponseDTO getHeader(Long doctorId) {
         DoctorDetailsHeaderProjectionDto projection = doctorRepository.getHeader(doctorId);
         DoctorDetailsYOEProjectionDto yearOfExperience = doctorRepository.getYearOfExperience(doctorId);
+        DoctorDetailsImageProjectionDto image = doctorRepository.getImage(doctorId);
         return new DoctorDetailsHeaderResponseDTO(
             projection.getName(), 
             projection.getSpecialization(),
-            yearOfExperience.getYearOfExperience()
+            yearOfExperience.getYearOfExperience(),
+            image.getImage()
         );
     }
     

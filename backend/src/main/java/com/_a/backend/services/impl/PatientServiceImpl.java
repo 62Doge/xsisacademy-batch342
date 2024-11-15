@@ -10,13 +10,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com._a.backend.dtos.projections.PatientChatNumberProjectionDTO;
 import com._a.backend.dtos.projections.PatientProjectionDto;
 import com._a.backend.dtos.requests.PatientRequestDTO;
+import com._a.backend.dtos.responses.PatientChatNumberResponseDTO;
 import com._a.backend.dtos.responses.PatientResponseDTO;
 import com._a.backend.entities.Biodata;
 import com._a.backend.entities.Customer;
 import com._a.backend.entities.CustomerMember;
 import com._a.backend.repositories.BiodataRepository;
+import com._a.backend.repositories.CustomerChatRepository;
 import com._a.backend.repositories.CustomerMemberRepository;
 import com._a.backend.repositories.CustomerRepository;
 import com._a.backend.services.PatientService;
@@ -36,6 +39,9 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
     CustomerMemberRepository customerMemberRepository;
 
     @Autowired
+    CustomerChatRepository customerChatRepository;
+
+    @Autowired
     DumpAuthServiceImpl dumpAuthServiceImpl;
 
     @Autowired
@@ -43,6 +49,7 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
 
     public Page<PatientResponseDTO> findActivePages(Long parentBiodataId, Pageable pageable) {
         Page<PatientProjectionDto> projections = customerMemberRepository.findPatient(parentBiodataId, pageable);
+        
         return projections.map(projection -> new PatientResponseDTO(
             projection.getId(),
             projection.getParentBiodataId(),
@@ -235,6 +242,14 @@ public class PatientServiceImpl implements PatientService<PatientRequestDTO, Pat
         patientResponseDTO.setCustomerRelationId(updatedCustomerMember.getCustomerRelationId());
 
         return patientResponseDTO;
+    }
+
+    @Override
+    public PatientChatNumberResponseDTO getChatNumber(Long customerMemberId) {
+        CustomerMember customerMember = customerMemberRepository.findById(customerMemberId).orElseThrow(() -> new EntityNotFoundException("CustomerMember not found with ID " + customerMemberId));
+        Customer customer = customerRepository.findById(customerMember.getCustomerId()).orElseThrow(() -> new EntityNotFoundException("Customer not found with ID " + customerMember.getCustomerId()));
+        PatientChatNumberProjectionDTO projection = customerChatRepository.getChatNumber(customer.getId());
+        return new PatientChatNumberResponseDTO(projection.getChatNumber());
     }
 
 }

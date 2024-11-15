@@ -227,11 +227,11 @@ function loadParent() {
   }).responseText;
 }
 
-function populateParentByLevel(selectId = null) {
+function populateParentByLevel(selectId = null, locationId = null) {
   let locationLevelName = $("#levelLocationId :selected").text().toLowerCase();
   $("#parentId").empty();
   $("#parentId").append(
-    `<option value="" selected disabled hidden>Choose here</option>`
+    `<option value="">Choose here</option>`
   );
   if (locationLevelName === "provinsi") {
     $("#parentId").append(
@@ -259,7 +259,8 @@ function populateParentByLevel(selectId = null) {
       const isHidden =
         secondLevelLocationCheck ||
         upperLevelLocationCheck ||
-        sameLevelLocationCheck
+        sameLevelLocationCheck || 
+        locationId === location.id
           ? "hidden"
           : "";
       $("#parentId").append(
@@ -272,7 +273,7 @@ function populateParentByLevel(selectId = null) {
 function populateLocationLevelSelect(locationLevelContent, selectId = null) {
   $("#levelLocationId").empty();
   $("#levelLocationId").append(
-    `<option value="" selected disabled hidden>Choose here</option>`
+    `<option value="" selected>Choose here</option>`
   );
 
   $.each(locationLevelContent, function (index, levelLocation) {
@@ -451,7 +452,9 @@ function openEditForm(id) {
           $("#baseModalTitle").html(`<strong>Edit Lokasi</strong>`);
           $("#baseModalBody").append(editForm);
           $("#locationName").val(location.name);
-
+          $("#levelLocationId").change(function() {
+            populateParentByLevel(null, location.id)
+          });
           $("#baseModalFooter").html(`
                         <button data-bs-dismiss="modal" type="button" class="btn btn-warning">
                             Batal

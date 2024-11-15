@@ -17,6 +17,8 @@ public interface DoctorTreatmentRepository extends JpaRepository<DoctorTreatment
 
   Boolean existsByName(String name);
 
+  Boolean existsByNameIgnoreCaseAndIsDeleteFalse(String name);
+
   Page<DoctorTreatment> findByNameContainingIgnoreCaseAndIsDeleteFalse(Pageable pageable, String name);
 
   Page<DoctorTreatment> findAllByIsDeleteFalse(Pageable pageable);

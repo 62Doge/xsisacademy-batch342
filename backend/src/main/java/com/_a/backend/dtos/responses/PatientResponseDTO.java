@@ -25,8 +25,9 @@ public class PatientResponseDTO {
         this.customerRelationId = customerRelationId;
     }
 
+    // customer member id
     private Long id;
-    
+
     @Column(name = "parent_biodata_id")
     private Long parentBiodataId;
     
