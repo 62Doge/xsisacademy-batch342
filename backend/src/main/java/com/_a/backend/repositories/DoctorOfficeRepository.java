@@ -29,7 +29,11 @@ public interface DoctorOfficeRepository extends JpaRepository<DoctorOffice, Long
         join do.doctor d
         join d.doctorOfficeSchedules dos
         WHERE do.doctor.id = ?1
-        and dos.doctorId = ?1
+        AND dos.doctorId = ?1
+        AND (
+        do.endDate is null
+        or do.endDate > CURRENT_DATE
+        )
         AND do.isDelete=false
       """)
   List<DoctorOffice> findByDoctorIdJpql(Long doctorId);
