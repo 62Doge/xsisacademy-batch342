@@ -129,7 +129,7 @@ function addFormTreatment() {
 
 function addTreatment() {
   let treatmentDataJSON = {
-    name: $('#treatment').val(),
+    name: $('#treatment').val().trim().replace(/\s+/g, ' '),
     doctorId: id
   }
   $.ajax({
@@ -137,13 +137,18 @@ function addTreatment() {
     url: "http://localhost:9001/api/doctor/doctor-treatment",
     data: JSON.stringify(treatmentDataJSON),
     contentType: "application/json",
-    success: function (response) {
+    success: function () {
       $('#baseModalTitle').html(`<strong class="fs-2">Sukses</strong>`);
       $('#baseModalBody').html(`<p class="text-center fs-3">Tindakan berhasil ditambahkan</p>`);
       $('#baseModalFooter').html("");
     },
     error: function (error) { 
-      console.log(error)
+      let errorMessage = error.responseJSON.message;
+      if(errorMessage == "doctor treatment already exist"){
+        $('#addFormTreatmentValidation').html(`<div class="alert alert-danger" role="alert">Tindakan sudah terdaftar. Silakan Masukan Tindakan lain.</div>`);
+      }else{
+        $('#addFormTreatmentValidation').html(`<div class="alert alert-danger" role="alert">Terjadi kesalahan. Gagal menambahkan Tindakan</div>`);
+      }
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
