@@ -79,7 +79,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     @Query(value = "SELECT mmfs.day, mmfs.time_schedule_start as start_time, mmfs.time_schedule_end as end_time " +
             "FROM m_medical_facility_schedule mmfs " +
             "JOIN t_doctor_office_schedule tdos ON tdos.medical_facility_schedule_id = mmfs.id " +
-            "WHERE tdos.doctor_id = :doctor_id and mmfs.medical_facility_id = :medical_facility_id", nativeQuery = true)
+            "WHERE tdos.doctor_id = :doctor_id AND mmfs.medical_facility_id = :medical_facility_id", nativeQuery = true)
     List<DoctorDetailsScheduleProjectionDto> getSchedule(@Param("medical_facility_id") Long medicalFacilityId,
             @Param("doctor_id") Long doctorId);
 
@@ -93,7 +93,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     DoctorDetailsPriceStartProjectionDto getPriceStart(@Param("medical_facility_id") Long medicalFacilityId,
             @Param("doctor_id") Long doctorId);
 
-    @Query(value = "SELECT " +
+            @Query(value = "SELECT " +
             "mmf.id AS medical_facility_id, " +
             "mmf.name AS medical_facility_name, " +
             "msu.name AS service_unit_name, " +
@@ -106,7 +106,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             "JOIN m_service_unit msu ON msu.id = tdo.service_unit_id " +
             "JOIN m_location subdistrict ON subdistrict.id = mmf.location_id " +
             "LEFT JOIN m_location city ON subdistrict.parent_id = city.id " +
-            "WHERE md.id = :doctor_id AND tdo.end_date IS NULL", nativeQuery = true)
+            "WHERE subdistrict.location_level_id = 2 AND md.id = :doctor_id AND tdo.end_date IS NULL", nativeQuery = true)
     List<DoctorDetailsOfficeLocationProjectionDto> getOfficeLocation(@Param("doctor_id") Long doctorId);
 
     @Query(value = "SELECT mb.image_path as image " +
