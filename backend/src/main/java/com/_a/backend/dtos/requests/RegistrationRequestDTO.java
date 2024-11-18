@@ -2,6 +2,7 @@ package com._a.backend.dtos.requests;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -16,8 +17,9 @@ public class RegistrationRequestDTO {
     private String password;
     @NotBlank
     private String confirmPassword;
-    @NotBlank(message = "Full name cannot be empty")
+    @NotBlank(message = "Nama lengkap wajib diisi")
     private String fullName;
-    @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15")
+    @Size(min = 10, max = 15, message = "Panjang nomor harus diantara 10 atau 15")
+    @Pattern(regexp = "^[1-9]\\d*$", message = "Pastikan nomor handphone valid")
     private String mobilePhone;
 }
