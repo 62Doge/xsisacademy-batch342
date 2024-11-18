@@ -7,7 +7,7 @@ import java.time.LocalDate;
 @Data
 public class BiodataResponseDTO {
     private Long id;
-    private String fullName;
+    private String fullname;
     private LocalDate dob;
     private String mobilePhone;
     private String email;
