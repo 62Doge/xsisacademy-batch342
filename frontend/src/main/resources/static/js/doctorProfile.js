@@ -2,13 +2,9 @@ $(document).ready(function () {
   const activeTab = localStorage.getItem("activeTab")||'tindakan';
   const activeNavLink = localStorage.getItem("activeNavLink")||'nav_link_tindakan';
   
-
   if (activeTab) {
-      $(".tab-pane").removeClass("active");
-      $(`#${activeTab}`).addClass("active");
-
-      $(".nav-link").removeClass("active");
-      $(`[href="#${activeTab}"]`).addClass("active");
+    $(".tab-pane").removeClass("active");
+    $(`#${activeTab}`).addClass("active");
   }
 
   if(activeNavLink){
@@ -16,8 +12,6 @@ $(document).ready(function () {
     $(`#${activeNavLink}`).addClass('active');
   }
 });
-
-
 
 const id = 3;
 
@@ -172,8 +166,6 @@ function addTreatment() {
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
-        localStorage.setItem("activeTab", "tindakan");
-        localStorage.setItem("activeNavLink", "nav_link_tindakan");
         window.location.reload();
 
       });
@@ -232,8 +224,6 @@ function removeTreatment(id) {
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
-        localStorage.setItem("activeTab", "tindakan");
-        localStorage.setItem("activeNavLink", "nav_link_spesialisasi");
         window.location.reload();
       });
     }
@@ -344,8 +334,6 @@ function addSpecialization() {
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
-        localStorage.setItem("activeTab", "spesialisasi");
-        localStorage.setItem("activeNavLink", "nav_link_spesialisasi");
         window.location.reload();
       });
     }
@@ -442,8 +430,6 @@ function editSpecialization(id) {
     },
     complete: function () {
       $('#baseModal').on('hidden.bs.modal', function () {
-        localStorage.setItem("activeTab", "spesialisasi");
-        localStorage.setItem("activeNavLink", "nav_link_spesialisasi");
         window.location.reload();
       });
     }
