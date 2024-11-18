@@ -5,6 +5,11 @@ let confirmPasswordUser = "";
 let fullNameUser = "";
 let mobilePhoneUser = "";
 
+$(document).ready(function () {
+
+})
+
+
 $('#buttonRegister').on('click', function(e) {
     $.ajax({
         type: "get",
@@ -129,6 +134,9 @@ function confirmationPassword() {
 
             $('#fullNameForm').show();
             $('#mobilePhoneForm').show();
+            $('#roleForm').show();
+            loadRoles();
+
             $('#baseModalTitle').html(`<strong>Masukkan Data Diri</strong>`);
             $('#modal-description').html(`<strong>Masukkan data diri beserta nomor handphone</strong>`);
 
@@ -158,29 +166,33 @@ function confirmationPassword() {
     });
 }
 
-function confirmRegist(roleId, email, password, confirmPassword, fullName, mobilePhone) {
+function confirmRegist() {
+    const newFullName = $('#fullName').val();
+    const newMobilePhone = $('#mobilePhone').val();
+    const newRole = $('#role').val();
 
     $.ajax({
         url: `http://localhost:9001/api/registration`,
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify({
-            roleId: roleId,
-            email: email,
-            password: password,
-            confirmPassword: confirmPassword,
-            fullName: fullName,
-            mobilePhone: mobilePhone,
+            roleId: newRole,
+            email: emailUser,
+            password: passwordUser,
+            confirmPassword: confirmPasswordUser,
+            fullName: newFullName,
+            mobilePhone: newMobilePhone,
         }),
         success: function(response) {
             alert("Berhasil registrasi akun");
 
-            // $('#baseModal').modal('hide');
-            // location.reload();
+            $('#baseModal').modal('hide');
+
         },
         error: function(xhr) {
+            const response = xhr.responseJSON;
             if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message) {
-                $('#otpError').text(xhr.responseJSON.message).show();
+                $('#mobilePhoneError').text(response.data.mobilePhone).show();
             } else if (xhr.status ===  404) {
                 $('#otpError').text("Pastikan OTP sudah valid.").show();
             } else {
@@ -189,3 +201,27 @@ function confirmRegist(roleId, email, password, confirmPassword, fullName, mobil
         }
     });
 }
+
+function loadRoles() {
+    $.ajax({
+        type: "GET",
+        url: "http://localhost:9001/api/admin/role",
+        contentType: "application/json",
+        success: function (response) {
+            console.log(response);
+            let roles = response.data.content;
+            let roleOptions = `<option value="" hidden selected disabled>Select Role</option>`;
+
+            roles.forEach(role => {
+                roleOptions += `<option value="${role.id}">${role.name}</option>`;
+            });
+
+            $('#role').append(roleOptions);
+
+        },
+        error: function (error) {
+            console.error("Error loading categories:", error);
+        }
+    });
+}
+
