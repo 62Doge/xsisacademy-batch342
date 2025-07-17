@@ -13,10 +13,12 @@ This is a mini project I developed together with my team during a bootcamp at Xs
 With a team of five members, each person was assigned 4 stories (tasks) to complete within 2 weeks (2 sprints in total). I was responsible for 2 Master Data stories and 2 Transactional Data stories:
 
 Master Data
+
 -Location Level
 -Payment Method
 
 Transactional Data
+
 -Profile Tab
 -Registration
 
