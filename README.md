@@ -15,11 +15,13 @@ With a team of five members, each person was assigned 4 stories (tasks) to compl
 Master Data
 
 -Location Level
+
 -Payment Method
 
 Transactional Data
 
 -Profile Tab
+
 -Registration
 
 Master Data
